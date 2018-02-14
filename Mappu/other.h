@@ -1,0 +1,16 @@
+//DWORD Endian(const char*);
+void ErrorNum(HWND);
+int ReadIniFiles(HWND,const _TCHAR*);
+int WriteIniFiles(HWND,HWND,HMENU,HMENU,const _TCHAR*);
+int CheckOffset(HWND,const _TCHAR*);
+int FontSizeSet(HMENU,DWORD,const char*,int,int);
+int MakeFont(HWND hWnd);
+BYTE ChangeMenuCheck(HWND,HMENU,UINT);
+UINT GetMenuCheck(HWND,HMENU,UINT);
+int SetMenuPriority(HWND,HMENU,int,DWORD);
+int AlphaValueSetMAP(HWND,HMENU,int);
+int AlphaValueSetNPCLIST(HWND,HMENU,int);
+int AlwaysUpdateList(HWND);
+int FileAutoLoad(HWND);
+int SetColor(HWND,DWORD,COLORREF*);
+int InitTree(HWND);

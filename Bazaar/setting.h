@@ -1,0 +1,7 @@
+BOOL CALLBACK DlgProcSetting(HWND,UINT,WPARAM,LPARAM);
+
+#ifdef SETTING_CPP
+//static WNDPROC WndProcMainClass_Edit;
+//LRESULT CALLBACK WndProcSubClass_Edit(HWND,UINT,WPARAM,LPARAM);
+
+#endif

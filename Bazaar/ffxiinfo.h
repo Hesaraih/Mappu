@@ -1,0 +1,2 @@
+INFORMATION GetNPCInfo(int);
+INFORMATION GetMyInfo();

@@ -1,0 +1,8 @@
+LIBRARY mta.dll
+
+EXPORTS
+	mta_Init
+	mta_InitFromIniFile
+	mta_Delete
+	mta_SetTarget
+	mta_UnSetTarget

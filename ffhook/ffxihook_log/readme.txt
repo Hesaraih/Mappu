@@ -1,0 +1,7 @@
+ffxihook_log.dllを動的リンクで使用のサンプル(ffxihook_log.lib持ってない人用)
+
+・madCHook.dllは静的リンクで利用
+・madCHookをインジェクトする時にOpenProcessをPROCESS_ALL_ACCESS等で
+  書き込みも許可しないと失敗するので注意(というかハマッタ)
+・ffxihook_log.dllのInjectはmadCHook.dllをInject後に行わないと失敗するので注意
+・ffxihook_log.hは過去ログに記載の物を利用

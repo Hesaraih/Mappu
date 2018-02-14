@@ -1,0 +1,1 @@
+LRESULT CALLBACK SearchProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
