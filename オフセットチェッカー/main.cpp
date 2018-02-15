@@ -26,9 +26,12 @@
 // SysLinkコントロール用にCommonControlのバージョンを6.0に指定
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+HINSTANCE hInstance;	// 現在のインターフェイス
+
 //WinMain
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 {
+	hInstance = hInst; // グローバル変数にインスタンス処理を格納します。
 	DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG), NULL, (DLGPROC)WndProc);
 
 #ifdef DEBUG
@@ -43,6 +46,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	int pId;
 	HANDLE hPol = 0;
+	HICON hIcon;
 	static HMODULE hModule;
 	static _TCHAR stsztDllFullPath[MAX_PATH] = _T("");//0.05で追加
 	static SYSTEMTIME stSysTimeUpdata;//0.05で追加
@@ -54,7 +58,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		_wsetlocale(LC_ALL, _T(""));
 
 		//アイコンの設定
-		SendMessage(hWnd,WM_SETICON,ICON_SMALL,(LPARAM)LoadImage((HINSTANCE)GetWindowLong(hWnd,GWL_HINSTANCE),MAKEINTRESOURCE(IDI_ICON),IMAGE_ICON,16,16,LR_DEFAULTCOLOR|LR_SHARED));
+		hIcon = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR | LR_SHARED);
+		SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
 
 		INITCOMMONCONTROLSEX InitCtrls;
 		InitCtrls.dwSize = sizeof(INITCOMMONCONTROLSEX);
@@ -368,7 +373,7 @@ void ShowVersion(HWND hWnd)
 				VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvCopyright, NULL);
 				//0.05bで追加
 				//wsprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\Comments"), lpTranslate->wLanguage, lpTranslate->wCodePage);
-				void *pvComment;
+				//void *pvComment;
 				//VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvComment, NULL);
 
 				_TCHAR szVersion[0x100];
@@ -517,7 +522,7 @@ int Save(_TCHAR *sztFileName, HWND hWnd, HWND hEdit)
 				DWORD dwWriteNum;
 				BYTE bom[2] = { 0xFF,0xFE };//BOM.
 				WriteFile(hFile, bom, (DWORD)(sizeof(bom)), &dwWriteNum, NULL);
-				WriteFile(hFile, sztText, _tcslen(sztText) * sizeof(_TCHAR), &dwWriteNum, NULL);
+				WriteFile(hFile, sztText, (DWORD)(_tcslen(sztText) * sizeof(_TCHAR)), &dwWriteNum, NULL);
 				CloseHandle(hFile);
 				ret = 1;
 			}
