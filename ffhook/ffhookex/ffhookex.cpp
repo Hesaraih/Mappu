@@ -18,6 +18,7 @@
 
 #define KILLEFFECT		1				// killeffectを使用する(0-OFF/1-ON)
 #define MERGEITEM		1				// アイテム整頓を使用する(0-OFF/1-ON)
+#define MACROEXE		1				// マクロを使用する(0-OFF/1-ON)
 
 #define DBG_DLL			0				// デバッグ(0-OFF/1-ON)
 
@@ -36,7 +37,7 @@
 #define LEN_AM_BUFFER	32				// アビ魔法名の最大長
 #define MAX_AMCUT		600				// 1つのPOLプロセスに登録できるアビ魔法カット情報数
 
-#define SEARCH_RANGE	0x300000		// 自動オフセのbaseからの検索範囲
+#define SEARCH_RANGE	0x400000		// 自動オフセのbaseからの検索範囲
 
 // 定数
 #define CMD_CUT_FMACRO	0x01			// マクロ、コマンドラインからのコマンド
@@ -234,7 +235,7 @@ BOOL hook_log(BYTE *attr, char *str)
 		*ptr = 0;
 	}
 #else
-	strncpy_s(pData->tLog[wp].Buffer, LEN_LOG_BUFFER-1, str, LEN_LOG_BUFFER-2);
+	_tcsncpy_s(pData->tLog[wp].Buffer, LEN_LOG_BUFFER-1, str, LEN_LOG_BUFFER-2);
 #endif
 	pData->tLog[wp].fCut = 0;
 	pData->tLog[wp].BufferW[0] = 0;
@@ -257,7 +258,7 @@ BOOL hook_log(BYTE *attr, char *str)
 					break;
 				} else if (p->Buffer[0] == '^') {
 					// 前方一致
-					if (!strncmp(ptr, &p->Buffer[1], p->nLen)) {
+					if (!_tcsncmp(ptr, &p->Buffer[1], p->nLen)) {
 						pData->tLog[wp].fCut = 1;
 						res = FALSE;
 						break;
@@ -329,20 +330,23 @@ next_func:
 
 #if CMD_HOOK == 1
 
-// コマンドもしくはデバッグログをFIFOに書込む
-// str			ログ本文
+/// <summary>
+/// コマンドもしくはデバッグログをFIFOに書込む
+/// </summary>
+/// <param name="str">ログ本文</param>
+/// <returns></returns>
 BOOL hook_cmd(char *str)
 {
 	int		n, wp, rp, inject, typ;
 	BOOL	res = TRUE;
-	char	*ptr, *buf, *c;
+	_TCHAR	*ptr, *buf, *c;
 
 	if (hMtx == 0 || str == NULL)	return res;
 
 	WaitForSingleObject(hMtx, INFINITE);
 	wp = pData->pWriteCmd;
 
-	strncpy_s(pData->tCmd[wp].Buffer, LEN_CMD_BUFFER-1, str, LEN_CMD_BUFFER-2);
+	_tcsncpy_s(pData->tCmd[wp].Buffer, LEN_CMD_BUFFER - 1, str, LEN_CMD_BUFFER - 2);
 
 	ptr = pData->tCmd[wp].Buffer;
 	pData->tCmd[wp].BufferW[0] = 0;
@@ -359,11 +363,11 @@ BOOL hook_cmd(char *str)
 
 		// メニュー発行された命令
 		if (pData->fCutAM & CMD_CUT_FMENU) {
-			if (!strncmp(ptr, "magic \"", 7)) {
+			if (!_tcsncmp(ptr, "magic \"", 7)) {
 				buf = &pData->tCmd[wp].Buffer[8];
-			} else if (!strncmp(ptr, "weaponskill \"", 13)) {
+			} else if (!_tcsncmp(ptr, "weaponskill \"", 13)) {
 				buf = &pData->tCmd[wp].Buffer[14];
-			} else if (!strncmp(ptr, "jobability \"", 12)) {
+			} else if (!_tcsncmp(ptr, "jobability \"", 12)) {
 				buf = &pData->tCmd[wp].Buffer[13];
 			}
 			if (buf)
@@ -372,7 +376,7 @@ BOOL hook_cmd(char *str)
 
 		// マクロもしくはコマンドラインより発行された命令
 		if (typ == 0 && pData->fCutAM & CMD_CUT_FMACRO) {
-			if (!strncmp(ptr, "ma ", 3) || !strncmp(ptr, "ja ", 3) || !strncmp(ptr, "ws ", 3)) {
+			if (!_tcsncmp(ptr, "ma ", 3) || !_tcsncmp(ptr, "ja ", 3) || !_tcsncmp(ptr, "ws ", 3)) {
 				buf = &pData->tCmd[wp].Buffer[4];
 				typ = 2;
 			}
@@ -382,18 +386,18 @@ BOOL hook_cmd(char *str)
 			PTCUTAM	p = pData->tCutAM;
 
 			for (n = 0; n < pData->nCutAM; n++, p++) {
-				if (!strncmp(buf, p->Buffer, p->nLen - (p->fPass != 0))) {
+				if (!_tcsncmp(buf, p->Buffer, p->nLen - (p->fPass != 0))) {
 					if (p->fPass == 2) {
 						c = &buf[p->nLen-1];
 						if (*c != 'I' && *c != 'V' && *c != 'X' && *c != ' ' &&
-							strncmp(c, "壱", 2) && strncmp(c, "弐", 2) && strncmp(c, "参", 2) && strncmp(c, "四", 2))
+							_tcsncmp(c, "壱", 2) && _tcsncmp(c, "弐", 2) && _tcsncmp(c, "参", 2) && _tcsncmp(c, "四", 2))
 							continue;
 					}
 
 					if (typ == 1) {
 						pData->tCmd[wp].fCut = 3;
 					} else {
-						if (!strpbrk(buf, "0123456789")) {
+						if (!_tcspbrk(buf, "0123456789")) {
 							pData->tCmd[wp].fCut = 1;
 						} else {
 							pData->tCmd[wp].fCut = 2;
@@ -412,7 +416,7 @@ BOOL hook_cmd(char *str)
 
 	pData->pWriteCmd = wp;
 
-	rp = (wp == SIZE_CMD_FIFO-1) ? 0 : wp+1;
+	rp = (wp == SIZE_CMD_FIFO - 1) ? 0 : wp+1;
 	inject = pData->nInject;
 
 	// ライトポインタがリードポインタに追いついていたらリードポインタをインクリメント
@@ -509,7 +513,7 @@ PIHOOK attach(PBYTE pCode, PBYTE pCallBackFunc, PBYTE *pNextHook)
 			DWORD addr;
 			ptr = pCode+1;
 			addr = (DWORD)((DWORD64)pCallBackFunc - (DWORD64)pCode - 5);
-			*(DWORD *)(pCode+1) = addr;
+			*(DWORD *)(pCode + 1) = addr;
 		} else {
 			*pCode++ = 0xff;
 			*pCode++ = 0x25;
@@ -729,11 +733,11 @@ BOOL init(void)
 
 	idPro = GetCurrentProcessId();
 
-	wsprintf(obj_name, MAP_NAME, idPro);
+	_stprintf(obj_name, MAP_NAME, idPro);
 	hMap = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, obj_name);
 	if (hMap == 0)		return FALSE;
 
-	wsprintf(obj_name, MTX_NAME, idPro);
+	_stprintf(obj_name, MTX_NAME, idPro);
 	hMtx = OpenMutex(MUTEX_ALL_ACCESS, NULL, obj_name);
 	if (hMtx == 0)		return FALSE;
 
@@ -1043,7 +1047,7 @@ EXPORT DWORD WINAPI FF11_GetProcessId(int no)
 					tPList[cnt].nPro = n;
 					EnumWindows(EnumWindowsProc , (LPARAM)&ep);
 
-					wsprintf(tPList[cnt].sName, _T("0x%08x %s"), tProcess[n].idPro, ep.name);
+					_stprintf(tPList[cnt].sName, _T("0x%08x %s"), tProcess[n].idPro, ep.name);
 					cnt++;
 				}
 			}
@@ -1094,9 +1098,11 @@ EXPORT PBYTE WINAPI FF11_GetBaseAddress(DWORD pid)
 	return ptr;
 }
 
-// BASEアドレスを返す
-// pid		POLのプロセスID
-// 戻り値	index番号
+/// <summary>
+/// BASEアドレスを返す
+/// </summary>
+/// <param name="pid">POLのプロセスID</param>
+/// <returns>index番号</returns>
 EXPORT int WINAPI FF11_Inject(DWORD pid)
 {
 	DWORD64	hpro;
@@ -1128,7 +1134,7 @@ EXPORT int WINAPI FF11_Inject(DWORD pid)
 
 	// ミューテックス作成
 	if (proc->hMtx == 0) {
-		wsprintf(obj_name, MTX_NAME, pid);
+		_stprintf(obj_name, MTX_NAME, pid);
 		proc->hMtx = CreateMutex(NULL, FALSE, obj_name);
 	}
 
@@ -1159,7 +1165,7 @@ EXPORT int WINAPI FF11_Inject(DWORD pid)
 	// 共有メモリオープン
 	if (proc->hMap == 0) {
 		BOOL first;
-		wsprintf(obj_name, MAP_NAME, pid);
+		_stprintf(obj_name, MAP_NAME, pid);
 		proc->hMap = CreateFileMapping((HANDLE)-1,
 				NULL, PAGE_READWRITE, 0, sizeof(TDATA), obj_name);
 		if (proc->hMap == 0)		goto err_end;
@@ -1473,15 +1479,15 @@ int get_log(int index, BYTE *attr, char *buf, wchar_t *wbuf, int sbuf, BYTE *fcu
 		p = pd->pReadLog[no];
 		if (p != pd->pWriteLog) {
 			if (buf) {
-				strncpy_s(buf, sbuf, pd->tLog[p].Buffer, sbuf-1);
-				buf[sbuf-1] = '\0';		// 念のため終端コード
+				_tcsncpy_s(buf, sbuf, pd->tLog[p].Buffer, sbuf - 1);
+				buf[sbuf - 1] = '\0';		// 念のため終端コード
 				res = (int)strlen(buf);
 			} else {
 				if (pd->tLog[p].BufferW[0] == 0)
 					MultiByteToWideChar(CP_ACP, 0, pd->tLog[p].Buffer, -1, pd->tLog[p].BufferW,
-									sbuf-1); 
-				wcsncpy_s(wbuf, sbuf, pd->tLog[p].BufferW, sbuf-1);
-				wbuf[sbuf-1] = '\0';	// 念のため終端コード
+									sbuf - 1); 
+				wcsncpy_s(wbuf, sbuf, pd->tLog[p].BufferW, sbuf - 1);
+				wbuf[sbuf - 1] = '\0';	// 念のため終端コード
 				res = (int)wcslen(wbuf);
 			}
 
@@ -1524,7 +1530,7 @@ int get_cmd(int index, char *buf, wchar_t *wbuf, int sbuf, BYTE *fcut)
 		p = pd->pReadCmd[no];
 		if (p != pd->pWriteCmd) {
 			if (buf) {
-				strncpy_s(buf, sbuf, pd->tCmd[p].Buffer, sbuf-1);
+				_tcsncpy_s(buf, sbuf, pd->tCmd[p].Buffer, sbuf-1);
 				buf[sbuf - 1] = '\0';		// 念のため終端コード
 				res = (int)strlen(buf);
 			} else {
@@ -1594,7 +1600,7 @@ int set_cut(PTPROC proc, PTDATA pd, char *attr, char *str)
 		ZeroMemory(pcut, sizeof(TCUT));
 		if (str) {
 			if (strcmp(".*", str)) {
-				strncpy_s(pcut->Buffer, LEN_LOG_BUFFER, str, LEN_LOG_BUFFER-1);
+				_tcsncpy_s(pcut->Buffer, LEN_LOG_BUFFER, str, LEN_LOG_BUFFER-1);
 			}
 		}
 		pcut->Buffer[LEN_LOG_BUFFER-1] = 0;
@@ -1605,12 +1611,12 @@ int set_cut(PTPROC proc, PTDATA pd, char *attr, char *str)
 		} else {
 			ZeroMemory(pcut->tAttr, 256);
 
-			strncpy_s(buf, 512, attr, 511);
+			_tcsncpy_s(buf, 512, attr, 511);
 			buf[511] = 0;
 			p1 = buf;
 
 			while (p1 && *p1) {
-				if (p2 = strpbrk(p1, " ,\0")) {
+				if (p2 = _tcspbrk(p1, " ,\0")) {
 					c = *p2;
 					*p2++ = 0;
 				} else {
@@ -1855,7 +1861,7 @@ EXPORT BOOL WINAPI FF11_PutCmdA(int index, char *command)
 
 	WaitForSingleObject(proc->hEvent, 10000);
 	ResetEvent(proc->hEvent);
-	strncpy_s(pd->nPrm, LEN_CMD_BUFFER, command, LEN_CMD_BUFFER-1);
+	_tcsncpy_s(pd->nPrm, LEN_CMD_BUFFER, command, LEN_CMD_BUFFER-1);
 	PostThreadMessage(pd->idThread, C_CMD, 0, 0);
 
 	return TRUE;
@@ -2118,6 +2124,13 @@ EXPORT WORD WINAPI FF11_GetPetID(int index)
 	FF11_GetData(index, FF11ADDR_PETID, (BYTE*)&petid, 2);
 
 	return petid;
+}
+
+EXPORT BOOL	WINAPI FF11_GetCast(int index, DWORD *cast, DWORD *remain, float *gage)
+{
+	BOOL g_cast = false;
+	//(未実装)
+	return g_cast;
 }
 
 EXPORT BYTE WINAPI FF11_GetWeatherId(int index)

@@ -33,7 +33,7 @@
 void ErrorNum(HWND hWnd)
 {
 	_TCHAR szErrorMessage[MAX_PATH];
-	sprintf(szErrorMessage, _T("Error Code = %d"), g_ErrorCode);
+	_stprintf(szErrorMessage, _T("Error Code = %d"), g_ErrorCode);
 	MessageBox(hWnd, szErrorMessage, _T("Mappu"), MB_OK | MB_ICONERROR);
 	PostMessage(hWnd, WM_CLOSE, 1, 1);//0.51で変更
 }
@@ -51,58 +51,58 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 
 	//[OFFSET]
 	GetPrivateProfileString(_T("OFFSET"), _T("NPCMAP"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Offset.NpcMap = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_Offset.NpcMap = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("OFFSET"), _T("NPCLIST"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Offset.NpcList = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_Offset.NpcList = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("OFFSET"), _T("NOWSTA"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Offset.NowSta = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_Offset.NowSta = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("OFFSET"), _T("TARGET"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Offset.Target = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_Offset.Target = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("OFFSET"), _T("WEATHER"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Offset.Weather = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_Offset.Weather = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 
 											   //[NPC_MEM]
 	GetPrivateProfileString(_T("NPC_MEM"), _T("POS_X"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.POS_X = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.POS_X = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("POS_Y"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.POS_Y = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.POS_Y = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("POS_Z"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.POS_Z = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.POS_Z = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("RADIAN"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.Radian = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.Radian = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("CHANGEDID"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.ChangedId = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.ChangedId = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("FIXEDID"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.FixedId = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.FixedId = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("NAME"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.Name = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.Name = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("VIEW_ADDRESS"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.ViewAddress = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.ViewAddress = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("DISTANCE"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.Distance = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.Distance = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("HP"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.Hpp = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.Hpp = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("NPCTYPE"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);//0.53で追加
-	NPC_MEM.NpcType = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.NpcType = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("VIEW"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.View = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.View = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("INRANGE"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.Inrange = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.Inrange = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("STATE"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.State = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.State = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("NPC_MEM"), _T("LASTHATEID"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	NPC_MEM.LastHateId = (WORD)strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	NPC_MEM.LastHateId = (WORD)_tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 
 														//[OTHER]
 	g_Timer = GetPrivateProfileInt(_T("OTHER"), _T("TIMER"), 500, szFullPathName);
 	GetPrivateProfileString(_T("OTHER"), _T("KEY_ZOOM_+0.1"), _T("0021"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_KeyZoomPlus = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_KeyZoomPlus = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("OTHER"), _T("KEY_ZOOM_+1.0"), _T("1021"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_KeyZoomPlus_1 = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_KeyZoomPlus_1 = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("OTHER"), _T("KEY_ZOOM_-0.1"), _T("0022"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_KeyZoomMinus = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_KeyZoomMinus = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	GetPrivateProfileString(_T("OTHER"), _T("KEY_ZOOM_-1.0"), _T("1022"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_KeyZoomMinus_1 = strtoul(szBuf, NULL, 16);//16進数で読み込みを行う
+	g_KeyZoomMinus_1 = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 	g_DLLFileSizeCmp = GetPrivateProfileInt(_T("OTHER"), _T("DLLFILESIZE"), 0, szFullPathName);
 	GetPrivateProfileString(_T("OTHER"), _T("EXIT_DIALOGBOX"), _T("ON"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
 	if (_tcscmp(szBuf, _T("ON")) == 0) {
@@ -151,15 +151,15 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		SendMessage(hWnd, WM_COMMAND, IDM_ZOOM_DEFAULT, 0);
 	}
 	GetPrivateProfileString(_T("MAP"), _T("DEFAULT_ZOOM_01"), _T("12.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Zoom_01 = (float)atof(szBuf);
+	g_Zoom_01 = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("MAP"), _T("DEFAULT_ZOOM_02"), _T("6.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Zoom_02 = (float)atof(szBuf);
+	g_Zoom_02 = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("MAP"), _T("DEFAULT_ZOOM_04"), _T("3.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Zoom_04 = (float)atof(szBuf);
+	g_Zoom_04 = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("MAP"), _T("ZOOM"), _T("3.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_Zoom = (float)atof(szBuf);
+	g_Zoom = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("MAP"), _T("ZOOM_MOUSE_DELTA"), _T("0.5"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_ZoomMouseDelta = (float)fabs(atof(szBuf));
+	g_ZoomMouseDelta = (float)fabs(_ttof(szBuf));
 
 	//[FONT]
 	g_Font.nSize = GetPrivateProfileInt(_T("FONT"), _T("FONTSIZE"), 11, szFullPathName);
@@ -733,19 +733,19 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 
 	//[POINT_SIZE]
 	GetPrivateProfileString(_T("POINT_SIZE"), _T("OWN"), _T("4.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_PointSizeOWN = (float)atof(szBuf);
+	g_PointSizeOWN = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("POINT_SIZE"), _T("TRACE"), _T("3.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_PointSizeTRACE = (float)atof(szBuf);
+	g_PointSizeTRACE = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("POINT_SIZE"), _T("NPC"), _T("4.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_PointSizeNPC = (float)atof(szBuf);
+	g_PointSizeNPC = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("POINT_SIZE"), _T("PARTY"), _T("3.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_PointSizePARTY = (float)atof(szBuf);
+	g_PointSizePARTY = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("POINT_SIZE"), _T("PC"), _T("3.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_PointSizePC = (float)atof(szBuf);
+	g_PointSizePC = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("POINT_SIZE"), _T("PET"), _T("2.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_PointSizePET = (float)atof(szBuf);
+	g_PointSizePET = (float)_ttof(szBuf);
 	GetPrivateProfileString(_T("POINT_SIZE"), _T("TARGET"), _T("4.0"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	g_PointSizeTARGET = (float)atof(szBuf);
+	g_PointSizeTARGET = (float)_ttof(szBuf);
 	g_TargetHighlight = GetPrivateProfileInt(_T("POINT_SIZE"), _T("TARGET_HIGHLIGHT"), 15, szFullPathName);
 
 
@@ -777,25 +777,25 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	if (GetWindowRect(hWnd, &rect_MAP) == 0) {
 		return -1;
 	}
-	wsprintf(szBuf, _T("%d"), rect_MAP.left);
+	_stprintf(szBuf, _T("%d"), rect_MAP.left);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("MAP_POS_X"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), rect_MAP.top);
+	_stprintf(szBuf, _T("%d"), rect_MAP.top);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("MAP_POS_Y"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), rect_MAP.right - rect_MAP.left);
+	_stprintf(szBuf, _T("%d"), rect_MAP.right - rect_MAP.left);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("MAP_SIZE_X"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), rect_MAP.bottom - rect_MAP.top);
+	_stprintf(szBuf, _T("%d"), rect_MAP.bottom - rect_MAP.top);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("MAP_SIZE_Y"), szBuf, szFullPathName);
 
 	if (GetWindowRect(hNPCList, &rect_LIST) == 0) {
 		return -2;
 	}
-	wsprintf(szBuf, _T("%d"), rect_LIST.left);
+	_stprintf(szBuf, _T("%d"), rect_LIST.left);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("NPCLIST_POS_X"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), rect_LIST.top);
+	_stprintf(szBuf, _T("%d"), rect_LIST.top);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("NPCLIST_POS_Y"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), rect_LIST.right - rect_LIST.left);
+	_stprintf(szBuf, _T("%d"), rect_LIST.right - rect_LIST.left);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("NPCLIST_SIZE_X"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), rect_LIST.bottom - rect_LIST.top);
+	_stprintf(szBuf, _T("%d"), rect_LIST.bottom - rect_LIST.top);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("NPCLIST_SIZE_Y"), szBuf, szFullPathName);
 
 	//[MAP]
@@ -803,7 +803,7 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	nRet &= WritePrivateProfileString(_T("MAP"), _T("DEFAULT_ZOOM_SETTING"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_ZOOM_DEFAULT)], szFullPathName);
 
 	//[FONT]
-	wsprintf(szBuf, _T("%d"), g_Font.nSize);
+	_stprintf(szBuf, _T("%d"), g_Font.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD)], szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONT_DROPSHADOW)) {
@@ -817,7 +817,7 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	}
 	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_Font.ColorEffect & 0xFF, (g_Font.ColorEffect >> 8) & 0xFF, (g_Font.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), g_FontEx.nSize);
+	_stprintf(szBuf, _T("%d"), g_FontEx.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE_EX"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD_EX"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD_EX)], szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONT_DROPSHADOW_EX)) {
@@ -831,7 +831,7 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	}
 	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_FontEx.ColorEffect & 0xFF, (g_FontEx.ColorEffect >> 8) & 0xFF, (g_FontEx.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_EX"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), g_FontSp.nSize);
+	_stprintf(szBuf, _T("%d"), g_FontSp.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE_SP"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD_SP"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD_SP)], szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONT_DROPSHADOW_SP)) {
@@ -845,7 +845,7 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	}
 	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_FontSp.ColorEffect & 0xFF, (g_FontSp.ColorEffect >> 8) & 0xFF, (g_FontSp.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_SP"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), g_FontPC.nSize);
+	_stprintf(szBuf, _T("%d"), g_FontPC.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE_PC"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD_PC"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD_PC)], szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONT_DROPSHADOW_PC)) {
@@ -859,7 +859,7 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	}
 	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_FontPC.ColorEffect & 0xFF, (g_FontPC.ColorEffect >> 8) & 0xFF, (g_FontPC.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_PC"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), g_FontTarget.nSize);
+	_stprintf(szBuf, _T("%d"), g_FontTarget.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE_TARGET"), szBuf, szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD_TARGET)) {
 		nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD_TARGET"), _T("ON"), szFullPathName);
@@ -928,16 +928,16 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("CENTER_OWN"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_CENTER_OWN)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("HIDE_HEIGHT_DIFF"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_HIDE_HEIGHT_DIFF)], szFullPathName);//0.56で追加
 	if (GetMenuCheck(hWnd, hMenu, IDM_PRIORITY_BELOW_NORMAL)) {
-		wsprintf(szBuf, _T("%s"), _T("BELOW_NORMAL"));
+		_stprintf(szBuf, _T("%s"), _T("BELOW_NORMAL"));
 	}
 	else if (GetMenuCheck(hWnd, hMenu, IDM_PRIORITY_IDLE)) {
-		wsprintf(szBuf, _T("%s"), _T("IDLE"));
+		_stprintf(szBuf, _T("%s"), _T("IDLE"));
 	}
 	else {
-		wsprintf(szBuf, _T("%s"), _T("NORMAL"));
+		_stprintf(szBuf, _T("%s"), _T("NORMAL"));
 	}
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("PRIORITY"), szBuf, szFullPathName);
-	wsprintf(szBuf, _T("%d"), g_Menu.alpha_map);
+	_stprintf(szBuf, _T("%d"), g_Menu.alpha_map);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("ALPHA_VALUE_MAP"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("TRANSPARENT_COLOR_MODE"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_TRANSPARENT_MODE)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("RADAR_MODE"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_RADAR_MODE)], szFullPathName);
@@ -947,7 +947,7 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("STATESOUND_EX"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_STATESOUND_EX)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("POPSOUND_SP"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_POPSOUND_SP)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("STATESOUND_SP"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_STATESOUND_SP)], szFullPathName);
-	wsprintf(szBuf, _T("%d"), g_Menu.alpha_npclist);
+	_stprintf(szBuf, _T("%d"), g_Menu.alpha_npclist);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("ALPHA_VALUE_NPCLIST"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("ALWAYS_UPDATE_AND_SET_ALL_ITEMS"), OffOn[GetMenuCheck(hWnd, hMenuNPCList, IDM_LIST_ALWAYS_UPDATE)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("FILE_AUTOLOAD"), OffOn[GetMenuCheck(hWnd, hMenuNPCList, IDM_FILE_AUTOLOAD)], szFullPathName);
@@ -1153,15 +1153,15 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 				if (0 == GetFullPathName(filename, sizeof(szFullPathName) / sizeof(_TCHAR), szFullPathName, NULL)) {
 					return 0;
 				}
-				wsprintf(szBuf, _T("%X"), g_Offset.NpcMap);
+				_stprintf(szBuf, _T("%X"), g_Offset.NpcMap);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NPCMAP"), szBuf, szFullPathName);
-				wsprintf(szBuf, _T("%X"), g_Offset.NpcList);
+				_stprintf(szBuf, _T("%X"), g_Offset.NpcList);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NPCLIST"), szBuf, szFullPathName);
-				wsprintf(szBuf, _T("%X"), g_Offset.NowSta);
+				_stprintf(szBuf, _T("%X"), g_Offset.NowSta);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NOWSTA"), szBuf, szFullPathName);
-				wsprintf(szBuf, _T("%X"), g_Offset.Target);
+				_stprintf(szBuf, _T("%X"), g_Offset.Target);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("TARGET"), szBuf, szFullPathName);
-				wsprintf(szBuf, _T("%X"), g_Offset.Weather);
+				_stprintf(szBuf, _T("%X"), g_Offset.Weather);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("WEATHER"), szBuf, szFullPathName);
 
 				if (nRet == 0) {
@@ -1169,7 +1169,7 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 				}
 			}
 		}
-		wsprintf(szBuf, _T("%d"), g_DLLFileSize);
+		_stprintf(szBuf, _T("%d"), g_DLLFileSize);
 		WritePrivateProfileString(_T("OTHER"), _T("DLLFILESIZE"), szBuf, szFullPathName);
 		nFlag = 0;
 	}
@@ -1193,15 +1193,15 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 				if (0 == GetFullPathName(filename, sizeof(szFullPathName) / sizeof(_TCHAR), szFullPathName, NULL)) {
 					return 0;
 				}
-				wsprintf(szBuf, _T("%X"), g_Offset.NpcMap);
+				_stprintf(szBuf, _T("%X"), g_Offset.NpcMap);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NPCMAP"), szBuf, szFullPathName);
-				wsprintf(szBuf, _T("%X"), g_Offset.NpcList);
+				_stprintf(szBuf, _T("%X"), g_Offset.NpcList);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NPCLIST"), szBuf, szFullPathName);
-				wsprintf(szBuf, _T("%X"), g_Offset.NowSta);
+				_stprintf(szBuf, _T("%X"), g_Offset.NowSta);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NOWSTA"), szBuf, szFullPathName);
-				wsprintf(szBuf, _T("%X"), g_Offset.Target);
+				_stprintf(szBuf, _T("%X"), g_Offset.Target);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("TARGET"), szBuf, szFullPathName);
-				wsprintf(szBuf, _T("%X"), g_Offset.Weather);
+				_stprintf(szBuf, _T("%X"), g_Offset.Weather);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("WEATHER"), szBuf, szFullPathName);
 
 				if (nRet == 0) {
@@ -1335,7 +1335,7 @@ int MakeFont(HWND hWnd) {
 	logFont.lfCharSet = SHIFTJIS_CHARSET;
 	logFont.lfQuality = ANTIALIASED_QUALITY;
 	logFont.lfHeight = -MulDiv(g_Font.nSize, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-	strcpy(logFont.lfFaceName, g_Font.szType);
+	_tcscpy(logFont.lfFaceName, g_Font.szType);
 	if (g_Font.nBold == 1) {
 		logFont.lfWeight = FW_BOLD;
 	}
@@ -1346,7 +1346,7 @@ int MakeFont(HWND hWnd) {
 	logFont.lfCharSet = SHIFTJIS_CHARSET;
 	logFont.lfQuality = ANTIALIASED_QUALITY;
 	logFont.lfHeight = -MulDiv(g_FontEx.nSize, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-	strcpy(logFont.lfFaceName, g_FontEx.szType);
+	_tcscpy(logFont.lfFaceName, g_FontEx.szType);
 	if (g_FontEx.nBold == 1) {
 		logFont.lfWeight = FW_BOLD;
 	}
@@ -1357,7 +1357,7 @@ int MakeFont(HWND hWnd) {
 	logFont.lfCharSet = SHIFTJIS_CHARSET;
 	logFont.lfQuality = ANTIALIASED_QUALITY;
 	logFont.lfHeight = -MulDiv(g_FontSp.nSize, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-	strcpy(logFont.lfFaceName, g_FontSp.szType);
+	_tcscpy(logFont.lfFaceName, g_FontSp.szType);
 	if (g_FontSp.nBold == 1) {
 		logFont.lfWeight = FW_BOLD;
 	}
@@ -1368,7 +1368,7 @@ int MakeFont(HWND hWnd) {
 	logFont.lfHeight = -MulDiv(g_FontSystem.nSize, GetDeviceCaps(hDC, LOGPIXELSY), 72);
 	logFont.lfCharSet = SHIFTJIS_CHARSET;
 	logFont.lfQuality = ANTIALIASED_QUALITY;
-	strcpy(logFont.lfFaceName, g_FontSystem.szType);
+	_tcscpy(logFont.lfFaceName, g_FontSystem.szType);
 	if (g_FontSystem.nBold == 1) {
 		logFont.lfWeight = FW_BOLD;
 	}
@@ -1379,7 +1379,7 @@ int MakeFont(HWND hWnd) {
 	logFont.lfHeight = -MulDiv(g_FontPC.nSize, GetDeviceCaps(hDC, LOGPIXELSY), 72);
 	logFont.lfCharSet = SHIFTJIS_CHARSET;
 	logFont.lfQuality = ANTIALIASED_QUALITY;
-	strcpy(logFont.lfFaceName, g_FontPC.szType);
+	_tcscpy(logFont.lfFaceName, g_FontPC.szType);
 	if (g_FontPC.nBold == 1) {
 		logFont.lfWeight = FW_BOLD;
 	}
@@ -1800,8 +1800,10 @@ int InitTree(HWND hTreeWnd)
 	//[+]
 	/* │  */tvis.hParent = TVI_ROOT;
 	/* │  */tvis.hInsertAfter = TVI_LAST; // TVI_FIRST, TVI_LAST, TVI_SORT
-	/* │  */tvis.item.mask = TVIF_TEXT;
+	/* │  */tvis.item.mask = TVIF_STATE | TVIF_TEXT;
 	/* ├─*/tvis.item.pszText = _T("NPCLIST表示");
+	/* ├─*/tvis.item.stateMask = TVIS_STATEIMAGEMASK;
+	/* ├─*/tvis.item.state = 0x2000; //チェック
 	/* │  */hNPCLIST = TreeView_InsertItem(hTreeWnd, &tvis);
 	/* │  */
 	/* ├─*/tvis.item.pszText = _T("管理方式");
@@ -2431,7 +2433,7 @@ int SetColor(HWND hWnd, DWORD dwId, COLORREF *Color)
 
 	_TCHAR szBuf[0x10], szText[0x20];
 	GetDlgItemText(hWnd, dwId, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-	sprintf(szText, _T("%s \"%s\""), _T("Color"), szBuf);
+	_stprintf(szText, _T("%s \"%s\""), _T("Color"), szBuf);
 	ZeroMemory(&cc, sizeof(cc));
 	cc.lStructSize = sizeof(CHOOSECOLOR);
 	cc.hwndOwner = hWnd;

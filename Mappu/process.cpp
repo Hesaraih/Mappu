@@ -88,7 +88,7 @@ int GetProcess(PROCESSENTRY32 *pe32,int iProcessCounter)
 	//pol.exe‚ÌƒvƒƒZƒX‚ðŽæ“¾
 	if(Process32First(hSnapshot,pe32)){
 		do{
-			if(strcmp(STRING_POL,pe32->szExeFile) == 0){
+			if(_tcscmp(STRING_POL,pe32->szExeFile) == 0){
 				iProcessCounter--;
 				if(iProcessCounter <=0){
 					nRet = 0;
@@ -124,7 +124,7 @@ int GetModule(MODULEENTRY32 *mo32,PROCESSENTRY32 pe32)
 
 	if(Module32First(hModuleSnapshot,mo32)){
 		do{
-			if(strcmp(STRING_DLL,mo32->szModule) == 0){
+			if(_tcscmp(STRING_DLL,mo32->szModule) == 0){
 				nFlag = 1;
 				break;
 			}

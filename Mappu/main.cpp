@@ -36,7 +36,7 @@
 #include "other.h"
 #include "searchaddr.h"
 
-#ifdef DEBUG
+#ifdef _DEBUG
 #include <crtdbg.h>
 #endif
 
@@ -192,7 +192,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 {
 	DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_MAP), NULL, (DLGPROC)WndProcMAP);
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 	return true;
@@ -214,7 +214,7 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_INITDIALOG:
 		//ロケールをOSデフォルトに設定
 		//VCの場合これが無いとIOで文字化けする
-		setlocale(LC_ALL, _T(""));
+		_tsetlocale(LC_ALL, _T(""));
 		SetWindowText(hWnd, MAPPU_VER);
 		//MENU_FLAG初期化 0.46で追加
 		ZeroMemory(&g_Menu, sizeof(MENU_FLAG));
@@ -244,7 +244,7 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			return 0;
 		}
 		GetPrivateProfileString(_T("MENU"), _T("MENU_LANG"), _T("EN"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-		if (strcmp(szBuf, _T("JP")) == 0) {
+		if (_tcscmp(szBuf, _T("JP")) == 0) {
 			hMenu = LoadMenu(NULL, MAKEINTRESOURCE(IDR_MENU_MAP_JP));
 		}
 		else {
@@ -256,8 +256,9 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			ErrorNum(hWnd);
 			return 0;
 		}
-		DeleteMenu(hMenu, IDM_SELECT_PID, FALSE);//ダミーで作ったメニュー項目を削除
-												 //FFXiが立ち上がっているか確認(オフセット読み込みより先に処理すること)
+		//ダミーで作ったメニュー項目を削除
+		DeleteMenu(hMenu, IDM_SELECT_PID, FALSE);
+		//FFXiが立ち上がっているか確認(オフセット読み込みより先に処理すること)
 		if (FindWindow(STRING_CLASS, NULL) == NULL) {
 			g_ErrorCode = 4;
 			ErrorNum(hWnd);
@@ -344,7 +345,6 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		//IDM_POPSOUNDとIDM_STATESOUNDはどちらかしかチェックしない
 		if (GetMenuCheck(hWnd, hSubMenu, IDM_POPSOUND) && GetMenuCheck(hWnd, hSubMenu, IDM_STATESOUND)) {
 			//両方チェック時POPSOUNDを未チェック
-			//g_Menu.popsound = ChangeMenuCheck(hWnd,hSubMenu,IDM_POPSOUND);
 			g_Menu.popsound[0] = ChangeMenuCheck(hWnd, hSubMenu, IDM_POPSOUND);//0.49で変更
 		}
 		if (GetMenuCheck(hWnd, hSubMenu, IDM_POPSOUND_EX) && GetMenuCheck(hWnd, hSubMenu, IDM_STATESOUND_EX)) {//0.49で追加
@@ -400,39 +400,39 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		MenuInfo.dwTypeData = szMenuName;
 		//IDM_ZOOM_PLUS
 		if (g_KeyZoomPlus & 0xFF00) {
-			wsprintf(szMenuName, _T("+0.1 [%s+%s]"), szVK[(g_KeyZoomPlus >> 8) & 0xFF], szVK[g_KeyZoomPlus & 0xFF]);
+			_stprintf(szMenuName, _T("+0.1 [%s+%s]"), szVK[(g_KeyZoomPlus >> 8) & 0xFF], szVK[g_KeyZoomPlus & 0xFF]);
 		}
 		else {
-			wsprintf(szMenuName, _T("+0.1 [%s]"), szVK[g_KeyZoomPlus & 0xFF]);
+			_stprintf(szMenuName, _T("+0.1 [%s]"), szVK[g_KeyZoomPlus & 0xFF]);
 		}
-		MenuInfo.cch = strlen(szMenuName);
+		MenuInfo.cch = _tcslen(szMenuName);
 		SetMenuItemInfo(hSubMenu, IDM_ZOOM_PLUS, FALSE, &MenuInfo);
 		//IDM_ZOOM_PLUS_1
 		if (g_KeyZoomPlus_1 & 0xFF00) {
-			wsprintf(szMenuName, _T("+1.0 [%s+%s]"), szVK[(g_KeyZoomPlus_1 >> 8) & 0xFF], szVK[g_KeyZoomPlus_1 & 0xFF]);
+			_stprintf(szMenuName, _T("+1.0 [%s+%s]"), szVK[(g_KeyZoomPlus_1 >> 8) & 0xFF], szVK[g_KeyZoomPlus_1 & 0xFF]);
 		}
 		else {
-			wsprintf(szMenuName, _T("+1.0 [%s]"), szVK[g_KeyZoomPlus_1 & 0xFF]);
+			_stprintf(szMenuName, _T("+1.0 [%s]"), szVK[g_KeyZoomPlus_1 & 0xFF]);
 		}
-		MenuInfo.cch = strlen(szMenuName);
+		MenuInfo.cch = _tcslen(szMenuName);
 		SetMenuItemInfo(hSubMenu, IDM_ZOOM_PLUS_1, FALSE, &MenuInfo);
 		//IDM_ZOOM_MINUS
 		if (g_KeyZoomMinus & 0xFF00) {
-			wsprintf(szMenuName, _T("-0.1 [%s+%s]"), szVK[(g_KeyZoomMinus >> 8) & 0xFF], szVK[g_KeyZoomMinus & 0xFF]);
+			_stprintf(szMenuName, _T("-0.1 [%s+%s]"), szVK[(g_KeyZoomMinus >> 8) & 0xFF], szVK[g_KeyZoomMinus & 0xFF]);
 		}
 		else {
-			wsprintf(szMenuName, _T("-0.1 [%s]"), szVK[g_KeyZoomMinus & 0xFF]);
+			_stprintf(szMenuName, _T("-0.1 [%s]"), szVK[g_KeyZoomMinus & 0xFF]);
 		}
-		MenuInfo.cch = strlen(szMenuName);
+		MenuInfo.cch = _tcslen(szMenuName);
 		SetMenuItemInfo(hSubMenu, IDM_ZOOM_MINUS, FALSE, &MenuInfo);
 		//IDM_ZOOM_MINUS_1
 		if (g_KeyZoomMinus_1 & 0xFF00) {
-			wsprintf(szMenuName, _T("-1.0 [%s+%s]"), szVK[(g_KeyZoomMinus_1 >> 8) & 0xFF], szVK[g_KeyZoomMinus_1 & 0xFF]);
+			_stprintf(szMenuName, _T("-1.0 [%s+%s]"), szVK[(g_KeyZoomMinus_1 >> 8) & 0xFF], szVK[g_KeyZoomMinus_1 & 0xFF]);
 		}
 		else {
-			wsprintf(szMenuName, _T("-1.0 [%s]"), szVK[g_KeyZoomMinus_1 & 0xFF]);
+			_stprintf(szMenuName, _T("-1.0 [%s]"), szVK[g_KeyZoomMinus_1 & 0xFF]);
 		}
-		MenuInfo.cch = strlen(szMenuName);
+		MenuInfo.cch = _tcslen(szMenuName);
 		SetMenuItemInfo(hSubMenu, IDM_ZOOM_MINUS_1, FALSE, &MenuInfo);
 
 #if USE_FFHOOK == 1
@@ -474,7 +474,7 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 
 	case WM_TIMER:
-#ifdef DEBUG
+#ifdef _DEBUG
 		DWORD dwTime;
 		dwTime = timeGetTime();
 #endif
@@ -519,9 +519,9 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			}
 			SetTimer(hWnd, ID_TIMER, g_Timer, NULL);
 		}
-#ifdef DEBUG
+#ifdef _DEBUG
 		_TCHAR szProcessTime[0x20];
-		sprintf(szProcessTime, _T("DEBUG - Process Time = %ldms"), timeGetTime() - dwTime);
+		_stprintf(szProcessTime, _T("DEBUG - Process Time = %ldms"), timeGetTime() - dwTime);
 		SetWindowText(hWnd, szProcessTime);
 #endif
 		break;
@@ -1392,15 +1392,15 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 					} *lpTranslate;
 					VerQueryValue((LPVOID)pbyVersionInfo, _T("\\VarFileInfo\\Translation"), (LPVOID*)&lpTranslate, NULL);
 					_TCHAR szDir[0x100];
-					sprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\FileVersion"), lpTranslate->wLanguage, lpTranslate->wCodePage);
+					_stprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\FileVersion"), lpTranslate->wLanguage, lpTranslate->wCodePage);
 					void *pvVer;
 					VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvVer, NULL);
-					sprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\LegalCopyright"), lpTranslate->wLanguage, lpTranslate->wCodePage);
+					_stprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\LegalCopyright"), lpTranslate->wLanguage, lpTranslate->wCodePage);
 					void *pvCopyright;
 					VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvCopyright, NULL);
 
 					_TCHAR szVersion[0x100];
-					sprintf(szVersion, _T("Version %s\n\n%s"), (_TCHAR*)pvVer, (_TCHAR*)pvCopyright);
+					_stprintf(szVersion, _T("Version %s\n\n%s"), (_TCHAR*)pvVer, (_TCHAR*)pvCopyright);
 					MessageBox(hWnd, szVersion, MAPPU_VER, MB_OK | MB_ICONINFORMATION);
 				}
 			}
@@ -1480,7 +1480,7 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				nCount++;
 				//メニューに追加
 				//メニューを増やした場合挿入先に注意すること
-				sprintf(szMenuStr, _T("PID:%X"), pe32.th32ProcessID);
+				_stprintf(szMenuStr, _T("PID:%X"), pe32.th32ProcessID);
 				HMENU hM1 = GetSubMenu(hSubMenu, MENU_OTHER_POS);//0.50で変更
 				HMENU hM2 = GetSubMenu(hM1, MENU_PROCESS_ID_POS);//0.50で変更
 				if (FALSE == InsertMenu(hM2, nCount, MF_BYPOSITION | MF_STRING, IDM_SELECT_PID + nCount, szMenuStr)) {//0.50で変更
@@ -1586,7 +1586,7 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 						nCount++;
 						//メニューに追加
 						//メニューを増やした場合挿入先に注意すること
-						sprintf(szMenuStr, _T("PID:%X"), pe32.th32ProcessID);
+						_stprintf(szMenuStr, _T("PID:%X"), pe32.th32ProcessID);
 						if (FALSE == InsertMenu(GetSubMenu(hSubMenu, MENU_PROCESS_ID_POS), nCount, MF_BYPOSITION | MF_STRING, IDM_SELECT_PID + nCount, szMenuStr)) {
 							g_ErrorCode = 30;
 							ErrorNum(hWnd);
@@ -1704,7 +1704,7 @@ LRESULT CALLBACK WndProcNPCLIST(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			ErrorNum(hWnd);
 		}
 		GetPrivateProfileString(_T("MENU"), _T("MENU_LANG"), _T("EN"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-		if (strcmp(szBuf, _T("JP")) == 0) {
+		if (_tcscmp(szBuf, _T("JP")) == 0) {
 			hMenu = LoadMenu(NULL, MAKEINTRESOURCE(IDR_MENU_NPCLIST_JP));
 		}
 		else {
@@ -2049,7 +2049,7 @@ LRESULT CALLBACK WndProcNPCLIST(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				_TCHAR szName[0x20];
 				int nItemCount;
 				GetDlgItemText(hWnd, IDC_EDIT_SEARCH, szSearch, sizeof(szSearch) / sizeof(_TCHAR) - 1);
-				if (strlen(szSearch) == 0)break;
+				if (_tcslen(szSearch) == 0)break;
 				else if (isupper(szSearch[0]) == 0) {
 					szSearch[0] = toupper(szSearch[0]);
 				}
@@ -2067,14 +2067,14 @@ LRESULT CALLBACK WndProcNPCLIST(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				for (int i = 0; i < nItemCount; i++) {
 					item.iItem = i;//行
 					ListView_GetItem(g_hList, &item);
-					if (strncmp(szSearch, szName, strlen(szSearch)) == 0) {
+					if (_tcsncmp(szSearch, szName, _tcslen(szSearch)) == 0) {
 						nSearchSelected = i;//0.48で追加
 						ListView_EnsureVisible(g_hList, i, FALSE);
 						nFlag = 1;
 						break;
 					}
 				}
-				if (nFlag == 0 && strcmp(szSearch, _T("Search")) != 0) {
+				if (nFlag == 0 && _tcscmp(szSearch, _T("Search")) != 0) {
 					MessageBeep(MB_ICONHAND);//見つからなかった時
 				}
 			}
@@ -2093,7 +2093,7 @@ LRESULT CALLBACK WndProcNPCLIST(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
 				//リセット
 				HDITEM headerItem;
-				for (int i = 0; i<7; i++) {
+				for (int i = 0; i < 7; i++) {
 					headerItem.mask = HDI_FORMAT;
 					Header_GetItem(hHeader, i, &headerItem);
 					headerItem.fmt &= ~HDF_SORTDOWN & ~HDF_SORTUP;
@@ -2104,9 +2104,11 @@ LRESULT CALLBACK WndProcNPCLIST(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				if (GetKeyState(VK_CONTROL) & 0x80) {
 					nAutoSort = 0x80000000 + ((NM_LISTVIEW*)lp)->iSubItem;
 					if (g_Sort[((NM_LISTVIEW*)lp)->iSubItem] == UP) {//0.57aで追加
-						sprintf(szWindowText, _T("NPCLIST AutoSort [%s] up"), szColumn[((NM_LISTVIEW*)lp)->iSubItem]);
+						_stprintf(szWindowText, _T("NPCLIST AutoSort [%s] up"), szColumn[((NM_LISTVIEW*)lp)->iSubItem]);
 					}
-					else sprintf(szWindowText, _T("NPCLIST AutoSort [%s] down"), szColumn[((NM_LISTVIEW*)lp)->iSubItem]);
+					else {
+						_stprintf(szWindowText, _T("NPCLIST AutoSort [%s] down"), szColumn[((NM_LISTVIEW*)lp)->iSubItem]);
+					}
 					SetWindowText(hWnd, szWindowText);
 					break;
 				}
@@ -2134,22 +2136,23 @@ LRESULT CALLBACK WndProcNPCLIST(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 					ErrorNum(hWnd);
 				}
 				Header_SetItem(hHeader, ((NM_LISTVIEW*)lp)->iSubItem, &headerItem);
-				break; }
+				break;
+			}
 
 			case LVN_BEGINLABELEDIT:
 				_TCHAR szText[MAX_PATH];
 				hEdit = ListView_GetEditControl(g_hList);
 				//ListView_GetItemText(g_hList,((LV_DISPINFO*)lp)->item.iItem,5,szText,sizeof(szText)/sizeof(_TCHAR));
 				ListView_GetItemText(g_hList, ((LV_DISPINFO*)lp)->item.iItem, 6, szText, sizeof(szText) / sizeof(_TCHAR));//0.57で変更
-#ifdef DEBUG
+#ifdef _DEBUG
 				DWORD dwAddress;
 				int id;
 				ListView_GetItemText(g_hList, ((LV_DISPINFO*)lp)->item.iItem, 0, szText, sizeof(szText) / sizeof(_TCHAR));
-				id = strtoul(szText, NULL, 16);
+				id = _tcstoul(szText, NULL, 16);
 				//メモリリード
-				dwAddress = g_DllAddress + g_OffsetNpcMap + id * sizeof(DWORD);
-				ReadProcessMemory(g_PolHandle, (const void *)dwAddress, &dwAddress, sizeof(DWORD), NULL);
-				wsprintf(szText, _T("%08X"), dwAddress);
+				dwAddress = g_DllAddress + g_Offset.NpcMap + id * sizeof(DWORD);
+				ReadProcessMemory(g_polHandle, (const void *)dwAddress, &dwAddress, sizeof(DWORD), NULL);
+				_stprintf(szText, _T("%08X"), dwAddress);
 #endif
 				SetWindowText(hEdit, szText);
 				break;
@@ -2177,19 +2180,19 @@ LRESULT CALLBACK WndProcNPCLIST(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 					ZeroMemory(szBuf, sizeof(szBuf));
 					ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST), ((LPNMLVCUSTOMDRAW)lp)->nmcd.dwItemSpec, 4, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
 
-					if (g_NPCLIST_BkColor == 1 && wcscmp(szBuf, _T("EX")) == 0) {//EX
+					if (g_NPCLIST_BkColor == 1 && _tcscmp(szBuf, _T("EX")) == 0) {//EX
 						ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST), ((LPNMLVCUSTOMDRAW)lp)->nmcd.dwItemSpec, 2, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-						if (wcscmp(szBuf, _T("Corpse")) == 0) {
+						if (_tcscmp(szBuf, _T("Corpse")) == 0) {
 							color = g_ColorNPC_Corpse[1];//背景色を変更
 
 						}
-						else if (wcscmp(szBuf, _T("War")) == 0) {
+						else if (_tcscmp(szBuf, _T("War")) == 0) {
 							color = g_ColorNPC_War[1];//背景色を変更
 						}
-						else if (wcscmp(szBuf, _T("Pop")) == 0) {
+						else if (_tcscmp(szBuf, _T("Pop")) == 0) {
 							color = g_ColorNPC_Pop[1];//背景色を変更
 						}
-						//else if(wcscmp(szBuf,_T("-")) == 0){
+						//else if(_tcscmp(szBuf,_T("-")) == 0){
 						//	color = RGB(255,255,255);//背景色を変更
 						//}
 
@@ -2198,18 +2201,18 @@ LRESULT CALLBACK WndProcNPCLIST(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 							((LPNMLVCUSTOMDRAW)lp)->clrText = RGB(255, 255, 255);
 						}
 					}
-					else if (g_NPCLIST_BkColor == 1 && wcscmp(szBuf, _T("SP")) == 0) {//SP
+					else if (g_NPCLIST_BkColor == 1 && _tcscmp(szBuf, _T("SP")) == 0) {//SP
 						ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST), ((LPNMLVCUSTOMDRAW)lp)->nmcd.dwItemSpec, 2, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-						if (wcscmp(szBuf, _T("Corpse")) == 0) {
+						if (_tcscmp(szBuf, _T("Corpse")) == 0) {
 							color = g_ColorNPC_Corpse[2];//背景色を変更
 						}
-						else if (wcscmp(szBuf, _T("War")) == 0) {
+						else if (_tcscmp(szBuf, _T("War")) == 0) {
 							color = g_ColorNPC_War[2];//背景色を変更
 						}
-						else if (wcscmp(szBuf, _T("Pop")) == 0) {
+						else if (_tcscmp(szBuf, _T("Pop")) == 0) {
 							color = g_ColorNPC_Pop[2];//背景色を変更
 						}
-						//else if(wcscmp(szBuf,_T("-")) == 0){
+						//else if(_tcscmp(szBuf,_T("-")) == 0){
 						//	color = RGB(255,255,255);//背景色を変更
 						//}
 
@@ -2291,7 +2294,7 @@ BOOL CALLBACK EnumWndProc(HWND hWnd, LPARAM lp)
 
 	GetWindowText(hWnd, szText, MAX_PATH);
 	if (wcsncmp(szText, _T("うさみみハリケーン"), wcslen(_T("うさみみハリケーン"))) == 0) {//部分一致
-		wsprintf(szCmp, _T("[pol.exe  (PID: %08X)]"), g_ProcessID);
+		_stprintf(szCmp, _T("[pol.exe  (PID: %08X)]"), g_ProcessID);
 		for (int i = 0; szText[i]; i++) {
 			if (wcsncmp(&szText[i], szCmp, wcslen(szCmp)) == 0) {
 				*hRetWnd = hWnd;
@@ -2369,9 +2372,17 @@ LRESULT CALLBACK WndProcSETTING(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
 					/* アイテムの取得 */
 					TreeView_GetItem(g_hTree, &tvSelectItem);
-					_tcscpy_s(g_szSelectItem, tvSelectItem.pszText);
+					_tcscpy(g_szSelectItem, tvSelectItem.pszText);
 
 					/* チェックボックスの状態の取得 */
+					UINT lFlag = TreeView_GetCheckState(g_hTree, lpnmtv->itemNew.hItem);
+					if (lFlag == 0) {
+						_tcscpy(g_szGetCheck, _T(DF_NOT_CHECK));
+					}
+					else {
+						_tcscpy(g_szGetCheck, _T(DF_CHECK));
+					}
+
 					GetTreeViewCheck(lpnmtv->itemNew.hItem);
 
 					/* 再描画させる */
@@ -2415,12 +2426,26 @@ long GetTreeViewCheck(HTREEITEM hItem) {
 	lFlag = ((BOOL)(tvItem.state >> 12) - 1);
 
 	if (lFlag == 0) {
-		_tcscpy_s(g_szGetCheck, _T(DF_NOT_CHECK));
+		_tcscpy(g_szGetCheck, _T(DF_NOT_CHECK));
 	}
 	else {
-		_tcscpy_s(g_szGetCheck, _T(DF_CHECK));
+		_tcscpy(g_szGetCheck, _T(DF_CHECK));
 	}
 
+	return 0;
+}
+
+long SetTreeViewCheck(HWND hWnd, HTREEITEM hItem, bool isCheck){
+	TVITEM  tvItem;
+
+	tvItem.mask = TVIF_HANDLE | TVIF_STATE;
+	tvItem.hItem = hItem;
+	tvItem.stateMask = TVIS_STATEIMAGEMASK;
+
+	tvItem.state = (isCheck ? 0x2000 : 0x1000);
+
+	TreeView_SetCheckState(g_hTree, hItem, isCheck); //で出来そうな気がする？？
+	TreeView_SetItem(g_hTree, &tvItem); //SendMessage(hWnd, TVM_SETITEM, 0, (LPARAM)&tvItem);
 	return 0;
 }
 
@@ -2533,8 +2558,12 @@ LRESULT CALLBACK WndProcCOLOR(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
 
-			if ((int)((color & 0xFF) + ((color >> 8) & 0xFF) + ((color >> 16) & 0xFF)) > 0x180)color = RGB(0, 0, 0);
-			else color = RGB(255, 255, 255);
+			if ((int)((color & 0xFF) + ((color >> 8) & 0xFF) + ((color >> 16) & 0xFF)) > 0x180) {
+				color = RGB(0, 0, 0);
+			}
+			else {
+				color = RGB(255, 255, 255);
+			}
 			SetTextColor(hDC, color);
 			GetDlgItemText(hWnd, ((LPDRAWITEMSTRUCT)(lp))->CtlID, szText, sizeof(szText) / sizeof(_TCHAR));
 			DrawText(hDC, szText, -1, &((LPDRAWITEMSTRUCT)(lp))->rcItem, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
@@ -2672,12 +2701,12 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 																   //現在の選択位置を取得
 			nItemNow = ListView_GetNextItem(hWnd, -1, LVNI_SELECTED);
 			ListView_GetItemText(hWnd, nItemNow, 0, szText, sizeof(szText) / sizeof(_TCHAR));
-			id = strtoul(szText, NULL, 16);
+			id = _tcstoul(szText, NULL, 16);
 			//メモリリード
 			dwAddress = g_DllAddress + g_Offset.NpcMap + id * sizeof(DWORD);
 			ReadProcessMemory(g_polHandle, (const void *)dwAddress, &dwAddress, sizeof(DWORD), NULL);
 			if (dwAddress == 0)dwAddress = g_DllAddress;//dwAddressが0の時うさみみのアドレスが変わらないのでdllのアドレスに移動させる 0.53で追加
-			wsprintf(szText, _T("%08X"), dwAddress);
+			_stprintf(szText, _T("%08X"), dwAddress);
 
 			//うさみみ0.09の表示アドレスを16進数で指定をコントロール 0.52で追加
 			for (int i = 0; i<100; i++) {
@@ -2709,7 +2738,7 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			dwAddress = g_DllAddress + g_Offset.NpcMap + targetinfo.id * sizeof(DWORD);
 			ReadProcessMemory(g_polHandle, (const void *)dwAddress, &dwAddress, sizeof(DWORD), NULL);
 			if (dwAddress == 0)dwAddress = g_DllAddress;
-			wsprintf(szText, _T("%08X"), dwAddress);
+			_stprintf(szText, _T("%08X"), dwAddress);
 
 			//うさみみ0.09の表示アドレスを16進数で指定をコントロール 0.52で追加
 			for (int i = 0; i<100; i++) {
@@ -2744,7 +2773,7 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		if (wp >= 'a' && wp <= 'z' || wp >= 'A' && wp <= 'Z') {//NPCLIST内を検索
 			_TCHAR szChar[2];
 			_TCHAR szName[0x20];
-			wsprintf(szChar, _T("%c"), toupper(wp));
+			_stprintf(szChar, _T("%c"), toupper(wp));
 			int nItemNow, nItemCount;
 			//アイテム数を取得
 			nItemCount = ListView_GetItemCount(hWnd);
@@ -2762,7 +2791,7 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				for (int i = nItemNow - 1; i >= 0; i--) {
 					item.iItem = i;//行
 					ListView_GetItem(hWnd, &item);
-					if (strncmp(szChar, szName, 1) == 0) {
+					if (_tcsncmp(szChar, szName, 1) == 0) {
 						ListView_SetItemState(hWnd, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 						ListView_EnsureVisible(hWnd, i, FALSE);
 						break;
@@ -2773,7 +2802,7 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				for (int i = nItemNow + 1; i<nItemCount; i++) {
 					item.iItem = i;//行
 					ListView_GetItem(hWnd, &item);
-					if (strncmp(szChar, szName, 1) == 0) {
+					if (_tcsncmp(szChar, szName, 1) == 0) {
 						ListView_SetItemState(hWnd, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 						ListView_EnsureVisible(hWnd, i, FALSE);
 						break;

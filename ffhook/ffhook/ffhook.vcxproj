@@ -99,12 +99,6 @@
     <ClInclude Include="ffhook.h" />
     <ClInclude Include="madCHook.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Library Include="madCHook.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="madCHook.dll" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

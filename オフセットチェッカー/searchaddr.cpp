@@ -6,6 +6,7 @@
 #define _UNICODE
 #endif
 
+#define HOOK_INFO
 
 #include <windows.h>
 #include <tchar.h>
@@ -177,11 +178,11 @@ int GetOffsetAddressAll(HANDLE hProcess, DWORD dwDllAddress)
 #pragma endregion
 
 #ifdef HOOK_INFO//0.05‚Å’Ç‰Á
-	g_offset.Ffhook_log = GetOffsetAddress(hProcess, dwDllAddress, constFfhook_logPattern);
-	g_offset.Ffhook_cmd = GetOffsetAddress(hProcess, dwDllAddress, constFfhook_cmdPattern);
-	ReadProcessMemory(hProcess, (LPCVOID)(g_offset.Ffhook_log + dwDllAddress + 1), &buf, sizeof(DWORD), NULL);
-	ReadProcessMemory(hProcess, (LPCVOID)(g_offset.Ffhook_log + dwDllAddress + 5 + buf), &g_offset.Ffxihook_log, ARRAYSIZE(g_offset.Ffxihook_log), NULL);
-	ReadProcessMemory(hProcess, (LPCVOID)(g_offset.Ffhook_cmd + dwDllAddress), &g_offset.Ffxihook_cmd, ARRAYSIZE(g_offset.Ffxihook_cmd), NULL);
+	g_Offset.Ffhook_log = GetOffsetAddress(hProcess, dwDllAddress, constFfhook_logPattern);
+	g_Offset.Ffhook_cmd = GetOffsetAddress(hProcess, dwDllAddress, constFfhook_cmdPattern);
+	ReadProcessMemory(hProcess, (LPCVOID)(g_Offset.Ffhook_log + dwDllAddress + 1), &buf, sizeof(DWORD), NULL);
+	ReadProcessMemory(hProcess, (LPCVOID)(g_Offset.Ffhook_log + dwDllAddress + 5 + buf), &g_Offset.Ffxihook_log, ARRAYSIZE(g_Offset.Ffxihook_log), NULL);
+	ReadProcessMemory(hProcess, (LPCVOID)(g_Offset.Ffhook_cmd + dwDllAddress), &g_Offset.Ffxihook_cmd, ARRAYSIZE(g_Offset.Ffxihook_cmd), NULL);
 #endif
 
 #pragma region “D’j
@@ -399,8 +400,8 @@ int GetOffsetAddressAll(HANDLE hProcess, DWORD dwDllAddress)
 	if (g_Offset.LogAddr == 0) { ret++; }
 
 #ifdef HOOK_INFO
-	if (g_offset.Ffhook_log == 0) { ret++; }
-	if (g_offset.Ffhook_cmd == 0) { ret++; }
+	if (g_Offset.Ffhook_log == 0) { ret++; }
+	if (g_Offset.Ffhook_cmd == 0) { ret++; }
 #endif
 
 	if (g_Offset.ArgusInitCode == 0) { ret++; }

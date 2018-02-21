@@ -12,12 +12,12 @@
 #define LOG_CUT			1				// ログカット機能(0-OFF/1-ON)
 #define CMD_HOOK		1				// コマンドをフックする(0-OFF/1-ON)
 #define	CMD_PUT			1				// 外部からコマンド実行する機能(0-OFF/1-ON)
-#define DBG_DLL			0				// デバッグ(0-OFF/1-ON)
+#define DBG_DLL			1				// デバッグ(0-OFF/1-ON)
 
 // 定数
 #define MAX_PROCESS		18				// フックできるPOLの数
 #define MAX_INJECT		32				// 1つのPOLにインジェクトできる数
-#define MAX_INDEX		(MAX_PROCESS*MAX_INJECT+1)
+#define MAX_INDEX		(MAX_PROCESS * MAX_INJECT + 1)
 
 #define SIZE_LOG_FIFO	1000			// ログFIFOの深さ
 #define LEN_LOG_BUFFER	1000			// ログ文字列長
@@ -44,7 +44,7 @@
 
 // デバッグ用
 #if DBG_DLL == 1
-#define	SLwsprintfA		wsprintfA
+#define	SLwsprintfA		_stprintf
 #else
 #define	SLwsprintfA
 #define syslog
@@ -75,7 +75,7 @@ typedef struct _tcut {
 
 // コマンドFIFO
 typedef struct {
-	char	Buffer[LEN_CMD_BUFFER];
+	TCHAR	Buffer[LEN_CMD_BUFFER];
 	wchar_t	BufferW[LEN_CMD_BUFFER];
 } TCMD;
 
@@ -159,18 +159,18 @@ static PTDATA	pData = 0;			// 共有メモリ情報テーブルへのポインタ
 
 #if LOG_HOOK == 1
 static PIHOOK	pILOG_HOOK = NULL;
-TCHAR pattern_log[MAX_PATTERN] = _T("E8........8B470CB3014089470C5F5E8AC35D5B");
+TCHAR pattern_log[MAX_PATTERN] = _T("E8........8B470C8B5424184089470C84DB742E");	//2017.4.4
 void(__stdcall *pNextLogHook)(char*, BYTE *, int, int);
 #endif
 
 #if CMD_HOOK == 1 || CMD_PUT == 1
 static PIHOOK	pICMD_HOOK = NULL;
-TCHAR pattern_cmd[MAX_PATTERN] = _T("............8B8C240804000055578D84240C02000068000200005033ED518B");
+TCHAR pattern_cmd[MAX_PATTERN] = _T("............8B8C24080400005556578D84241002000068000200005033ED51");	//2017.4.4
 void(*pNextCmdHook)(char*, int);
 #endif
 
-TCHAR pattern_job[] = _T("8B44240C568B4804890D........8B50088915........8A480C880Dxxxxxxxx");
-TCHAR pattern_ptinfo[] = _T("8D04C5xxxxxxxx8D7804C700........F3A58B70188B48503BF1C6405601");
+TCHAR pattern_job[] = _T("F605..........74..8A0Dxxxxxxxx80F9");	//2017.4.4
+TCHAR pattern_ptinfo[] = _T("84C974098D80xxxxxxxxC2040033C0C2..00");	//2017.4.4
 #define ADJUST_PTINFO		6
 
 
@@ -218,7 +218,7 @@ BOOL hook_log(BYTE *attr, char *str)
 		*ptr = 0;
 	}
 #else
-	strncpy_s(pData->tLog[wp].Buffer, LEN_LOG_BUFFER - 1, str, LEN_LOG_BUFFER - 2);
+	_tcsncpy_s(pData->tLog[wp].Buffer, LEN_LOG_BUFFER - 1, str, LEN_LOG_BUFFER - 2);
 #endif
 	pData->tLog[wp].BufferW[0] = 0;
 	pData->tLog[wp].tAttr = (attr) ? *attr : 0;
@@ -316,11 +316,11 @@ __declspec(naked) void __stdcall fnHookLog(char *str, BYTE *attr, int dummy1, in
 
 // コマンドもしくはデバッグログをFIFOに書込む
 // str			ログ本文
-void hook_cmd(char *str)
+void hook_cmd(LPTSTR str)
 {
 	int		n, wp, rp, inject;
 	BOOL	res = TRUE;
-	char	*ptr;
+	TCHAR	*ptr;
 
 	if (hMtx == 0 || str == NULL)
 		return;
@@ -329,7 +329,7 @@ void hook_cmd(char *str)
 
 	wp = pData->pWriteCmd;
 
-	strncpy_s(pData->tCmd[wp].Buffer, LEN_CMD_BUFFER - 1, str, LEN_CMD_BUFFER - 2);
+	_tcsncpy_s(pData->tCmd[wp].Buffer, LEN_CMD_BUFFER - 1, str, LEN_CMD_BUFFER - 2);
 
 	ptr = pData->tCmd[wp].Buffer;
 	pData->tCmd[wp].BufferW[0] = 0;
@@ -470,10 +470,10 @@ void detach(PIHOOK pihook)
 
 #if DBG_DLL == 1
 // デバッグ用ログ出力
-void syslog(char *str)
+void syslog(LPTSTR str)
 {
-	char buf[512];
-	wsprintfA(buf, "system log:%s", str);
+	TCHAR buf[512];
+	_stprintf(buf, _T("system log:%s"), str);
 	hook_cmd(buf);
 }
 #endif
@@ -606,22 +606,22 @@ void  exchange(void *data)
 BOOL init(void)
 {
 	TCHAR	obj_name[256];
-	char	mes[256];
+	TCHAR	mes[256];
 	BOOL	res = TRUE;
 	PVOID	ptr = NULL;
 
 	if (pData) {
-		syslog("初期済み?");
+		syslog(_T("初期済み?"));
 		return TRUE;	// 初期化済み
 	}
 
 	idPro = GetCurrentProcessId();
 
-	wsprintf(obj_name, MAP_NAME, idPro);
+	_stprintf(obj_name, MAP_NAME, idPro);
 	hMap = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, obj_name);
 	if (hMap == 0)		return FALSE;
 
-	wsprintf(obj_name, MTX_NAME, idPro);
+	_stprintf(obj_name, MTX_NAME, idPro);
 	hMtx = OpenMutex(MUTEX_ALL_ACCESS, NULL, obj_name);
 	if (hMtx == 0)		return FALSE;
 
@@ -633,9 +633,9 @@ BOOL init(void)
 	pData = (PTDATA)MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	if (pData == NULL)	return FALSE;
 
-	SLwsprintfA(mes, "プロセスID = %d", idPro);
+	SLwsprintfA(mes, _T("プロセスID = %d"), idPro);
 	syslog(mes);
-	SLwsprintfA(mes, "baseアドレス = %08x", pData->pBase);
+	SLwsprintfA(mes, _T("baseアドレス = %08x"), pData->pBase);
 	syslog(mes);
 
 	// FFxiMain.Dllが見つかっていないのでアタッチできない
@@ -645,7 +645,7 @@ BOOL init(void)
 	{
 		ptr = search_addr(pData->pBase, pattern_log);
 
-		SLwsprintfA(mes, "ログアタッチアドレス = %08x", ptr);
+		SLwsprintfA(mes, _T("ログアタッチアドレス = %08x"), ptr);
 		syslog(mes);
 
 		if (ptr)
@@ -653,10 +653,10 @@ BOOL init(void)
 
 		if (pILOG_HOOK) {
 			pData->fRdy |= FF11_Rdy_GetLog;
-			syslog("ログアタッチ成功!");
+			syslog(_T("ログアタッチ成功!"));
 		}
 		else {
-			syslog("ログアタッチ失敗!");
+			syslog(_T("ログアタッチ失敗!"));
 		}
 	}
 #endif
@@ -665,7 +665,7 @@ BOOL init(void)
 	{
 		ptr = search_addr(pData->pBase, pattern_cmd);
 
-		SLwsprintfA(mes, "コマンドアタッチアドレス = %08x", ptr);
+		SLwsprintfA(mes, _T("コマンドアタッチアドレス = %08x"), ptr);
 		syslog(mes);
 
 #if CMD_HOOK == 1
@@ -677,10 +677,10 @@ BOOL init(void)
 #endif
 		if (pICMD_HOOK) {
 			pData->fRdy |= FF11_Rdy_GetCmd;
-			syslog("コマンドアタッチ成功!");
+			syslog(_T("コマンドアタッチ成功!"));
 		}
 		else {
-			syslog("コマンドアタッチ失敗!");
+			syslog(_T("コマンドアタッチ失敗!"));
 		}
 	}
 #endif
@@ -1108,7 +1108,7 @@ int get_log(int index, BYTE *attr, char *buf, wchar_t *wbuf, int sbuf, BYTE *fcu
 #endif
 
 #if CMD_HOOK == 1 || DBG_DLL == 1
-int get_cmd(int index, char *buf, wchar_t *wbuf, int sbuf)
+int get_cmd(int index, LPTSTR buf, wchar_t *wbuf, int sbuf)
 {
 	PTPROC	proc;
 	PTDATA	pd;
@@ -1128,17 +1128,17 @@ int get_cmd(int index, char *buf, wchar_t *wbuf, int sbuf)
 		p = pd->pReadCmd[no];
 		if (p != pd->pWriteCmd) {
 			if (buf) {
-				strncpy_s(buf, sbuf, pd->tCmd[p].Buffer, sbuf - 1);
+				_tcsncpy_s(buf, sbuf, pd->tCmd[p].Buffer, sbuf - 1);
 				buf[sbuf - 1] = '\0';		// 念のため終端コード
-				res = (int)strlen(buf);
+				res = (int)_tcslen(buf);
 			}
 			else {
 				if (pd->tCmd[p].BufferW[0] == 0)
-					MultiByteToWideChar(CP_ACP, 0, pd->tCmd[p].Buffer, -1, pd->tCmd[p].BufferW,
+					MultiByteToWideChar(CP_ACP, 0, (LPCCH)pd->tCmd[p].Buffer, -1, pd->tCmd[p].BufferW,
 						sbuf - 1);
 				wcsncpy_s(wbuf, sbuf, pd->tCmd[p].BufferW, sbuf - 1);
 				wbuf[sbuf - 1] = '\0';	// 念のため終端コード
-				res = (int)wcslen(wbuf);
+				res = (int)_tcslen(wbuf);
 			}
 
 			if (++p >= SIZE_LOG_FIFO)
@@ -1286,12 +1286,12 @@ EXPORT BOOL WINAPI FF11_ClrCutString(int index)
 	return FALSE;
 }
 
-EXPORT int WINAPI FF11_GetCmdA(int index, char *buffer, int buffer_size)
+EXPORT int WINAPI FF11_GetCmdA(int index, LPTSTR buffer, int buffer_size)
 {
 #if CMD_HOOK == 1 || DBG_DLL == 1
 	int		res;
 	res = get_cmd(index, buffer, NULL, buffer_size);
-	return (res <= 0) ? res : (int)strlen(buffer);
+	return (res <= 0) ? res : (int)_tcslen(buffer);
 #else
 	return -1;
 #endif

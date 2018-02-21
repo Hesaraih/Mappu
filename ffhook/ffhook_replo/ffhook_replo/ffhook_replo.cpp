@@ -10,7 +10,18 @@
 #define REPLO_HOOK      1               // ログをフックする(0-OFF/1-ON)
 #define REPLO_TRIM      1               // ログの不要な制御コード排除(0-OFF/1-ON)
 
-#define DBG_DLL         0               // デバッグ(0-OFF/1-ON)
+#define LOG_HOOK		1				// ログをフックする(0-OFF/1-ON)
+#define LOG_DECODE		1				// ログの不要な制御コード排除(0-OFF/1-ON)
+#define LOG_CUT			1				// ログカット機能(0-OFF/1-ON)
+
+#define CMD_HOOK		1				// コマンドをフックする(0-OFF/1-ON)
+#define	CMD_PUT			1				// 外部からコマンド実行する機能(0-OFF/1-ON)
+
+#define KILLEFFECT		1				// killeffectを使用する(0-OFF/1-ON)
+#define MERGEITEM		1				// アイテム整頓を使用する(0-OFF/1-ON)
+#define MACROEXE		1				// マクロを使用する(0-OFF/1-ON)
+
+#define DBG_DLL         1               // デバッグ(0-OFF/1-ON)
 
 #define MAX_PROCESS     6               // フックできるPOLの数
 #define MAX_INJECT      12              // 1つのPOLにインジェクトできる数
@@ -19,23 +30,39 @@
 
 #define SIZE_LOG_FIFO   1000            // ログFIFO数
 #define LEN_LOG_BUFFER  1000            // ログ文字列長
+#define MAX_LOGCUT		300				// 1つのPOLプロセスに登録できるログカット情報数
 
-#define SEARCH_RANGE    0x300000        // 自動オフセのbaseからの検索範囲
+#define SEARCH_RANGE    0x400000        // 自動オフセのbaseからの検索範囲
 
 // 定数
+#define C_CMD			(WM_USER + 1)
+#define C_KILLEFFECT	(WM_USER + 2)
+#define C_MERGEITEM		(WM_USER + 3)
+#define C_MACROEXE		(WM_USER + 4)
+#define C_END			(WM_USER + 9)
+
 #define HOOK_NAME       _T("ffhook_replo.dll")
 #define MADC_NAME       _T("madCHook.dll")
 #define POL_NAME        _T("pol.exe")
 #define DLL_NAME        _T("FFXiMain.dll")
 #define MAP_NAME        _T("FFHOOK_REPLO_MAP_%d")       // マップファイル名(pid)
+#define EVENT_NAME		_T("FFHOOK_EVENT_%d")	// イベント名(pid)
 #define MTX_NAME        _T("FFHOOK_REPLO_MTX_%d")       // Mutex名(pid)
 
 // デバッグ用
 #if DBG_DLL == 1
-#define SLwsprintfA     wsprintfA
+#define SL_stprintfA     _stprintf
 #else
-#define SLwsprintfA
+#define SL_stprintfA
 #define syslog
+#endif
+
+#if CMD_PUT == 1 || KILLEFFECT == 1 || MERGEITEM == 1
+#define USE_EXCHANGE
+#endif
+
+#if LOG_HOOK == 1 || CMD_HOOK == 1 || CMD_PUT == 1
+#define USE_HOOK
 #endif
 
 #if REPLO_HOOK == 1
@@ -47,6 +74,21 @@ typedef struct {
     char    Buffer[LEN_LOG_BUFFER];     // ログバッファ
     time_t  Timer;                      // ログ出力時間
 } TREPLO;
+
+// ログFIFO
+typedef struct {
+	BYTE	tAttr;						// アトリビュート格納用
+	BYTE	fCut;						// カットされたログはTRUE
+	char	Buffer[LEN_LOG_BUFFER];		// ログバッファ
+	wchar_t	BufferW[LEN_LOG_BUFFER];	// ログバッファ
+} TLOG;
+
+// ログカット情報
+typedef struct _tcut {
+	BYTE	tAttr[256];					// アトリビュートテーブル
+	int		nLen;						// ログカット文字列長
+	char	Buffer[LEN_LOG_BUFFER];		// ログカット文字列
+} TCUT, *PTCUT;
 
 // 共有メモリ情報テーブル
 // FIFOバッファはプロセスに１個とし、読込みポインタだけ独立させる。
@@ -61,12 +103,24 @@ typedef struct {
     int     nInject;                // このプロセスで使用中のindex数
     BYTE    fEna[MAX_INJECT];       // 使用中のテーブルは1になる
 
-    int     pWriteReplo;            // ログFIFO 書込みポインタ
+	int		pWriteLog;				// ログFIFO 書込みポインタ
+	int		pReadLog[MAX_INJECT];	// ログFIFO 読込みポインタ(テーブル毎に独立)
+	TLOG	tLog[SIZE_LOG_FIFO];	// ログバッファ
+
+	BYTE	fCut;					// ログカットのON/OFF
+	int		nCut;					// ログカット情報登録数
+	TCUT	tCut[MAX_LOGCUT];		// ログカット情報
+
+	int     pWriteReplo;            // ログFIFO 書込みポインタ
     int     pReadReplo[MAX_INJECT]; // ログFIFO 読込みポインタ(テーブル毎に独立)
     TREPLO  tReplo[SIZE_LOG_FIFO];  // ログバッファ
 
-    HANDLE          hThread;        // スレッドハンドル用
+	int		pWriteCmd;				// コマンドFIFO 書込みポインタ
+	int		pReadCmd[MAX_INJECT];	// コマンドFIFO 読込みポインタ(テーブル毎に独立)
+	
+	HANDLE          hThread;        // スレッドハンドル用
     unsigned int    idThread;       // スレッドID
+	char	nPrm[LEN_LOG_BUFFER];	// コマンド依存パラメータ用
 
     PBYTE   tPtr[50];               // 各アドレス格納用(FF11_GetAddressで使用)
 } TDATA, *PTDATA;
@@ -77,7 +131,8 @@ typedef struct {
     HANDLE  hPro;                   // プロセスハンドル
     HANDLE  hMap;                   // 共有メモリマップハンドル
     HANDLE  hMtx;                   // Mutexハンドル
-    PTDATA  pData;                  // 共有メモリ情報テーブルへのポインタ
+	HANDLE	hEvent;					// イベント用
+	PTDATA  pData;                  // 共有メモリ情報テーブルへのポインタ
 } TPROC, *PTPROC;
 
 // インデックス管理テーブル(index=0は使わない事にした)
@@ -106,6 +161,7 @@ static BOOL     fPol = FALSE;       // POL側の時TRUEになる
 static int      idPro = 0;          // プロセスID
 static HANDLE   hMap = 0;           // 共有メモリのハンドル
 static HANDLE   hMtx = 0;           // 排他処理
+static HANDLE	hEvent = 0;			// イベント用
 static PTDATA   pData = 0;          // 共有メモリ情報テーブルへのポインタ
 
 #include "pattern.h"
@@ -172,6 +228,166 @@ __declspec(naked) void __stdcall fnHookReplo(char *str, BYTE *dummy)
         pop     eax
         jmp     pNextReploHook
     }
+}
+#endif
+
+#if LOG_HOOK == 1 || DBG_DLL == 1
+// ログをFIFOに書込む
+// attribute	アトリビュート
+// str			ログ本文
+BOOL hook_log(BYTE *attr, char *str)
+{
+	int		n, wp, rp, inject;
+	BOOL	res = TRUE;
+
+	if (hMtx == 0 || str == NULL)	return res;
+
+	WaitForSingleObject(hMtx, INFINITE);
+	wp = pData->pWriteLog;
+
+#if LOG_DECODE == 1
+	{
+		char	*ptr;
+		ptr = pData->tLog[wp].Buffer;
+		for (n = 0; n < LEN_LOG_BUFFER - 1 && *str; n++) {
+			if (*str == 0x1f || *str == 0x7f) {
+				// 制御文字なら2文字分スキップ
+				if (*(++str) != 0) {
+					str++;
+					n++;
+					continue;
+				}
+			}
+			else if (*(unsigned char*)str == 0xef) {
+				// タブ変換文字列
+				if (*(str + 1) == 0x27 || *(str + 1) == 0x28) {
+					*ptr++ = 0x1e;
+					str++;
+					n++;
+				}
+			}
+			*ptr++ = *str++;
+		}
+		*ptr = 0;
+	}
+#else
+	_tcsncpy_s(pData->tLog[wp].Buffer, LEN_LOG_BUFFER - 1, str, LEN_LOG_BUFFER - 2);
+#endif
+	pData->tLog[wp].fCut = 0;
+	pData->tLog[wp].BufferW[0] = 0;
+	pData->tLog[wp].tAttr = (attr) ? *attr : 0;
+
+#if LOG_CUT == 1
+	if (pData->fCut) {
+		if (attr && pData->nCut) {
+			char	*ptr;
+			PTCUT	p = pData->tCut;
+
+			ptr = pData->tLog[wp].Buffer;
+			for (n = 0; n < pData->nCut; n++, p++) {
+				if (p->tAttr[*attr] == 0)	continue;	// アトリビュート不一致
+
+				if (p->Buffer[0] == 0) {
+					// 本文なし
+					pData->tLog[wp].fCut = 1;
+					res = FALSE;
+					break;
+				}
+				else if (p->Buffer[0] == '^') {
+					// 前方一致
+					if (!_tcsncmp(ptr, &p->Buffer[1], p->nLen)) {
+						pData->tLog[wp].fCut = 1;
+						res = FALSE;
+						break;
+					}
+				}
+				else {
+					if (strstr(ptr, p->Buffer)) {
+						pData->tLog[wp].fCut = 1;
+						res = FALSE;
+						break;
+					}
+				}
+			}
+		}
+	}
+#endif
+
+	if (++wp >= SIZE_LOG_FIFO)
+		wp = 0;
+
+	pData->pWriteLog = wp;
+
+	rp = (wp == SIZE_LOG_FIFO - 1) ? 0 : wp + 1;
+	inject = pData->nInject;
+
+	// ライトポインタがリードポインタに追いついていたらリードポインタをインクリメント
+	for (n = 0; n < MAX_INJECT && inject > 0; n++) {
+		if (pData->fEna[n]) {
+			// 有効なテーブルだけチェックする
+			if (pData->pReadLog[n] == wp)
+				pData->pReadLog[n] = rp;
+			inject--;
+		}
+	}
+
+	ReleaseMutex(hMtx);
+
+	return res;
+}
+// フック関数
+__declspec(naked) void __stdcall fnHookLog(char *str, BYTE *attr, int dummy1, int dummy2)
+{
+	// レジスタを退避しないとハングした
+	__asm {
+		push	eax
+		push	ebx
+		push	ecx
+		push	edx
+		mov     eax, dword ptr[esp + 14h]
+		mov     ebx, dword ptr[esp + 18h]
+		push	eax
+		push	ebx
+		call	hook_log
+		add		esp, 8h
+		pop		edx
+		pop		ecx
+		pop		ebx
+		test	eax, eax
+		jne		next_func
+		pop		eax
+		ret		10h
+		next_func :
+		pop		eax
+			jmp		pNextLogHook
+	}
+}
+#endif
+
+#if CMD_HOOK == 1
+// コマンドフック関数
+__declspec(naked) void __stdcall fnHookCmd(char *str)
+{
+	__asm {
+		push	eax
+		push	ebx
+		push	ecx
+		push	edx
+		mov     eax, dword ptr[esp + 14h]
+		push	eax
+		call	hook_cmd
+		add		esp, 4h
+		pop		edx
+		pop		ecx
+		pop		ebx
+		test	eax, eax
+		jne		next_func
+		pop		eax
+		ret
+		next_func :
+		pop		eax
+			jmp		pNextCmdHook
+	}
 }
 #endif
 
@@ -271,7 +487,7 @@ void syslog(char *str)
     char buf[512];
     BYTE attr = 255;
 
-    wsprintfA(buf, "[system log]%s", str);
+    SL_stprintfA(buf, "[system log]%s", str);
     hook_log(&attr, buf);
 }
 #endif
@@ -328,34 +544,34 @@ static PVOID search_addr(BYTE *base, TCHAR *pattern, DWORD *addr = NULL, DWORD *
 
     fp = n;
 
-    for (p1 = (BYTE*)base; p1 < (BYTE*)base+SEARCH_RANGE; p1++) {
-        if (*p1 != ptrn[fp]) continue;
-        p2 = p1+1;
-        for (n = fp+1; n < cnt; p2++, n++) {
-            if (mask[n]) continue;
-            if (*p2 != ptrn[n]) break;
-        }
-        if (n == cnt) {
-            ptr = (PVOID)(p1 - fp);
-            if (addr) {
-                for (n = 0; n < cnt; n++) {
-                    if (mask[n] == 2) {
-                        *addr = *(DWORD *)(p1-fp+n);
-                        break;
-                    }
-                }
-            }
-            if (adj) {
-                for (n = 0; n < cnt; n++) {
-                    if (mask[n] == 3) {
-                        *adj = *(DWORD *)(p1-fp+n);
-                        break;
-                    }
-                }
-            }
-            break;
-        }
-    }
+	for (p1 = (BYTE*)base; p1 < (BYTE*)base + SEARCH_RANGE; p1++) {
+		if (*p1 != ptrn[fp]) continue;
+		p2 = p1 + 1;
+		for (n = fp + 1; n < cnt; p2++, n++) {
+			if (mask[n]) continue;
+			if (*p2 != ptrn[n]) break;
+		}
+		if (n == cnt) {
+			ptr = (PVOID)(p1 - fp);
+			if (addr) {
+				for (n = 0; n < cnt; n++) {
+					if (mask[n] == 2) {
+						*addr = *(DWORD *)(p1 - fp + n);
+						break;
+					}
+				}
+			}
+			if (adj) {
+				for (n = 0; n < cnt; n++) {
+					if (mask[n] == 3) {
+						*adj = *(DWORD *)(p1 - fp + n);
+						break;
+					}
+				}
+			}
+			break;
+		}
+	}
 
     return ptr;
 }
@@ -363,6 +579,71 @@ static PVOID search_addr(BYTE *base, TCHAR *pattern, DWORD *addr = NULL, DWORD *
 // -------------------------------------------------
 // コマンドインターフェース アプリからPOLにコマンド
 // -------------------------------------------------
+#ifdef USE_EXCHANGE
+void  exchange(void *data)
+{
+	BOOL	fend = FALSE;
+	MSG		msg;
+
+	pData->idThread = GetCurrentThreadId();
+
+	while (!fend) {
+		if (GetMessage(&msg, NULL, 0, 0) != 1)
+			break;
+
+		switch (msg.message) {
+#if CMD_PUT == 1
+		case C_CMD:
+			if (pData->tPtr[FF11ADDR_PTINFO]) {
+				if (*pData->tPtr[FF11ADDR_PTINFO] == 0)
+					break;
+			}
+			if (pData->nPrm)
+				pNextCmdHook(pData->nPrm, 1);
+			break;
+#endif
+#if KILLEFFECT == 1
+		case C_KILLEFFECT:
+			if (pData->tPtr[FF11ADDR_PTINFO]) {
+				if (*pData->tPtr[FF11ADDR_PTINFO] == 0)
+					break;
+			}
+			if (pKillEffect && msg.wParam) {
+				pKillEffect((int)msg.wParam);
+			}
+			break;
+#endif
+#if MERGEITEM == 1
+		case C_MERGEITEM:
+			if (pData->tPtr[FF11ADDR_PTINFO]) {
+				if (*pData->tPtr[FF11ADDR_PTINFO] == 0)
+					break;
+			}
+			if (pMergeItem)
+				pMergeItem((int)msg.wParam);
+			break;
+#endif
+#if MACROEXE == 1
+		case C_MACROEXE:
+			if (pData->tPtr[FF11ADDR_PTINFO]) {
+				if (*pData->tPtr[FF11ADDR_PTINFO] == 0)
+					break;
+			}
+			if (pMacro)
+				pMacro((int)msg.wParam, (int)msg.lParam);
+			break;
+#endif
+		case C_END:
+			fend = TRUE;
+			break;
+		}
+		//		Sleep(5);
+		SetEvent(hEvent);
+	}
+
+	_endthread();
+}
+#endif // USE_EXCHENGE
 
 BOOL init(void)
 {
@@ -378,11 +659,11 @@ BOOL init(void)
 
     idPro = GetCurrentProcessId();
 
-    wsprintf(obj_name, MAP_NAME, idPro);
+    _stprintf(obj_name, MAP_NAME, idPro);
     hMap = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, obj_name);
     if (hMap == 0)      return FALSE;
 
-    wsprintf(obj_name, MTX_NAME, idPro);
+    _stprintf(obj_name, MTX_NAME, idPro);
     hMtx = OpenMutex(MUTEX_ALL_ACCESS, NULL, obj_name);
     if (hMtx == 0)      return FALSE;
 
@@ -394,9 +675,9 @@ BOOL init(void)
     pData = (PTDATA)MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
     if (pData == NULL)  return FALSE;
 
-    SLwsprintfA(mes, "プロセスID = %d", idPro);
+    SL_stprintfA(mes, "プロセスID = %d", idPro);
     syslog(mes);
-    SLwsprintfA(mes, "baseアドレス = %08x", pData->pBase);
+    SL_stprintfA(mes, "baseアドレス = %08x", pData->pBase);
     syslog(mes);
 
     // FFxiMain.Dllが見つかっていないのでアタッチできない
@@ -406,7 +687,7 @@ BOOL init(void)
     {
         ptr = search_addr(pData->pBase, pattern_replo);
 
-        SLwsprintfA(mes, "ログアタッチアドレス = %08x", ptr);
+        SL_stprintfA(mes, "ログアタッチアドレス = %08x", ptr);
         syslog(mes);
 
         if (ptr)
@@ -425,7 +706,7 @@ BOOL init(void)
     {
         ptr = search_addr(pData->pBase, pattern_log);
 
-        SLwsprintfA(mes, "ログアタッチアドレス = %08x", ptr);
+        SL_stprintfA(mes, "ログアタッチアドレス = %08x", ptr);
         syslog(mes);
 
         if (ptr)
@@ -444,7 +725,7 @@ BOOL init(void)
     {
         ptr = search_addr(pData->pBase, pattern_cmd);
 
-        SLwsprintfA(mes, "コマンドアタッチアドレス = %08x", ptr);
+        SL_stprintfA(mes, "コマンドアタッチアドレス = %08x", ptr);
         syslog(mes);
 
 #if CMD_HOOK == 1
@@ -472,7 +753,7 @@ BOOL init(void)
 #if KILLEFFECT == 1
         {
             ptr = search_addr(pData->pBase, pattern_killeffect);
-            SLwsprintfA(mes, "KILLEFFECTアタッチアドレス = %08x", ptr);
+            SL_stprintfA(mes, "KILLEFFECTアタッチアドレス = %08x", ptr);
             syslog(mes);
             if (pKillEffect = (void (*)(int))ptr)
                 pData->fRdy |= FF11_Rdy_KillEffect;
@@ -481,7 +762,7 @@ BOOL init(void)
 #if MERGEITEM == 1
         {
             ptr = search_addr(pData->pBase, pattern_mergeitem);
-            SLwsprintfA(mes, "MERGEITEMアタッチアドレス = %08x", ptr);
+            SL_stprintfA(mes, "MERGEITEMアタッチアドレス = %08x", ptr);
             syslog(mes);
             if (pMergeItem = (void (*)(int))ptr)
                 pData->fRdy |= FF11_Rdy_MergeItem;
@@ -490,7 +771,7 @@ BOOL init(void)
 #if MACROEXE == 1
         {
             ptr = search_addr(pData->pBase, pattern_macroexe);
-            SLwsprintfA(mes, "MACROアタッチアドレス = %08x", ptr);
+            SL_stprintfA(mes, "MACROアタッチアドレス = %08x", ptr);
             syslog(mes);
             if (pMacro = (void (__stdcall *)(int,int))ptr)
                 pData->fRdy |= FF11_Rdy_Macro;
@@ -563,7 +844,7 @@ BOOL init(void)
         pData->tPtr[FF11ADDR_NUMBAG] = (PBYTE)(DWORD64)addr;
 
     if (search_addr(pData->pBase, pattern_ownpos, &addr))
-        pData->tPtr[FF11ADDR_OWNPOS] = (PBYTE)(DWORD64)addr+4;
+        pData->tPtr[FF11ADDR_OWNPOS] = (PBYTE)(DWORD64)addr + 4;
 
     if (search_addr(pData->pBase, pattern_choose, &addr))
         pData->tPtr[FF11ADDR_CHOOSE] = (PBYTE)(DWORD64)addr;
@@ -596,7 +877,7 @@ BOOL init(void)
 
 #if DBG_DLL == 1
     for (int n = 0; n < FF11ADDR_ENDPOINT; n++) {
-        SLwsprintfA(mes, "%s = %08x", Addres[n], pData->tPtr[n]);
+        SL_stprintfA(mes, "%s = %08x", Addres[n], pData->tPtr[n]);
         syslog(mes);
     }
 #endif
@@ -735,7 +1016,7 @@ EXPORT int WINAPI FF11_Inject(DWORD pid)
 
     // ミューテックス作成
     if (proc->hMtx == 0) {
-        wsprintf(obj_name, MTX_NAME, pid);
+        _stprintf(obj_name, MTX_NAME, pid);
         proc->hMtx = CreateMutex(NULL, FALSE, obj_name);
     }
 
@@ -766,7 +1047,7 @@ EXPORT int WINAPI FF11_Inject(DWORD pid)
     // 共有メモリオープン
     if (proc->hMap == 0) {
         BOOL first;
-        wsprintf(obj_name, MAP_NAME, pid);
+        _stprintf(obj_name, MAP_NAME, pid);
         proc->hMap = CreateFileMapping((HANDLE)-1,
                 NULL, PAGE_READWRITE, 0, sizeof(TDATA), obj_name);
         if (proc->hMap == 0)        goto err_end;
@@ -870,12 +1151,13 @@ BOOL check_login(HANDLE hpro, PTDATA pd)
     DWORD n;
 
     if (pd->tPtr[FF11ADDR_LOGIN]) {
-        if (ReadProcessMemory(hpro, pd->tPtr[FF11ADDR_LOGIN],(PBYTE)&n,4,NULL)) {
-            if (n != 0x00000000)
-                return FALSE;
+		if (ReadProcessMemory(hpro, pd->tPtr[FF11ADDR_LOGIN], (PBYTE)&n, 4, NULL)) {
+			if (n != 0x3f800000) {
+				return FALSE;
+			}
         }
     }
-
+	//0x3f800000以外ならログイン状態(例:0x3E9EB852)
     return TRUE;
 }
 
@@ -1234,43 +1516,43 @@ EXPORT BOOL WINAPI FF11_ReadMemory(int index, BYTE *ptr, BYTE *buffer, int size)
 
 EXPORT BOOL WINAPI FF11_GetData(int index, int offset, BYTE *buffer, int size)
 {
-    PTPROC  proc;
-    PTDATA  pd;
-    DWORD   addr;
-    PBYTE   ptr = NULL;
+	PTPROC  proc;
+	PTDATA  pd;
+	DWORD   addr;
+	PBYTE   ptr = NULL;
 
-    if (buffer != NULL && size > 0) {
-        if (check_index(index, &proc, &pd)) {
-            switch (offset) {
-            case FF11ADDR_ITEMTABLE:
-            case FF11ADDR_EQUIPTABLE:
-            case FF11ADDR_MAXBAG:
-                if (ReadProcessMemory(proc->hPro, pd->tPtr[FF11ADDR_ITEMBASE], (BYTE*)&addr,4, NULL))
-                    ptr = pd->tPtr[offset] + addr;
-                break;
-            case FF11ADDR_NUMBAG:
-                if (pd->tPtr[FF11ADDR_NUMBAG] == 0)
-                    break;
-                if (ReadProcessMemory(proc->hPro, pd->tPtr[FF11ADDR_NUMBAG], (PBYTE*)&ptr, 4, NULL))
-                    ptr += 0x1c;
-                else
-                    ptr = NULL;
-                break;
-            default :
-                ptr = pd->tPtr[offset];
-            }
+	if (buffer != NULL && size > 0) {
+		if (check_index(index, &proc, &pd)) {
+			switch (offset) {
+				case FF11ADDR_ITEMTABLE:
+				case FF11ADDR_EQUIPTABLE:
+				case FF11ADDR_MAXBAG:
+					if (ReadProcessMemory(proc->hPro, pd->tPtr[FF11ADDR_ITEMBASE], (BYTE*)&addr, 4, NULL))
+						ptr = pd->tPtr[offset] + addr;
+					break;
+				case FF11ADDR_NUMBAG:
+					if (pd->tPtr[FF11ADDR_NUMBAG] == 0)
+						break;
+					if (ReadProcessMemory(proc->hPro, pd->tPtr[FF11ADDR_NUMBAG], (PBYTE*)&ptr, 4, NULL))
+						ptr += 0x1c;
+					else
+						ptr = NULL;
+					break;
+				default:
+					ptr = pd->tPtr[offset];
+			}
 
-            if (ptr && check_login(proc->hPro, pd)) {
-                if (ReadProcessMemory(proc->hPro, ptr, buffer, size, NULL))
-                    return TRUE;
-            }
-        }
-    }
+			if (ptr && check_login(proc->hPro, pd)) {
+				if (ReadProcessMemory(proc->hPro, ptr, buffer, size, NULL))
+					return TRUE;
+			}
+		}
+	}
 
-    if (buffer != NULL)
-        ZeroMemory(buffer, size);
+	if (buffer != NULL)
+		ZeroMemory(buffer, size);
 
-    return FALSE;
+	return FALSE;
 }
 
 EXPORT BOOL WINAPI FF11_GetPCnameA(int index, char *name)

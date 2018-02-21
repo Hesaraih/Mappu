@@ -124,7 +124,7 @@ DWORD SearchAddress(BYTE *base, const BYTE *pattern, DWORD dwReadAddress, DWORD 
 	cnt = 0;
 
 	for (n = 0; n < 100; n++) {
-		c = (char)tolower(pattern[n]);
+		c = (char)_totlower(pattern[n]);
 		if (c == ' ') {
 			continue;
 		}

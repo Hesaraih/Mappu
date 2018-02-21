@@ -175,33 +175,6 @@ struct NPC_MEM_MAP{//0.49‚Å’Ç‰Á
 #endif
 #endif
 
-#ifdef UNICODE
-
-#ifdef strcpy
-#undef strcpy
-#endif
-
-#ifdef strcmp
-#undef strcmp
-#endif
-
-#define atoi	_wtoi
-#define atof	_wtof
-#define fgets	fgetws
-#define fopen	_wfopen
-#define isalpha	iswalpha
-#define setlocale	_wsetlocale
-#define strcmp	wcscmp
-#define strcpy	wcscpy
-#define strlen	wcslen
-#define strncmp	wcsncmp
-#define strtoul		wcstoul
-#define sprintf	swprintf
-#define sscanf	swscanf
-#define tolower	towlower
-#endif
-
-
 struct INFORMATION{
 	WORD id;
 	DWORD fixedid;
@@ -339,7 +312,7 @@ const _TCHAR szVK[][10]={
 	_T("F17"),_T("F18"),_T("F19"),_T("F20"),_T("F21"),_T("F22"),_T("F23"),_T("F24"),_T("-"),_T("-"),_T("-"),_T("-"),_T("-"),_T("-"),_T("-"),_T("-")
 };
 
-#ifdef DEBUG//
+#ifdef _DEBUG
 #define GETLASTERROR {\
 	LPVOID lpMsgBuf;\
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,NULL,GetLastError(),MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),(LPTSTR)&lpMsgBuf,0,NULL);\

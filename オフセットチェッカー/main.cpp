@@ -7,6 +7,7 @@
 #endif
 
 #define MAINCPP
+#define HOOK_INFO
 
 #include <windows.h>
 #include <tchar.h>
@@ -18,6 +19,7 @@
 #include "searchaddr.h"
 #include "resource.h"
 #include "format.h"//0.05bで追加
+#include <crtdbg.h>  
 
 #pragma comment(lib,"version.lib")
 #pragma comment(lib,"Comctl32.lib")
@@ -34,7 +36,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 	hInstance = hInst; // グローバル変数にインスタンス処理を格納します。
 	DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG), NULL, (DLGPROC)WndProc);
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 	return true;
@@ -71,7 +73,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
 	case WM_COMMAND:
 		if (LOWORD(wp) == IDC_BUTTON_START) {
-			wsprintf(stsztDllFullPath, _T(""));//0.05で追加
+			_stprintf(stsztDllFullPath, _T(""));//0.05で追加
 			SetDlgItemText(hWnd, IDC_EDIT_OFFSET, _T(""));//0.05で追加
 			EnableWindow(GetDlgItem(hWnd, IDC_BUTTON_SAVE), FALSE);//0.05で追加
 			g_Offset.dwDllAddress = GetDllModuleAddress(1, &pId, &hPol, stsztDllFullPath);//0.05で変更
@@ -86,68 +88,68 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			ShowWindow(hEdit, SW_HIDE);//ちらつき軽減
 			SetFocus(hEdit);
 			SetWindowText(hEdit, _T("※出力された値は全て参考値です\r\n\r\n"));
-			wsprintf(szText, FORMAT_MAPPU);
+			_stprintf(szText, FORMAT_MAPPU);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_HEALER);
+			_stprintf(szText, FORMAT_HEALER);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_BAZAAR);
+			_stprintf(szText, FORMAT_BAZAAR);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_GRAPHICSID2JOBS);
+			_stprintf(szText, FORMAT_GRAPHICSID2JOBS);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_NPCMEM);
+			_stprintf(szText, FORMAT_NPCMEM);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_SOUKOBAN);
+			_stprintf(szText, FORMAT_SOUKOBAN);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_REALTIMELOGGETS);
+			_stprintf(szText, FORMAT_REALTIMELOGGETS);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_XIACE);
+			_stprintf(szText, FORMAT_XIACE);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_KODOUGU);
+			_stprintf(szText, FORMAT_KODOUGU);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_FISHKAI);
+			_stprintf(szText, FORMAT_FISHKAI);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
 			//0.10で追加
-			wsprintf(szText, FORMAT_MADMAN);
+			_stprintf(szText, FORMAT_MADMAN);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_MADMOVE);
+			_stprintf(szText, FORMAT_MADMOVE);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_PUPSTATUS);
+			_stprintf(szText, FORMAT_PUPSTATUS);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_ARGUS);
+			_stprintf(szText, FORMAT_ARGUS);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_CAST);
+			_stprintf(szText, FORMAT_CAST);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_DORO_DLL);
+			_stprintf(szText, FORMAT_DORO_DLL);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_OTHER);
+			_stprintf(szText, FORMAT_OTHER);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_FFXI_CHOCOBO);
+			_stprintf(szText, FORMAT_FFXI_CHOCOBO);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_FFXI_LOGIN_POINT);
+			_stprintf(szText, FORMAT_FFXI_LOGIN_POINT);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_XINPC);
+			_stprintf(szText, FORMAT_XINPC);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-			wsprintf(szText, FORMAT_CHOCOBO_CHECKER_PLUS);
+			_stprintf(szText, FORMAT_CHOCOBO_CHECKER_PLUS);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
 
@@ -155,7 +157,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			_TCHAR szHexLog[0x100] = _T("");
 			for (int i = 0; i<0x20; i++) {
 				_TCHAR szBuff[10];
-				swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_offset.Ffxihook_log[i]);
+				swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_Offset.Ffxihook_log[i]);
 				_tcscat_s(szHexLog, szBuff);
 			}
 			szHexLog[ARRAYSIZE(szHexLog) - 1] = '\0';
@@ -163,11 +165,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			_TCHAR szHexCmd[0x100] = _T("");
 			for (int i = 0; i<0x20; i++) {
 				_TCHAR szBuff[10];
-				swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_offset.Ffxihook_cmd[i]);
+				swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_Offset.Ffxihook_cmd[i]);
 				_tcscat_s(szHexCmd, szBuff);
 			}
 			szHexCmd[ARRAYSIZE(szHexCmd) - 1] = '\0';
-			wsprintf(szText, FORMAT_HOOK_INFO);//0.05bで変更
+			_stprintf(szText, FORMAT_HOOK_INFO);//0.05bで変更
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
 #endif
@@ -188,11 +190,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				MessageBox(hWnd, _T("ファイルが開けません"), NULL, MB_ICONERROR);
 			}
 			else if (nRet == 1) {
-				wsprintf(stsztDllFullPath, _T(""));//0.05で追加
+				_stprintf(stsztDllFullPath, _T(""));//0.05で追加
 				SetDlgItemText(hWnd, IDC_EDIT_OFFSET, _T(""));//0.05で追加
 				EnableWindow(GetDlgItem(hWnd, IDC_BUTTON_SAVE), FALSE);//0.05で追加
-#ifdef DEBUG//0.03で追加
-				if (g_offset.dwDllAddress)FreeLibrary((HMODULE)g_offset.dwDllAddress);
+#ifdef _DEBUG//0.03で追加
+				if (g_Offset.dwDllAddress) {
+					FreeLibrary((HMODULE)g_Offset.dwDllAddress);
+				}
 #endif
 				hPol = OpenProcess(PROCESS_VM_READ, false, GetCurrentProcessId());
 				g_Offset.dwDllAddress = (DWORD)LoadLibrary(szFileName);
@@ -207,67 +211,67 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 					ShowWindow(hEdit, SW_HIDE);//ちらつき軽減
 					SetFocus(hEdit);
 					SetWindowText(hEdit, _T("※出力された値は全て参考値です\r\n\r\n"));
-					wsprintf(szText, FORMAT_MAPPU);
+					_stprintf(szText, FORMAT_MAPPU);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_HEALER);
+					_stprintf(szText, FORMAT_HEALER);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_BAZAAR);
+					_stprintf(szText, FORMAT_BAZAAR);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_GRAPHICSID2JOBS);
+					_stprintf(szText, FORMAT_GRAPHICSID2JOBS);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_NPCMEM);
+					_stprintf(szText, FORMAT_NPCMEM);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_SOUKOBAN);
+					_stprintf(szText, FORMAT_SOUKOBAN);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_REALTIMELOGGETS);
+					_stprintf(szText, FORMAT_REALTIMELOGGETS);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_XIACE);
+					_stprintf(szText, FORMAT_XIACE);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_KODOUGU);
+					_stprintf(szText, FORMAT_KODOUGU);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_FISHKAI);
+					_stprintf(szText, FORMAT_FISHKAI);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_MADMAN);
+					_stprintf(szText, FORMAT_MADMAN);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_MADMOVE);
+					_stprintf(szText, FORMAT_MADMOVE);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_PUPSTATUS);
+					_stprintf(szText, FORMAT_PUPSTATUS);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_ARGUS);
+					_stprintf(szText, FORMAT_ARGUS);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_CAST);
+					_stprintf(szText, FORMAT_CAST);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_DORO_DLL);
+					_stprintf(szText, FORMAT_DORO_DLL);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_OTHER);
+					_stprintf(szText, FORMAT_OTHER);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_FFXI_CHOCOBO);
+					_stprintf(szText, FORMAT_FFXI_CHOCOBO);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_FFXI_LOGIN_POINT);
+					_stprintf(szText, FORMAT_FFXI_LOGIN_POINT);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_XINPC);
+					_stprintf(szText, FORMAT_XINPC);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
-					wsprintf(szText, FORMAT_CHOCOBO_CHECKER_PLUS);
+					_stprintf(szText, FORMAT_CHOCOBO_CHECKER_PLUS);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
 
@@ -275,7 +279,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 					_TCHAR szHexLog[0x100] = _T("");
 					for (int i = 0; i<0x20; i++) {
 						_TCHAR szBuff[10];
-						swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_offset.Ffxihook_log[i]);
+						swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_Offset.Ffxihook_log[i]);
 						_tcscat_s(szHexLog, szBuff);
 					}
 					szHexLog[ARRAYSIZE(szHexLog) - 1] = '\0';
@@ -283,25 +287,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 					_TCHAR szHexCmd[0x100] = _T("");
 					for (int i = 0; i<0x20; i++) {
 						_TCHAR szBuff[10];
-						swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_offset.Ffxihook_cmd[i]);
+						swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_Offset.Ffxihook_cmd[i]);
 						_tcscat_s(szHexCmd, szBuff);
 					}
 					szHexCmd[ARRAYSIZE(szHexCmd) - 1] = '\0';
-					wsprintf(szText, FORMAT_HOOK_INFO);//0.05bで変更
+					_stprintf(szText, FORMAT_HOOK_INFO);//0.05bで変更
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
 #endif
 					SendMessage(hEdit, WM_VSCROLL, SB_TOP, 0);
 					ShowWindow(hEdit, SW_NORMAL);
-					wsprintf(stsztDllFullPath, _T("%s"), szFileName);
+					_stprintf(stsztDllFullPath, _T("%s"), szFileName);
 					if (GetTimeStamp_Update(stsztDllFullPath, &stSysTimeUpdata) == 1) {//0.05で追加
 						EnableWindow(GetDlgItem(hWnd, IDC_BUTTON_SAVE), TRUE);//0.05で追加
 					}
 					free(szText);
 				}
 				if (hPol)CloseHandle(hPol);
-#ifndef DEBUG//0.03で追加
-				if (g_Offset.dwDllAddress)FreeLibrary((HMODULE)g_Offset.dwDllAddress);
+#ifndef _DEBUG//0.03で追加
+				if (g_Offset.dwDllAddress) {
+					FreeLibrary((HMODULE)g_Offset.dwDllAddress);
+				}
 #endif
 			}
 			free(szFileName);
@@ -309,7 +315,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		else if (LOWORD(wp) == IDC_BUTTON_SAVE) {//0.05で追加
 			_TCHAR sztFileName[MAX_PATH];
-			wsprintf(sztFileName, _T("%s_%d%02d%02d.txt"), PathFindFileName(stsztDllFullPath), stSysTimeUpdata.wYear, stSysTimeUpdata.wMonth, stSysTimeUpdata.wDay);
+			_stprintf(sztFileName, _T("%s_%d%02d%02d.txt"), PathFindFileName(stsztDllFullPath), stSysTimeUpdata.wYear, stSysTimeUpdata.wMonth, stSysTimeUpdata.wDay);
 			int nRet = Save(sztFileName, hWnd, GetDlgItem(hWnd, IDC_EDIT_OFFSET));
 			if (nRet == 1) {
 				MessageBox(hWnd, _T("保存しました"), PathFindFileName(sztFileName), MB_OK);
@@ -365,19 +371,19 @@ void ShowVersion(HWND hWnd)
 				} *lpTranslate;
 				VerQueryValue((LPVOID)pbyVersionInfo, _T("\\VarFileInfo\\Translation"), (LPVOID*)&lpTranslate, NULL);
 				_TCHAR szDir[0x100];
-				wsprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\FileVersion"), lpTranslate->wLanguage, lpTranslate->wCodePage);
+				_stprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\FileVersion"), lpTranslate->wLanguage, lpTranslate->wCodePage);
 				void *pvVer;
 				VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvVer, NULL);
-				wsprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\LegalCopyright"), lpTranslate->wLanguage, lpTranslate->wCodePage);
+				_stprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\LegalCopyright"), lpTranslate->wLanguage, lpTranslate->wCodePage);
 				void *pvCopyright;
 				VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvCopyright, NULL);
 				//0.05bで追加
-				//wsprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\Comments"), lpTranslate->wLanguage, lpTranslate->wCodePage);
+				//_stprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\Comments"), lpTranslate->wLanguage, lpTranslate->wCodePage);
 				//void *pvComment;
 				//VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvComment, NULL);
 
 				_TCHAR szVersion[0x100];
-				wsprintf(szVersion, _T("<a href=\"https://github.com/Hesaraih\">%s Ver %s</a>"), pvCopyright, pvVer);//0.05bで変更
+				_stprintf(szVersion, _T("<a href=\"https://github.com/Hesaraih\">%s Ver %s</a>"), pvCopyright, pvVer);//0.05bで変更
 				SetDlgItemText(hWnd, IDC_LINK, szVersion);
 			}
 		}

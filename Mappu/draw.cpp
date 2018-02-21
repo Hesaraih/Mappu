@@ -30,14 +30,14 @@
 #pragma comment(lib,"msimg32.lib")
 
 
-#define DRAW_EDGE(hDC,nX,nZ,szShow)	TextOut(hDC,nX+1,nZ-1,szShow,strlen(szShow));\
-					TextOut(hDC,nX+1,nZ+0,szShow,strlen(szShow));\
-					TextOut(hDC,nX+1,nZ+1,szShow,strlen(szShow));\
-					TextOut(hDC,nX+0,nZ-1,szShow,strlen(szShow));\
-					TextOut(hDC,nX+0,nZ+1,szShow,strlen(szShow));\
-					TextOut(hDC,nX-1,nZ-1,szShow,strlen(szShow));\
-					TextOut(hDC,nX-1,nZ+1,szShow,strlen(szShow));\
-					TextOut(hDC,nX-1,nZ+0,szShow,strlen(szShow));
+#define DRAW_EDGE(hDC,nX,nZ,szShow)	TextOut(hDC,nX+1,nZ-1,szShow,_tcslen(szShow));\
+					TextOut(hDC,nX+1,nZ+0,szShow,_tcslen(szShow));\
+					TextOut(hDC,nX+1,nZ+1,szShow,_tcslen(szShow));\
+					TextOut(hDC,nX+0,nZ-1,szShow,_tcslen(szShow));\
+					TextOut(hDC,nX+0,nZ+1,szShow,_tcslen(szShow));\
+					TextOut(hDC,nX-1,nZ-1,szShow,_tcslen(szShow));\
+					TextOut(hDC,nX-1,nZ+1,szShow,_tcslen(szShow));\
+					TextOut(hDC,nX-1,nZ+0,szShow,_tcslen(szShow));
 
 static POSXYZR g_OwnPos[300];//0.55で追加 0.55aで要素数増
 
@@ -64,8 +64,8 @@ int Draw(HWND hWnd, HWND hLIST, HWND hCHARACTER)
 	//WindowTextを更新 0.50で追加
 	_TCHAR szText[0x20], szCmp[0x20];
 	GetWindowText(hWnd, szCmp, sizeof(szCmp) / sizeof(_TCHAR) - 1);
-	sprintf(szText, _T("Mappu - %s"), mypos.name);
-	if (strcmp(szText, szCmp) != 0 && strlen(mypos.name) != 0)SetWindowText(hWnd, szText);
+	_stprintf(szText, _T("Mappu - %s"), mypos.name);
+	if (_tcscmp(szText, szCmp) != 0 && _tcslen(mypos.name) != 0)SetWindowText(hWnd, szText);
 #endif
 
 	//マップ表示(Mapウィンドウ)
@@ -189,10 +189,10 @@ int DrawMap(HWND hWnd, INFORMATION mypos, MAP_INFORMATION *mapInfo)
 		}
 		else {
 			if (mapInfo->AreaID >= 0x0100) {//2Byteエリア 0.53で追加
-				sprintf(szBuf, _T("No MAP!Area = %x"), mapInfo->AreaID);
+				_stprintf(szBuf, _T("No MAP!Area = %x"), mapInfo->AreaID);
 			}
 			else {
-				sprintf(szBuf, _T("No MAP!Area = %02x"), mapInfo->AreaID);
+				_stprintf(szBuf, _T("No MAP!Area = %02x"), mapInfo->AreaID);
 			}
 			SetTextColor(hMemDC, g_ColorMapName);
 			DrawText(hMemDC, szBuf, -1, &rect, DT_SINGLELINE | DT_BOTTOM | DT_LEFT | DT_END_ELLIPSIS);
@@ -210,7 +210,7 @@ int DrawMap(HWND hWnd, INFORMATION mypos, MAP_INFORMATION *mapInfo)
 	}
 	else if (mapInfo->code == 1) {
 		//map.iniが見つからなかった時
-		sprintf(szBuf, _T("map.iniが見つかりません。"));
+		_stprintf(szBuf, _T("map.iniが見つかりません。"));
 		SetTextColor(hMemDC, g_ColorMapName);
 		DrawText(hMemDC, szBuf, -1, &rect, DT_SINGLELINE | DT_BOTTOM | DT_LEFT | DT_END_ELLIPSIS);//0.47aで変更
 		mapInfo->zoom = (float)0.4;
@@ -222,10 +222,10 @@ int DrawMap(HWND hWnd, INFORMATION mypos, MAP_INFORMATION *mapInfo)
 	}
 	else {//map.ini読み込み時のその他エラー
 		if (mapInfo->AreaID >= 0x0100) {
-			sprintf(szBuf, _T("map.ini読み込みエラー。 code = %d,Area = %x"), mapInfo->code, mapInfo->AreaID);
+			_stprintf(szBuf, _T("map.ini読み込みエラー。 code = %d,Area = %x"), mapInfo->code, mapInfo->AreaID);
 		}
 		else {
-			sprintf(szBuf, _T("map.ini読み込みエラー。 code = %d,Area = %02x"), mapInfo->code, mapInfo->AreaID);
+			_stprintf(szBuf, _T("map.ini読み込みエラー。 code = %d,Area = %02x"), mapInfo->code, mapInfo->AreaID);
 		}
 		SetTextColor(hMemDC, g_ColorMapName);
 		DrawText(hMemDC, szBuf, -1, &rect, DT_SINGLELINE | DT_BOTTOM | DT_LEFT | DT_END_ELLIPSIS);//0.47aで変更
@@ -426,7 +426,7 @@ int DrawWeatherIcon(HWND hWnd)
 
 	byteWeather = GetWeather();
 	if (g_Menu.weather_icon && byteWeather != nFlagIcon && byteWeather > 3) {//0.48で変更 0.50で変更
-		wsprintf(szIconName, _T(".\\weather\\%s.ico"), szWeather[byteWeather]);
+		_stprintf(szIconName, _T(".\\weather\\%s.ico"), szWeather[byteWeather]);
 		hIcon = (HICON)LoadImage(0, szIconName, IMAGE_ICON, 16, 16, LR_LOADFROMFILE | LR_SHARED);
 		if (hIcon) {
 			SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
@@ -773,7 +773,7 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 	}
 
 	//Area名表示
-	if (strlen(mapInfo.AreaName) != 0 && g_ColorMapName) {
+	if (_tcslen(mapInfo.AreaName) != 0 && g_ColorMapName) {
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
 			SetTextColor(*hMemDC, g_FontSystem.ColorEffect);
@@ -790,7 +790,7 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 
 	//倍率表示
 	if (g_ColorZoom) {
-		sprintf(szBuf, _T("x%0.1f"), g_Zoom);
+		_stprintf(szBuf, _T("x%0.1f"), g_Zoom);
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
 			SetTextColor(*hMemDC, g_FontSystem.ColorEffect);
@@ -811,7 +811,7 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 		double dDistanceXZ, dDistanceXYZ;
 		dDistanceXYZ = (double)sqrt(pow((long double)targetpos.x - mypos.x, 2) + pow((long double)targetpos.y - mypos.y, 2) + pow((long double)targetpos.z - mypos.z, 2));
 		dDistanceXZ = (double)sqrt(pow((long double)targetpos.x - mypos.x, 2) + pow((long double)targetpos.z - mypos.z, 2));
-		sprintf(szBuf, _T("\n%0.1lf(%0.1f)"), dDistanceXYZ, dDistanceXZ);
+		_stprintf(szBuf, _T("\n%0.1lf(%0.1f)"), dDistanceXYZ, dDistanceXZ);
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
 			SetTextColor(*hMemDC, g_FontSystem.ColorEffect);
@@ -829,10 +829,10 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 	//MyPosition表示
 	if (g_Menu.own_position && g_ColorMyPosition) {
 		if (mapInfo.AreaID >= 0x0100) {
-			sprintf(szBuf, _T("Area:%X_%1X (%.1f, %.1f, %.1f)"), mapInfo.AreaID, mapInfo.SubID, mypos.x, mypos.y, mypos.z);
+			_stprintf(szBuf, _T("Area:%X_%1X (%.1f, %.1f, %.1f)"), mapInfo.AreaID, mapInfo.SubID, mypos.x, mypos.y, mypos.z);
 		}
 		else {
-			sprintf(szBuf, _T("Area:%02X_%1X (%.1f, %.1f, %.1f)"), mapInfo.AreaID, mapInfo.SubID, mypos.x, mypos.y, mypos.z);
+			_stprintf(szBuf, _T("Area:%02X_%1X (%.1f, %.1f, %.1f)"), mapInfo.AreaID, mapInfo.SubID, mypos.x, mypos.y, mypos.z);
 		}
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
@@ -851,10 +851,10 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 	//<pos>表示
 	if (g_Menu.own_lt_pos_gt && (mapInfo.x == 0 || mapInfo.z == 0) && g_Colorlt_Pos_gt) {
 		if (g_Menu.own_position) {
-			sprintf(szBuf, _T("\n(?-?)"));
+			_stprintf(szBuf, _T("\n(?-?)"));
 		}
 		else {
-			sprintf(szBuf, _T("(?-?)"));
+			_stprintf(szBuf, _T("(?-?)"));
 		}
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
@@ -878,10 +878,10 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 		//マップ上の座標から<pos>に変換
 		//(fx-a)/(b) a:実座標(A-1)の開始位置 b:1マスあたりの幅
 		if (g_Menu.own_position) {
-			wsprintf(szBuf, _T("\n(%c-%d)"), (int)((fx - 17) / 32) + ('A'), (int)((fz - 17) / 32) + 1);
+			_stprintf(szBuf, _T("\n(%c-%d)"), (int)((fx - 17) / 32) + ('A'), (int)((fz - 17) / 32) + 1);
 		}
 		else {
-			wsprintf(szBuf, _T("(%c-%d)"), (int)((fx - 17) / 32) + ('A'), (int)((fz - 17) / 32) + 1);
+			_stprintf(szBuf, _T("(%c-%d)"), (int)((fx - 17) / 32) + ('A'), (int)((fz - 17) / 32) + 1);
 		}
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
@@ -967,7 +967,7 @@ int DrawPC(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATIO
 		for (int i = 0; i<6; i++) {
 			partypos[i] = GetPartyInfo(i);
 			if (partypos[i].code < 0)continue;
-			else if (strlen(partypos[i].name) == 0)continue;
+			else if (_tcslen(partypos[i].name) == 0)continue;
 			else if (partypos[i].inrange == 0) {//範囲外
 				continue;
 			}
@@ -1012,7 +1012,7 @@ int DrawPC(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATIO
 					COLORREF colorBuf;
 					colorBuf = GetTextColor(*hMemDC);
 					SetTextColor(*hMemDC, g_FontPC.ColorEffect);
-					TextOut(*hMemDC, nX + g_FontPC.nDS_x, nZ - g_FontPC.nDS_z, partypos[i].name, strlen(partypos[i].name));
+					TextOut(*hMemDC, nX + g_FontPC.nDS_x, nZ - g_FontPC.nDS_z, partypos[i].name, _tcslen(partypos[i].name));
 					SetTextColor(*hMemDC, colorBuf);
 				}
 				else if (g_FontPC.nEffect == 2) {//縁作成
@@ -1022,7 +1022,7 @@ int DrawPC(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATIO
 					DRAW_EDGE(*hMemDC, nX, nZ, partypos[i].name);//0.52でDefineに変更
 					SetTextColor(*hMemDC, colorBuf);
 				}
-				TextOut(*hMemDC, nX, nZ, partypos[i].name, strlen(partypos[i].name));
+				TextOut(*hMemDC, nX, nZ, partypos[i].name, _tcslen(partypos[i].name));
 			}
 		}
 		//フォントを戻す
@@ -1047,7 +1047,7 @@ int DrawPC(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATIO
 		for (int i = 6; i<18; i++) {
 			partypos[i] = GetPartyInfo(i);
 			if (partypos[i].code < 0)continue;
-			else if (strlen(partypos[i].name) == 0)continue;
+			else if (_tcslen(partypos[i].name) == 0)continue;
 			else if (partypos[i].inrange == 0) {//範囲外
 				continue;
 			}
@@ -1092,7 +1092,7 @@ int DrawPC(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATIO
 					COLORREF colorBuf;
 					colorBuf = GetTextColor(*hMemDC);
 					SetTextColor(*hMemDC, g_FontPC.ColorEffect);
-					TextOut(*hMemDC, nX + g_FontPC.nDS_x, nZ - g_FontPC.nDS_z, partypos[i].name, strlen(partypos[i].name));
+					TextOut(*hMemDC, nX + g_FontPC.nDS_x, nZ - g_FontPC.nDS_z, partypos[i].name, _tcslen(partypos[i].name));
 					SetTextColor(*hMemDC, colorBuf);
 				}
 				else if (g_FontPC.nEffect == 2) {//縁作成
@@ -1102,7 +1102,7 @@ int DrawPC(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATIO
 					DRAW_EDGE(*hMemDC, nX, nZ, partypos[i].name);//0.52でDefineに変更
 					SetTextColor(*hMemDC, colorBuf);
 				}
-				TextOut(*hMemDC, nX, nZ, partypos[i].name, strlen(partypos[i].name));
+				TextOut(*hMemDC, nX, nZ, partypos[i].name, _tcslen(partypos[i].name));
 			}
 		}
 		//フォントを戻す
@@ -1192,7 +1192,7 @@ int DrawPC(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATIO
 					COLORREF colorBuf;
 					colorBuf = GetTextColor(*hMemDC);
 					SetTextColor(*hMemDC, g_FontPC.ColorEffect);
-					TextOut(*hMemDC, nX + g_FontPC.nDS_x, nZ - g_FontPC.nDS_z, pcPos.name, strlen(pcPos.name));
+					TextOut(*hMemDC, nX + g_FontPC.nDS_x, nZ - g_FontPC.nDS_z, pcPos.name, _tcslen(pcPos.name));
 					SetTextColor(*hMemDC, colorBuf);
 				}
 				else if (g_FontPC.nEffect == 2) {//縁作成
@@ -1202,7 +1202,7 @@ int DrawPC(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATIO
 					DRAW_EDGE(*hMemDC, nX, nZ, pcPos.name);//0.52でDefineに変更
 					SetTextColor(*hMemDC, colorBuf);
 				}
-				TextOut(*hMemDC, nX, nZ, pcPos.name, strlen(pcPos.name));
+				TextOut(*hMemDC, nX, nZ, pcPos.name, _tcslen(pcPos.name));
 			}
 		}
 		//フォントを戻す
@@ -1297,7 +1297,7 @@ int DrawPET(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATI
 					COLORREF colorBuf;
 					colorBuf = GetTextColor(*hMemDC);
 					SetTextColor(*hMemDC, g_FontPC.ColorEffect);
-					TextOut(*hMemDC, nX + g_FontPC.nDS_x, nZ - g_FontPC.nDS_z, petPos.name, strlen(petPos.name));
+					TextOut(*hMemDC, nX + g_FontPC.nDS_x, nZ - g_FontPC.nDS_z, petPos.name, _tcslen(petPos.name));
 					SetTextColor(*hMemDC, colorBuf);
 				}
 				else if (g_FontPC.nEffect == 2) {//縁作成
@@ -1307,7 +1307,7 @@ int DrawPET(HDC *hMemDC, INFORMATION mypos, INFORMATION targetpos, MAP_INFORMATI
 					DRAW_EDGE(*hMemDC, nX, nZ, petPos.name);//0.52でDefineに変更
 					SetTextColor(*hMemDC, colorBuf);
 				}
-				TextOut(*hMemDC, nX, nZ, petPos.name, strlen(petPos.name));
+				TextOut(*hMemDC, nX, nZ, petPos.name, _tcslen(petPos.name));
 			}
 		}
 		//フォントを戻す
@@ -1355,7 +1355,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 	for (int i = 0; i<item_count; i++) {
 		if (ListView_GetCheckState(hLIST, i) != 0) {
 			ListView_GetItemText(hLIST, i, 0, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-			checked_id[i] = strtoul(szBuf, NULL, 16);
+			checked_id[i] = _tcstoul(szBuf, NULL, 16);
 		}
 	}
 
@@ -1395,14 +1395,14 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 				//Typeの取得
 				ListView_GetItemText(hLIST, i, 4, szType, sizeof(szType) / sizeof(_TCHAR));
-				if (strcmp(szType, _T("EX")) == 0) {
+				if (_tcscmp(szType, _T("EX")) == 0) {
 					if (nNormalExSp != 1) {//EX描画以外では戻る 0.60で追加
 						continue;
 					}
 					checked_id[i] = 0;//一度処理した物は削除する 0.60で追加
 					nType = 1;//EX Type
 				}
-				else if (strcmp(szType, _T("SP")) == 0) {
+				else if (_tcscmp(szType, _T("SP")) == 0) {
 					if (nNormalExSp != 2) {//SP描画以外では戻る 0.60で追加
 						continue;
 					}
@@ -1421,7 +1421,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 							   //点描画
 				if (npcPos.inrange != 0) {//範囲内
-					if (npcPos.npctype == 0x40 && strcmp(_T("???"), npcPos.name) != 0) {//???は除外 0.54aで変更
+					if (npcPos.npctype == 0x40 && _tcscmp(_T("???"), npcPos.name) != 0) {//???は除外 0.54aで変更
 						continue;//0.53で追加 範囲外のNPC(デバッグ情報だと思われる)
 					}
 
@@ -1503,28 +1503,28 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 						//ID
 						if (g_Menu.npc_id) {
-							//sprintf(szID,_T("%03X"),checked_id[i]);
-							sprintf(szID, _T("%03X"), npcPos.id);//0.60aで変更
+							//_stprintf(szID,_T("%03X"),checked_id[i]);
+							_stprintf(szID, _T("%03X"), npcPos.id);//0.60aで変更
 						}
 						//HPP
 						if (g_Menu.npc_hpp) {
-							sprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
+							_stprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
 						}
 						//Timer
 						if (g_Menu.npc_timer) {
 							_TCHAR szBuf[0x10];
 							ListView_GetItemText(hLIST, i, 3, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-							if (strlen(szBuf) != 0) {
-								sprintf(szTIMER, _T("\"%s\""), szBuf);
+							if (_tcslen(szBuf) != 0) {
+								_stprintf(szTIMER, _T("\"%s\""), szBuf);
 							}
 						}
 						//Name
 						if (g_Menu.npc_name) {
-							sprintf(szNAME, _T("%s"), npcPos.name);
+							_stprintf(szNAME, _T("%s"), npcPos.name);
 						}
 						//表示
 						if (g_Menu.npc_id || g_Menu.npc_hpp || g_Menu.npc_timer || g_Menu.npc_name) {
-							sprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
+							_stprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
 							int nX, nZ;
 							nX = nCenter_X + x + 1 + int(2 * g_PointSizeNPC);
 							nZ = nCenter_Z - z - (MulDiv(g_Font.nSize, GetDeviceCaps(*hMemDC, LOGPIXELSY), 72) / 2);
@@ -1534,7 +1534,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 								COLORREF colorBuf;
 								colorBuf = GetTextColor(*hMemDC);
 								SetTextColor(*hMemDC, g_Font.ColorEffect);
-								TextOut(*hMemDC, nX + g_Font.nDS_x, nZ - g_Font.nDS_z, szShow, strlen(szShow));
+								TextOut(*hMemDC, nX + g_Font.nDS_x, nZ - g_Font.nDS_z, szShow, _tcslen(szShow));
 								SetTextColor(*hMemDC, colorBuf);
 							}
 							else if (g_Font.nEffect == 2) {//縁作成
@@ -1544,7 +1544,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 								DRAW_EDGE(*hMemDC, nX, nZ, szShow);//0.52でDefineに変更
 								SetTextColor(*hMemDC, colorBuf);
 							}
-							TextOut(*hMemDC, nX, nZ, szShow, strlen(szShow));
+							TextOut(*hMemDC, nX, nZ, szShow, _tcslen(szShow));
 							SelectObject(*hMemDC, hOldFont);
 						}
 					}
@@ -1556,27 +1556,27 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 						//ID
 						if (g_Menu.npc_id_ex) {
-							sprintf(szID, _T("%03X"), checked_id[i]);
+							_stprintf(szID, _T("%03X"), checked_id[i]);
 						}
 						//HPP
 						if (g_Menu.npc_hpp_ex) {
-							sprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
+							_stprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
 						}
 						//Timer
 						if (g_Menu.npc_timer_ex) {
 							_TCHAR szBuf[0x10];
 							ListView_GetItemText(hLIST, i, 3, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-							if (strlen(szBuf) != 0) {
-								sprintf(szTIMER, _T("\"%s\""), szBuf);
+							if (_tcslen(szBuf) != 0) {
+								_stprintf(szTIMER, _T("\"%s\""), szBuf);
 							}
 						}
 						//Name
 						if (g_Menu.npc_name_ex) {
-							sprintf(szNAME, _T("%s"), npcPos.name);
+							_stprintf(szNAME, _T("%s"), npcPos.name);
 						}
 						//表示
 						if (g_Menu.npc_id_ex || g_Menu.npc_hpp_ex || g_Menu.npc_timer_ex || g_Menu.npc_name_ex) {
-							sprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
+							_stprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
 							int nX, nZ;
 							nX = nCenter_X + x + 1 + int(2 * g_PointSizeNPC);
 							nZ = nCenter_Z - z - (MulDiv(g_FontEx.nSize, GetDeviceCaps(*hMemDC, LOGPIXELSY), 72) / 2);
@@ -1586,7 +1586,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 								COLORREF colorBuf;
 								colorBuf = GetTextColor(*hMemDC);
 								SetTextColor(*hMemDC, g_FontEx.ColorEffect);
-								TextOut(*hMemDC, nX + g_FontEx.nDS_x, nZ - g_FontEx.nDS_z, szShow, strlen(szShow));
+								TextOut(*hMemDC, nX + g_FontEx.nDS_x, nZ - g_FontEx.nDS_z, szShow, _tcslen(szShow));
 								SetTextColor(*hMemDC, colorBuf);
 							}
 							else if (g_FontEx.nEffect == 2) {//縁作成
@@ -1596,7 +1596,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 								DRAW_EDGE(*hMemDC, nX, nZ, szShow);//0.52でDefineに変更
 								SetTextColor(*hMemDC, colorBuf);
 							}
-							TextOut(*hMemDC, nX, nZ, szShow, strlen(szShow));
+							TextOut(*hMemDC, nX, nZ, szShow, _tcslen(szShow));
 							SelectObject(*hMemDC, hOldFont);
 						}
 					}
@@ -1608,27 +1608,27 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 						//ID
 						if (g_Menu.npc_id_sp) {
-							sprintf(szID, _T("%03X"), checked_id[i]);
+							_stprintf(szID, _T("%03X"), checked_id[i]);
 						}
 						//HPP
 						if (g_Menu.npc_hpp_sp) {
-							sprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
+							_stprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
 						}
 						//Timer
 						if (g_Menu.npc_timer_sp) {
 							_TCHAR szBuf[0x10];
 							ListView_GetItemText(hLIST, i, 3, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-							if (strlen(szBuf) != 0) {
-								sprintf(szTIMER, _T("\"%s\""), szBuf);
+							if (_tcslen(szBuf) != 0) {
+								_stprintf(szTIMER, _T("\"%s\""), szBuf);
 							}
 						}
 						//Name
 						if (g_Menu.npc_name_sp) {
-							sprintf(szNAME, _T("%s"), npcPos.name);
+							_stprintf(szNAME, _T("%s"), npcPos.name);
 						}
 						//表示
 						if (g_Menu.npc_id_sp || g_Menu.npc_hpp_sp || g_Menu.npc_timer_sp || g_Menu.npc_name_sp) {
-							sprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
+							_stprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
 							int nX, nZ;
 							nX = nCenter_X + x + 1 + int(2 * g_PointSizeNPC);
 							nZ = nCenter_Z - z - (MulDiv(g_FontSp.nSize, GetDeviceCaps(*hMemDC, LOGPIXELSY), 72) / 2);
@@ -1638,7 +1638,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 								COLORREF colorBuf;
 								colorBuf = GetTextColor(*hMemDC);
 								SetTextColor(*hMemDC, g_FontSp.ColorEffect);
-								TextOut(*hMemDC, nX + g_FontSp.nDS_x, nZ - g_FontSp.nDS_z, szShow, strlen(szShow));
+								TextOut(*hMemDC, nX + g_FontSp.nDS_x, nZ - g_FontSp.nDS_z, szShow, _tcslen(szShow));
 								SetTextColor(*hMemDC, colorBuf);
 							}
 							else if (g_FontSp.nEffect == 2) {//縁作成
@@ -1648,7 +1648,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 								DRAW_EDGE(*hMemDC, nX, nZ, szShow);//0.52でDefineに変更
 								SetTextColor(*hMemDC, colorBuf);
 							}
-							TextOut(*hMemDC, nX, nZ, szShow, strlen(szShow));
+							TextOut(*hMemDC, nX, nZ, szShow, _tcslen(szShow));
 							SelectObject(*hMemDC, hOldFont);
 						}
 					}
@@ -1716,13 +1716,13 @@ int DrawTarget(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos
 				if (ListView_GetCheckState(hLIST, i) != 0) {
 					//ID取得
 					ListView_GetItemText(hLIST, i, 0, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-					if (strtoul(szBuf, NULL, 16) == targetpos.id) {
+					if (_tcstoul(szBuf, NULL, 16) == targetpos.id) {
 						//Typeの取得
 						ListView_GetItemText(hLIST, i, 4, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-						if (strcmp(szBuf, _T("EX")) == 0) {//EX Type
+						if (_tcscmp(szBuf, _T("EX")) == 0) {//EX Type
 							nType = 1;
 						}
-						else if (strcmp(szBuf, _T("SP")) == 0) {//SP Type
+						else if (_tcscmp(szBuf, _T("SP")) == 0) {//SP Type
 							nType = 2;//0.51で修正
 						}
 						else {//Normal
@@ -1811,19 +1811,19 @@ int DrawTarget(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos
 		else {
 			logFont.lfHeight = -MulDiv(g_FontTarget.nSize, GetDeviceCaps(*hMemDC, LOGPIXELSY), 72);
 		}
-		if (strlen(g_FontTarget.szType) == 0) {
+		if (_tcslen(g_FontTarget.szType) == 0) {
 			if (nType == 0) {//Normal
-				strcpy(logFont.lfFaceName, g_Font.szType);
+				_tcscpy(logFont.lfFaceName, g_Font.szType);
 			}
 			else if (nType == 1) {//Ex
-				strcpy(logFont.lfFaceName, g_FontEx.szType);
+				_tcscpy(logFont.lfFaceName, g_FontEx.szType);
 			}
 			else if (nType == 2) {//Sp
-				strcpy(logFont.lfFaceName, g_FontSp.szType);
+				_tcscpy(logFont.lfFaceName, g_FontSp.szType);
 			}
 		}
 		else {
-			strcpy(logFont.lfFaceName, g_FontTarget.szType);
+			_tcscpy(logFont.lfFaceName, g_FontTarget.szType);
 		}
 		if (g_FontTarget.nBold == -1) {
 			if (nType == 0 && g_Font.nBold) {//Normal
@@ -1872,20 +1872,20 @@ int DrawTarget(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos
 			_TCHAR szNAME[0x20] = _T("");
 			//ID
 			if (g_Menu.target_id) {
-				sprintf(szID, _T("%03X"), targetpos.id);
+				_stprintf(szID, _T("%03X"), targetpos.id);
 			}
 			//HPP
 			if (g_Menu.target_hpp) {
-				sprintf(szHPP, _T("(%d%%)"), targetpos.hpp);
+				_stprintf(szHPP, _T("(%d%%)"), targetpos.hpp);
 			}
 			//Name
 			if (g_Menu.target_name) {
-				sprintf(szNAME, _T("%s"), targetpos.name);
+				_stprintf(szNAME, _T("%s"), targetpos.name);
 			}
 
 			//表示
 			if (g_Menu.target_id || g_Menu.target_hpp || g_Menu.target_name) {
-				sprintf(szShow, _T("%s%s%s"), szID, szHPP, szNAME);
+				_stprintf(szShow, _T("%s%s%s"), szID, szHPP, szNAME);
 				int nX, nZ;
 				nX = nCenter_X + x + 1 + int(2 * g_PointSizeTARGET);
 				nZ = nCenter_Z - z + logFont.lfHeight / 2;
@@ -1894,7 +1894,7 @@ int DrawTarget(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos
 					COLORREF colorBuf;
 					colorBuf = GetTextColor(*hMemDC);
 					SetTextColor(*hMemDC, g_FontTarget.ColorEffect);
-					TextOut(*hMemDC, nX + g_FontTarget.nDS_x, nZ - g_FontTarget.nDS_z, szShow, strlen(szShow));
+					TextOut(*hMemDC, nX + g_FontTarget.nDS_x, nZ - g_FontTarget.nDS_z, szShow, _tcslen(szShow));
 					SetTextColor(*hMemDC, colorBuf);
 				}
 				else if (g_FontTarget.nEffect == 2) {//縁作成
@@ -1904,7 +1904,7 @@ int DrawTarget(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos
 					DRAW_EDGE(*hMemDC, nX, nZ, szShow);//0.52でDefineに変更
 					SetTextColor(*hMemDC, colorBuf);
 				}
-				TextOut(*hMemDC, nX, nZ, szShow, strlen(szShow));
+				TextOut(*hMemDC, nX, nZ, szShow, _tcslen(szShow));
 			}
 		}
 
@@ -1968,7 +1968,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		stwAreaID = wNowAreaID;
 		retInfo.AreaID = stwAreaID;
 
-		sprintf(szFileName, _T("%s\\map.ini"), g_MapPath);
+		_stprintf(szFileName, _T("%s\\map.ini"), g_MapPath);
 		if (0 == GetFullPathName(szFileName, sizeof(szFullPathName) / sizeof(_TCHAR), szFullPathName, NULL)) {
 			//map.iniが存在しないとき
 			retInfo.code = 1;
@@ -1976,17 +1976,17 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		}
 
 		if (stwAreaID >= 0x0100) {//2byteエリア
-			sprintf(szAreaID, _T("%x"), stwAreaID);
+			_stprintf(szAreaID, _T("%x"), stwAreaID);
 		}
 		else {//1byteエリア
-			sprintf(szAreaID, _T("%02x"), stwAreaID);
+			_stprintf(szAreaID, _T("%02x"), stwAreaID);
 		}
 
 		//[Map] エリア名取得
-		sprintf(szSection, _T("%s_jname"), szAreaID); //a0_jname等
+		_stprintf(szSection, _T("%s_jname"), szAreaID); //a0_jname等
 		GetPrivateProfileString(_T("Map"), szSection, _T(""), stszAreaName, sizeof(stszAreaName) / sizeof(_TCHAR), szFullPathName);
-		if (strlen(stszAreaName) == 0) { //日本語名が取得できなかった時
-			sprintf(szSection, _T("%s_ename"), szAreaID); //英語名で取得
+		if (_tcslen(stszAreaName) == 0) { //日本語名が取得できなかった時
+			_stprintf(szSection, _T("%s_ename"), szAreaID); //英語名で取得
 			GetPrivateProfileString(_T("Map"), szSection, _T(""), stszAreaName, sizeof(stszAreaName) / sizeof(_TCHAR), szFullPathName);
 		}
 
@@ -1995,7 +1995,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		GetPrivateProfileString(_T("Map"), szAreaID, _T(""), stszMapiniString[nSubID], sizeof(stszMapiniString[0]) / sizeof(_TCHAR), szFullPathName);
 		//SubIDがある表記の配列
 		for (nSubID = 1; nSubID < 0x20; nSubID++) {
-			sprintf(szSection, _T("%s_%x"), szAreaID, nSubID - 1);
+			_stprintf(szSection, _T("%s_%x"), szAreaID, nSubID - 1);
 			GetPrivateProfileString(_T("Map"), szSection, _T(""), stszMapiniString[nSubID], sizeof(stszMapiniString[0]) / sizeof(_TCHAR), szFullPathName);
 		}
 	}
@@ -2003,14 +2003,14 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 	//SubID判別
 	int i;
 	for (int j = 0; j < MAP_SUB_ID_MAX; j++) {
-		if (strlen(stszMapiniString[j]) == 0) {
+		if (_tcslen(stszMapiniString[j]) == 0) {
 			continue;
 		}
 
 		//mapInfo.zoom
 		i = 0;
 		nSearchNow = i;
-		mapInfo.zoom = (float)atof(&stszMapiniString[j][nSearchNow]);
+		mapInfo.zoom = (float)_ttof(&stszMapiniString[j][nSearchNow]);
 
 		//mapInfo.x
 		i = SearchChar(&stszMapiniString[j][nSearchNow], _T(','));
@@ -2020,7 +2020,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		}
 		nSearchNow += i;
 
-		mapInfo.x = (float)atof(&stszMapiniString[j][nSearchNow]) * 2;	//512*512マップ使用
+		mapInfo.x = (float)_ttof(&stszMapiniString[j][nSearchNow]) * 2;	//512*512マップ使用
 
 		//mapInfo.zoom
 		i = SearchChar(&stszMapiniString[j][nSearchNow], _T(','));
@@ -2030,7 +2030,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		}
 		nSearchNow += i;
 
-		//mapInfo.zoom = -1 * (float)atof(&stszMapiniString[j][nSearchNow]);
+		//mapInfo.zoom = -1 * (float)_ttof(&stszMapiniString[j][nSearchNow]);
 
 		//mapInfo.z
 		i = SearchChar(&stszMapiniString[j][nSearchNow], _T(','));
@@ -2040,7 +2040,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		}
 		nSearchNow += i;
 
-		mapInfo.z = (float)atof(&stszMapiniString[j][nSearchNow]) * 2;
+		mapInfo.z = (float)_ttof(&stszMapiniString[j][nSearchNow]) * 2;
 
 		int nEnd = 0x20; //マップ1枚あたり16ブロックまで
 		for (int k = 0; k < nEnd; k++) {
@@ -2061,7 +2061,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 				}
 			}
 			nSearchNow += i;
-			info[k].x = (float)atof(&stszMapiniString[j][nSearchNow]);
+			info[k].x = (float)_ttof(&stszMapiniString[j][nSearchNow]);
 			//info[k].y
 			i = SearchChar(&stszMapiniString[j][nSearchNow], _T(','));
 			if (i == 0) {
@@ -2069,7 +2069,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 				return retInfo;
 			}
 			nSearchNow += i;
-			info[k].y = (float)atof(&stszMapiniString[j][nSearchNow]);
+			info[k].y = (float)_ttof(&stszMapiniString[j][nSearchNow]);
 			//info[k].z
 			i = SearchChar(&stszMapiniString[j][nSearchNow], _T(','));
 			if (i == 0) {
@@ -2077,7 +2077,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 				return retInfo;
 			}
 			nSearchNow += i;
-			info[k].z = (float)atof(&stszMapiniString[j][nSearchNow]);
+			info[k].z = (float)_ttof(&stszMapiniString[j][nSearchNow]);
 		}
 
 		//現在のサブエリアに自分の位置が含まれているかチェック
@@ -2111,7 +2111,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 				retInfo.z = mapInfo.z;
 				retInfo.zoom = mapInfo.zoom;
 				retInfo.code = 0;//0は正常終了
-				strcpy(retInfo.AreaName, stszAreaName);
+				_tcscpy(retInfo.AreaName, stszAreaName);
 
 				return retInfo;
 			}
@@ -2131,21 +2131,21 @@ float GetZoomIni()
 	_TCHAR szZoom[0x10];
 	WORD wAreaID;
 
-	sprintf(szFileName, _T("%s\\zoom.ini"), g_MapPath);
+	_stprintf(szFileName, _T("%s\\zoom.ini"), g_MapPath);
 	if (0 == GetFullPathName(szFileName, sizeof(szFullPathName) / sizeof(_TCHAR), szFullPathName, NULL)) {
 		return -1;
 	}
 
 	wAreaID = GetAreaID();
 	if (wAreaID >= 0x0100) {
-		sprintf(szSection, _T("%04x"), wAreaID);
+		_stprintf(szSection, _T("%04x"), wAreaID);
 	}
 	else {
-		sprintf(szSection, _T("%02x"), wAreaID);
+		_stprintf(szSection, _T("%02x"), wAreaID);
 	}
 
 	GetPrivateProfileString(_T("ZOOM"), szSection, _T(""), szZoom, sizeof(szZoom) / sizeof(_TCHAR), szFullPathName);
-	retfzoom = (float)atof(szZoom);
+	retfzoom = (float)_ttof(szZoom);
 
 	return retfzoom;
 }
@@ -2169,18 +2169,18 @@ IPicture* LoadMAP(MAP_INFORMATION mapInfo, _TCHAR *szExtension)
 	//ファイル名を作成
 	if (g_HexToDec == 0) {
 		if (mapInfo.AreaID >= 0x0100) {//2Byteエリア 0.53で追加
-			sprintf(szBuf, _T("%s\\%x_%x.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
+			_stprintf(szBuf, _T("%s\\%x_%x.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
 		}
 		else {
-			sprintf(szBuf, _T("%s\\%02x_%x.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
+			_stprintf(szBuf, _T("%s\\%02x_%x.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
 		}
 	}
 	else {
 		if (mapInfo.AreaID >= 0x0100) {//2Byteエリア 0.53で追加
-			sprintf(szBuf, _T("%s\\%x_%d.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
+			_stprintf(szBuf, _T("%s\\%x_%d.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
 		}
 		else {
-			sprintf(szBuf, _T("%s\\%02x_%d.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
+			_stprintf(szBuf, _T("%s\\%02x_%d.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
 		}
 	}
 
@@ -2189,10 +2189,10 @@ IPicture* LoadMAP(MAP_INFORMATION mapInfo, _TCHAR *szExtension)
 	}
 	if (!PathFileExists(cFilename)) {//ファイルが存在しなかった時
 		if (mapInfo.AreaID >= 0x0100) {//SubIDの無いファイルを読み込む
-			sprintf(szBuf, _T("%s\\%x.%s"), g_MapPath, mapInfo.AreaID, szExtension);
+			_stprintf(szBuf, _T("%s\\%x.%s"), g_MapPath, mapInfo.AreaID, szExtension);
 		}
 		else {
-			sprintf(szBuf, _T("%s\\%02x.%s"), g_MapPath, mapInfo.AreaID, szExtension);
+			_stprintf(szBuf, _T("%s\\%02x.%s"), g_MapPath, mapInfo.AreaID, szExtension);
 		}
 		if (0 == GetFullPathName(szBuf, sizeof(cFilename) / sizeof(_TCHAR), cFilename, NULL)) {
 			return 0;
@@ -2200,7 +2200,7 @@ IPicture* LoadMAP(MAP_INFORMATION mapInfo, _TCHAR *szExtension)
 	}
 
 #ifndef UNICODE//ユニコード文字列に変換
-	mbstowcs(wcFilename, cFilename, strlen(cFilename) + 1);
+	mbstowcs(wcFilename, cFilename, _tcslen(cFilename) + 1);
 #else//元々ユニコードなのでコピーするだけ
 	wcscpy(wcFilename, cFilename);
 #endif
@@ -2461,7 +2461,7 @@ INFORMATION GetNPCInfo(int id)
 #ifdef UNICODE
 		mbstowcs(info.name, &dump[NPC_MEM.Name], sizeof(info.name) / sizeof(_TCHAR) - 1);
 #else
-		strcpy(info.name, &dump[NPC_MEM.NAME]);
+		_tcscpy(info.name, &dump[NPC_MEM.NAME]);
 #endif
 		info.name[NPCLIST_ID] = _T('\0');//最大文字列対策
 		memcpy(&info.viewAddress, &dump[NPC_MEM.ViewAddress], sizeof(DWORD));//0.47で変更

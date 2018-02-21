@@ -186,8 +186,8 @@ const BYTE constNpcMemLockOnSearchPattern[PATTERN_MAX_RANGE] = "FFFFFFFF";
 
 #ifdef HOOK_INFO
 //ffhookの置換アドレス
-const BYTE constFfhook_logPattern[PATTERN_MAX_RANGE]   = "E8........8B470C8B5424184089470C84DB742E";
-const BYTE constFfhook_cmdPattern[PATTERN_MAX_RANGE]   = "............8B8C24080400005556578D84241002000068000200005033ED51";//変更
+const BYTE constFfhook_logPattern[PATTERN_MAX_RANGE]   = "E8........8B470C8B5424184089470C84DB742E";	//2017.4.4
+const BYTE constFfhook_cmdPattern[PATTERN_MAX_RANGE]   = "............8B8C24080400005556578D84241002000068000200005033ED51";	//2017.4.4
 #endif
 
 const BYTE constCameraPattern[PATTERN_MAX_RANGE]       = "89.424..E8........8B0D........68xxxxxxxx6A";//変更
