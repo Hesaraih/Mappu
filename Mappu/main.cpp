@@ -278,6 +278,16 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			ErrorNum(hWnd);
 			return 0;
 		}
+		//SETTINGダイアログ作成(オフセット読み込み後に処理する)
+		hSETTING = CreateDialog((HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE), MAKEINTRESOURCE(IDD_DIALOG_SETTING), hWnd, (DLGPROC)WndProcSETTING);
+		if (!hSETTING) {
+			g_ErrorCode = 6;
+			ErrorNum(hWnd);
+		}
+		else {
+			//初期表示
+			ShowWindow(hSETTING, SW_HIDE);
+		}
 
 		//iniファイルからオフセット読み込み
 		if (ReadIniFiles(hWnd, STRING_INI) != 1) {
@@ -1363,16 +1373,12 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			break;
 
 		case IDM_SETTINGS:
-			//SETTINGダイアログ作成(オフセット読み込み後に処理する)
-			hSETTING = CreateDialog((HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE), MAKEINTRESOURCE(IDD_DIALOG_SETTING), hWnd, (DLGPROC)WndProcSETTING);
-			if (!hSETTING) {
-				g_ErrorCode = 1590;
-				ErrorNum(hWnd);
+			if (hSETTING) {
+				ShowWindow(hSETTING, SW_SHOW);
 			}
-			ShowWindow(hSETTING, SW_SHOW);
 			break;
-		case IDM_VERSION: {//0.50で追加
-						   //バージョンリソースから情報取得
+		case IDM_VERSION: {
+			//バージョンリソースから情報取得
 			_TCHAR szFileName[MAX_PATH];
 			if (GetModuleFileName(NULL, szFileName, sizeof(szFileName) / sizeof(_TCHAR) - 1) == 0) {
 				g_ErrorCode = 1600;
@@ -1383,7 +1389,7 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			pbyVersionInfo = (BYTE*)malloc(dwBlockSize);
 			if (pbyVersionInfo) {
 				if (GetFileVersionInfo(szFileName, 0, dwBlockSize, (LPVOID)pbyVersionInfo) == FALSE) {
-					MessageBox(hWnd, _T("Cant get VersionInfo"), MAPPU_VER, MB_ICONERROR);
+					MessageBox(hWnd, _T("Can't get VersionInfo"), MAPPU_VER, MB_ICONERROR);
 				}
 				else {
 					struct {
@@ -1405,7 +1411,8 @@ LRESULT CALLBACK WndProcMAP(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				}
 			}
 			free(pbyVersionInfo);
-			break; }
+			break;
+		}
 
 		case IDM_EXIT:
 			SendMessage(hWnd, WM_CLOSE, 0, 0);

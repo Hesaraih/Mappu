@@ -87,7 +87,7 @@ int GetProcess(PROCESSENTRY32 *pe32,int iProcessCounter)
 	//pol.exeのプロセスを取得
 	if(Process32First(hSnapshot,pe32)){
 		do{
-			if(wcscmp(STRING_POL,pe32->szExeFile) == 0){
+			if(_tcscmp (STRING_POL,pe32->szExeFile) == 0){
 				iProcessCounter--;
 				if(iProcessCounter <=0){
 					iRet = 0;
@@ -123,7 +123,7 @@ int GetModule(MODULEENTRY32 *mo32,PROCESSENTRY32 pe32)
 
 	if(Module32First(hModuleSnapshot,mo32)){
 		do{
-			if(wcscmp(STRING_DLL,mo32->szModule) == 0){
+			if(_tcscmp (STRING_DLL,mo32->szModule) == 0){
 				iFlag = 1;
 				break;
 			}
@@ -256,7 +256,7 @@ int GetPCNameFromPid(DWORD dwPID,_TCHAR *szPCName,int nSize)
 		return -2;
 	}
 
-	if(!(wcslen(szPCName) >= 3 && szPCName[0] >= 'A' && szPCName[0] <= 'Z')){
+	if(!(_tcslen(szPCName) >= 3 && szPCName[0] >= 'A' && szPCName[0] <= 'Z')){
 		return -3;
 	}
 
@@ -292,7 +292,7 @@ int GetPCNameFromHandle(HANDLE hPol,DWORD dwDllAddr,int pos,_TCHAR* szPCName,int
 //初期PIDを選択 0.43で追加
 int SetInitPID(HWND hWnd,_TCHAR* str)
 {
-	if(wcslen(str) == 0)return -1;
+	if(_tcslen(str) == 0)return -1;
 
 	int nPIDcount = SendMessage(hWnd,CB_GETCOUNT,0,0);
 	_TCHAR szText[0x20];
@@ -301,7 +301,7 @@ int SetInitPID(HWND hWnd,_TCHAR* str)
 
 	for(int i=0;i<nPIDcount;i++){
 		SendMessage(hWnd,CB_GETLBTEXT,i,(LPARAM)szText);
-		if(wcscmp(str,szText) == 0){
+		if(_tcscmp (str,szText) == 0){
 			SendMessage(hWnd,CB_SETCURSEL,i,0);
 			SendMessage(GetParent(hWnd),WM_COMMAND,IDC_COMBO_PID|(CBN_SELCHANGE<<16),0);
 			break;

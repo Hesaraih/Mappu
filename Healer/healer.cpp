@@ -10,7 +10,7 @@
 #define _UNICODE
 #endif
 
-//swprintf及びwsprintfを_stprintfに0.34で変更
+//swprintf及び_stprintfを_stprintfに0.34で変更
 
 /*ToDo
 */
@@ -116,7 +116,7 @@ int SearchRecastNo(int);//メイン用
 int SearchRecastNo_Log(int);//Log用
 PARTYINFORMATION GetPartyInfo(int);
 PARTYINFORMATION GetNPCInfo(int);
-int ReadINI(HWND, _TCHAR*);
+int ReadINI(HWND, LPCTSTR);
 int MakeComboFromSection(HWND);
 int UpdateList_Reserved(HWND, int);//0.12で追加
 PARTYINFORMATION GetCharInfo(_TCHAR*);//0.12で追加
@@ -229,7 +229,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR lpCmdLine, int)
 			COPYDATASTRUCT cp;
 			ZeroMemory(&cp, sizeof(COPYDATASTRUCT));
 			cp.lpData = szCmd;
-			cp.cbData = (wcslen(szCmd) + 1) * sizeof(_TCHAR);
+			cp.cbData = (_tcslen(szCmd) + 1) * sizeof(_TCHAR);
 #ifdef _DEBUG
 			//MessageBox(NULL,szCmd,_T("wcs"),MB_OK);
 			//MessageBoxA(NULL,lpCmdLine,"mbs",MB_OK);
@@ -298,7 +298,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		const _TCHAR szColumn[][0x10] = { _T("名前"),_T("Haste"),_T("Refresh"),_T("User"),_T("User2"),_T("User3"),_T("HP"),_T("HP%"),_T("MP"),_T("MP%"),_T("TP"),_T("優先度"),_T("距離") };//0.22で変更
 		col.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
 		col.fmt = LVCFMT_LEFT;
-		for (int i = 0; i<sizeof(szColumn) / sizeof(szColumn[0]); i++) {//0.15で変更
+		for (int i = 0; i < sizeof(szColumn) / sizeof(szColumn[0]); i++) {//0.15で変更
 			col.cx = g_ColumnCx[i];
 			col.fmt = LVCFMT_RIGHT;
 			col.iSubItem = i;
@@ -366,7 +366,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		_TCHAR szFileName[MAX_PATH];
 		HANDLE hFile;
 		GetModuleFileName(NULL, szFileName, sizeof(szFileName) / sizeof(_TCHAR) - 1);
-		if (wcslen(szFileName) <= 5) {
+		if (_tcslen(szFileName) <= 5) {
 			PostMessage(hWnd, WM_CLOSE, NULL, NULL);
 		}
 		else {
@@ -799,7 +799,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		CMD_QUEUE *buf_que, *new_que;
 		_TCHAR *szSrcCmd;
 		szSrcCmd = (_TCHAR*)copydata->lpData;
-		if (wcslen(szSrcCmd) != 0 && *szSrcCmd == '/') {
+		if (_tcslen(szSrcCmd) != 0 && *szSrcCmd == '/') {
 			WaitForSingleObject(hEvent, 1000);//0.142bで変更
 			ResetEvent(hEvent);//0.13bで追加
 			buf_que = cqueue;
@@ -808,7 +808,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			wcscpy(new_que->szCmd, szSrcCmd);
 			while (buf_que->nextpointer != NULL) {
 				buf_que = buf_que->nextpointer;
-				if (wcscmp(buf_que->szCmd, new_que->szCmd) == 0) {//0.13bで追加
+				if (_tcscmp (buf_que->szCmd, new_que->szCmd) == 0) {//0.13bで追加
 					SetEvent(hEvent);//0.13bで追加
 					free(new_que);//0.40で追加
 					return 0;
@@ -817,7 +817,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			buf_que->nextpointer = new_que;
 			SetEvent(hEvent);//0.13bで追加
 		}
-		else if (wcslen(szSrcCmd) != 0 && wcscmp(szSrcCmd, _T("run")) == 0) {//0.38で追加
+		else if (_tcslen(szSrcCmd) != 0 && _tcscmp (szSrcCmd, _T("run")) == 0) {//0.38で追加
 			if (!IsWindow(hReserved)) {
 				SendMessage(hWnd, WM_COMMAND, IDC_BUTTON_START, 1);//1がrun
 			}
@@ -825,7 +825,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				SendMessage(hReserved, WM_COMMAND, IDC_BUTTON_RESERVED_START, 1);
 			}
 		}
-		else if (wcslen(szSrcCmd) != 0 && wcscmp(szSrcCmd, _T("stop")) == 0) {//0.38で追加
+		else if (_tcslen(szSrcCmd) != 0 && _tcscmp (szSrcCmd, _T("stop")) == 0) {//0.38で追加
 			if (!IsWindow(hReserved)) {
 				SendMessage(hWnd, WM_COMMAND, IDC_BUTTON_START, 2);//2がstop
 			}
@@ -903,7 +903,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		break;
 
 	case WM_CHANGE_HEADER_NAME://0.41で追加
-		if (wcslen((_TCHAR*)wp) != 0) {
+		if (_tcslen((_TCHAR*)wp) != 0) {
 			LVCOLUMN col;
 			ZeroMemory(&col, sizeof(col));
 			col.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
@@ -1053,13 +1053,13 @@ HWND MakeToolTips(HWND hWnd, LONG ID)
 		ti.rect.left = lWidth;
 		Header_GetItem(ListView_GetHeader(GetDlgItem(hWnd, ID)), i, &hdi);
 		ti.rect.right = lWidth + hdi.cxy;
-		ti.lpszText = _T("-");
-		if (i == 1 && wcslen(g_HasteSetting.szCmd)) {//0.32で変更
+		_stprintf(ti.lpszText, _T("-"));
+		if (i == 1 && _tcslen(g_HasteSetting.szCmd)) {//0.32で変更
 			if (g_HasteSetting.mode == 0x01) {//0.33で変更
 				_stprintf(szBuf, _T("対象が戦闘中の時だけ実行\n"));
 			}
 
-			if (wcslen(g_HasteSetting.szPreJa)) {
+			if (_tcslen(g_HasteSetting.szPreJa)) {
 				_stprintf(szText, _T("%s%s\n%s"), szBuf, g_HasteSetting.szPreJa, g_HasteSetting.szCmd);
 				ti.lpszText = szText;
 			}
@@ -1068,12 +1068,12 @@ HWND MakeToolTips(HWND hWnd, LONG ID)
 				ti.lpszText = szText;
 			}
 		}
-		else if (i == 2 && wcslen(g_RefreshSetting.szCmd)) {//0.32で変更
+		else if (i == 2 && _tcslen(g_RefreshSetting.szCmd)) {//0.32で変更
 			if (g_RefreshSetting.mode == 0x01) {//0.33で変更
 				_stprintf(szBuf, _T("対象が戦闘中の時だけ実行\n"));
 			}
 
-			if (wcslen(g_RefreshSetting.szPreJa)) {
+			if (_tcslen(g_RefreshSetting.szPreJa)) {
 				_stprintf(szText, _T("%s%s\n%s"), szBuf, g_RefreshSetting.szPreJa, g_RefreshSetting.szCmd);
 				ti.lpszText = szText;
 			}
@@ -1082,12 +1082,12 @@ HWND MakeToolTips(HWND hWnd, LONG ID)
 				ti.lpszText = szText;
 			}
 		}
-		else if (i == 3 && wcslen(g_UserSetting[0].szCmd)) {//0.31で変更
+		else if (i == 3 && _tcslen(g_UserSetting[0].szCmd)) {//0.31で変更
 			if (g_UserSetting[0].mode == 0x01) {//0.32で追加
 				_stprintf(szBuf, _T("対象が戦闘中の時だけ実行\n"));
 			}
 
-			if (wcslen(g_UserSetting[0].szPreJa)) {
+			if (_tcslen(g_UserSetting[0].szPreJa)) {
 				_stprintf(szText, _T("%s%s\n%s"), szBuf, g_UserSetting[0].szPreJa, g_UserSetting[0].szCmd);//0.32で変更
 				ti.lpszText = szText;
 			}
@@ -1096,12 +1096,12 @@ HWND MakeToolTips(HWND hWnd, LONG ID)
 				ti.lpszText = szText;
 			}
 		}
-		else if (i == 4 && wcslen(g_UserSetting[1].szCmd)) {
+		else if (i == 4 && _tcslen(g_UserSetting[1].szCmd)) {
 			if (g_UserSetting[1].mode == 0x01) {//0.32で追加
 				_stprintf(szBuf, _T("対象が戦闘中の時だけ実行\n"));
 			}
 
-			if (wcslen(g_UserSetting[1].szPreJa)) {
+			if (_tcslen(g_UserSetting[1].szPreJa)) {
 				_stprintf(szText, _T("%s%s\n%s"), szBuf, g_UserSetting[1].szPreJa, g_UserSetting[1].szCmd);//0.32で変更
 				ti.lpszText = szText;
 			}
@@ -1110,12 +1110,12 @@ HWND MakeToolTips(HWND hWnd, LONG ID)
 				ti.lpszText = szText;
 			}
 		}
-		else if (i == 5 && wcslen(g_UserSetting[2].szCmd)) {
+		else if (i == 5 && _tcslen(g_UserSetting[2].szCmd)) {
 			if (g_UserSetting[2].mode == 0x01) {//0.32で追加
 				_stprintf(szBuf, _T("対象が戦闘中の時だけ実行\n"));
 			}
 
-			if (wcslen(g_UserSetting[2].szPreJa)) {
+			if (_tcslen(g_UserSetting[2].szPreJa)) {
 				_stprintf(szText, _T("%s%s\n%s"), szBuf, g_UserSetting[2].szPreJa, g_UserSetting[2].szCmd);//0.32で変更
 				ti.lpszText = szText;
 			}
@@ -1153,9 +1153,8 @@ void UpdateToolTips(HWND hWnd, HWND hTool, LONG ID)
 		ti.rect.left = lWidth;
 		Header_GetItem(ListView_GetHeader(GetDlgItem(hWnd, ID)), i, &hdi);
 		ti.rect.right = lWidth + hdi.cxy;
-		ti.lpszText = _T("-");
-
-		if (i == 1 && wcslen(g_HasteSetting.szCmd)) {//0.32で変更
+		_stprintf(ti.lpszText, _T("-"));
+		if (i == 1 && _tcslen(g_HasteSetting.szCmd)) {//0.32で変更
 			if (g_HasteSetting.mode == 0x01) {
 				_stprintf(szText, _T("対象が戦闘中の時だけ実行\n%s"), g_HasteSetting.szCmd);
 			}
@@ -1164,7 +1163,7 @@ void UpdateToolTips(HWND hWnd, HWND hTool, LONG ID)
 			}
 			ti.lpszText = szText;
 		}
-		else if (i == 2 && wcslen(g_RefreshSetting.szCmd)) {//0.32で変更
+		else if (i == 2 && _tcslen(g_RefreshSetting.szCmd)) {//0.32で変更
 			if (g_RefreshSetting.mode == 0x01) {
 				_stprintf(szText, _T("対象が戦闘中の時だけ実行\n%s"), g_RefreshSetting.szCmd);
 			}
@@ -1173,12 +1172,12 @@ void UpdateToolTips(HWND hWnd, HWND hTool, LONG ID)
 			}
 			ti.lpszText = szText;
 		}
-		else if (i == 3 && wcslen(g_UserSetting[0].szCmd)) {//0.31で変更
+		else if (i == 3 && _tcslen(g_UserSetting[0].szCmd)) {//0.31で変更
 			if (g_UserSetting[0].mode == 0x01) {//0.32で追加
 				_stprintf(szBuf, _T("対象が戦闘中の時だけ実行\n"));
 			}
 
-			if (wcslen(g_UserSetting[0].szPreJa)) {
+			if (_tcslen(g_UserSetting[0].szPreJa)) {
 				_stprintf(szText, _T("%s%s\n%s"), szBuf, g_UserSetting[0].szPreJa, g_UserSetting[0].szCmd);//0.32で変更
 				ti.lpszText = szText;
 			}
@@ -1187,12 +1186,12 @@ void UpdateToolTips(HWND hWnd, HWND hTool, LONG ID)
 				ti.lpszText = szText;
 			}
 		}
-		else if (i == 4 && wcslen(g_UserSetting[1].szCmd)) {
+		else if (i == 4 && _tcslen(g_UserSetting[1].szCmd)) {
 			if (g_UserSetting[1].mode == 0x01) {//0.32で追加
 				_stprintf(szBuf, _T("対象が戦闘中の時だけ実行\n"));
 			}
 
-			if (wcslen(g_UserSetting[1].szPreJa)) {
+			if (_tcslen(g_UserSetting[1].szPreJa)) {
 				_stprintf(szText, _T("%s%s\n%s"), szBuf, g_UserSetting[1].szPreJa, g_UserSetting[1].szCmd);//0.32で変更
 				ti.lpszText = szText;
 			}
@@ -1201,12 +1200,12 @@ void UpdateToolTips(HWND hWnd, HWND hTool, LONG ID)
 				ti.lpszText = szText;
 			}
 		}
-		else if (i == 5 && wcslen(g_UserSetting[2].szCmd)) {
+		else if (i == 5 && _tcslen(g_UserSetting[2].szCmd)) {
 			if (g_UserSetting[2].mode == 0x01) {//0.32で追加
 				_stprintf(szBuf, _T("対象が戦闘中の時だけ実行\n"));
 			}
 
-			if (wcslen(g_UserSetting[2].szPreJa)) {
+			if (_tcslen(g_UserSetting[2].szPreJa)) {
 				_stprintf(szText, _T("%s%s\n%s"), szBuf, g_UserSetting[2].szPreJa, g_UserSetting[2].szCmd);//0.32で変更
 				ti.lpszText = szText;
 			}
@@ -1255,7 +1254,7 @@ void DrawItem(LPDRAWITEMSTRUCT lp)
 		DeleteObject(hBrush);
 	}
 	else {
-		if (wcslen(szItem[COLUMN_DISTANCE]) >= 3 && wcstod(szItem[COLUMN_DISTANCE], NULL) <= (double)g_SpellDistance) {//魔法射程距離内 0.13で変更
+		if (_tcslen(szItem[COLUMN_DISTANCE]) >= 3 && wcstod(szItem[COLUMN_DISTANCE], NULL) <= (double)g_SpellDistance) {//魔法射程距離内 0.13で変更
 			hBrush = CreateSolidBrush(RGB(255, 255, 192));
 			FillRect(hDC, &rcItem[COLUMN_DISTANCE], hBrush);//距離 0.20で変更
 			DeleteObject(hBrush);//0.20で変更
@@ -1274,7 +1273,7 @@ void DrawItem(LPDRAWITEMSTRUCT lp)
 			hBrush = CreateSolidBrush(RGB(153, 255, 255));
 		}
 		FillRect(hDC, &rcMP, hBrush);//MP
-		if (wcslen(szItem[COLUMN_DISTANCE]) >= 3 && wcstod(szItem[COLUMN_DISTANCE], NULL) <= (double)g_SpellDistance) {//魔法射程距離内 0.13で変更
+		if (_tcslen(szItem[COLUMN_DISTANCE]) >= 3 && wcstod(szItem[COLUMN_DISTANCE], NULL) <= (double)g_SpellDistance) {//魔法射程距離内 0.13で変更
 			rcMP.bottom = rcItem[COLUMN_NAME].bottom;
 			rcMP.top = rcItem[COLUMN_NAME].top + (rcItem[COLUMN_NAME].bottom - rcItem[COLUMN_NAME].top) / 2;
 			rcMP.left = rcItem[COLUMN_NAME].left;
@@ -1296,7 +1295,7 @@ void DrawItem(LPDRAWITEMSTRUCT lp)
 			hBrush = CreateSolidBrush(RGB(1, 255, 31));
 		}
 		FillRect(hDC, &rcHP, hBrush);//HP
-		if (wcslen(szItem[COLUMN_DISTANCE]) >= 3 && wcstod(szItem[COLUMN_DISTANCE], NULL) <= (double)g_SpellDistance) {//魔法射程距離内 0.13で変更
+		if (_tcslen(szItem[COLUMN_DISTANCE]) >= 3 && wcstod(szItem[COLUMN_DISTANCE], NULL) <= (double)g_SpellDistance) {//魔法射程距離内 0.13で変更
 			rcHP.bottom = rcItem[COLUMN_NAME].top + (rcItem[COLUMN_NAME].bottom - rcItem[COLUMN_NAME].top) * 3 / 4;
 			rcHP.top = rcItem[COLUMN_NAME].top;
 			rcHP.left = rcItem[COLUMN_NAME].left;
@@ -1331,32 +1330,32 @@ void DrawItem(LPDRAWITEMSTRUCT lp)
 	//コントロールを描画
 	HTHEME hTheme = OpenThemeData(hList, _T("BUTTON"));
 	if (hTheme) {
-		if (wcscmp(szItem[COLUMN_HASTE], _T("1")) == 0) {
+		if (_tcscmp (szItem[COLUMN_HASTE], _T("1")) == 0) {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_DEFAULTED, &rcItem[COLUMN_HASTE], NULL);
 		}
 		else {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_NORMAL, &rcItem[COLUMN_HASTE], NULL);
 		}
-		if (wcscmp(szItem[COLUMN_REFRESH], _T("1")) == 0) {
+		if (_tcscmp (szItem[COLUMN_REFRESH], _T("1")) == 0) {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_DEFAULTED, &rcItem[COLUMN_REFRESH], NULL);
 		}
 		else {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_NORMAL, &rcItem[COLUMN_REFRESH], NULL);
 		}
-		if (wcscmp(szItem[COLUMN_USER], _T("1")) == 0) {
+		if (_tcscmp (szItem[COLUMN_USER], _T("1")) == 0) {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_DEFAULTED, &rcItem[COLUMN_USER], NULL);
 		}
 		else {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_NORMAL, &rcItem[COLUMN_USER], NULL);
 		}
 		//0.22で追加
-		if (wcscmp(szItem[COLUMN_USER2], _T("1")) == 0) {
+		if (_tcscmp (szItem[COLUMN_USER2], _T("1")) == 0) {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_DEFAULTED, &rcItem[COLUMN_USER2], NULL);
 		}
 		else {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_NORMAL, &rcItem[COLUMN_USER2], NULL);
 		}
-		if (wcscmp(szItem[COLUMN_USER3], _T("1")) == 0) {
+		if (_tcscmp (szItem[COLUMN_USER3], _T("1")) == 0) {
 			DrawThemeBackground(hTheme, hDC, BP_CHECKBOX, PBS_DEFAULTED, &rcItem[COLUMN_USER3], NULL);
 		}
 		else {
@@ -1405,20 +1404,22 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		nItem = ListView_GetNextItem(hWnd, nItem, LVNI_SELECTED);
 
 		item.mask = LVIF_TEXT;
-		item.pszText = _T("");//初期化
+		_stprintf(item.pszText, _T(""));//初期化
+
 
 		if (wp == 'h' || wp == 'H') {
 			ListView_GetItemText(hWnd, nItem, COLUMN_HASTE, szText, sizeof(szText) / sizeof(_TCHAR));
-			if (wcscmp(szText, _T("0")) == 0) {
+			if (_tcscmp (szText, _T("0")) == 0) {
 				ListView_SetItemText(hWnd, nItem, COLUMN_HASTE, _T("1"));
 			}
 			else {
+				_stprintf(szText, _T("0"));
 				ListView_SetItemText(hWnd, nItem, COLUMN_HASTE, _T("0"));
 			}
 		}
 		else if (wp == 'r' || wp == 'R') {
 			ListView_GetItemText(hWnd, nItem, COLUMN_REFRESH, szText, sizeof(szText) / sizeof(_TCHAR));
-			if (wcscmp(szText, _T("0")) == 0) {
+			if (_tcscmp (szText, _T("0")) == 0) {
 				ListView_SetItemText(hWnd, nItem, COLUMN_REFRESH, _T("1"));
 			}
 			else {
@@ -1427,7 +1428,7 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		else if (wp == 'u' || wp == 'U') {
 			ListView_GetItemText(hWnd, nItem, COLUMN_USER, szText, sizeof(szText) / sizeof(_TCHAR));
-			if (wcscmp(szText, _T("0")) == 0) {
+			if (_tcscmp (szText, _T("0")) == 0) {
 				ListView_SetItemText(hWnd, nItem, COLUMN_USER, _T("1"));
 			}
 			else {
@@ -1436,7 +1437,7 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		else if (wp == 'i' || wp == 'I') {//0.22で追加
 			ListView_GetItemText(hWnd, nItem, COLUMN_USER2, szText, sizeof(szText) / sizeof(_TCHAR));
-			if (wcscmp(szText, _T("0")) == 0) {
+			if (_tcscmp (szText, _T("0")) == 0) {
 				ListView_SetItemText(hWnd, nItem, COLUMN_USER2, _T("1"));
 			}
 			else {
@@ -1445,7 +1446,7 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		else if (wp == 'o' || wp == 'O') {//0.22で追加
 			ListView_GetItemText(hWnd, nItem, COLUMN_USER3, szText, sizeof(szText) / sizeof(_TCHAR));
-			if (wcscmp(szText, _T("0")) == 0) {
+			if (_tcscmp (szText, _T("0")) == 0) {
 				ListView_SetItemText(hWnd, nItem, COLUMN_USER3, _T("1"));
 			}
 			else {
@@ -1478,10 +1479,10 @@ LRESULT CALLBACK WndProcSubClass(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		if ((lvinfo.flags & LVHT_ONITEM) != 0 && (lvinfo.iSubItem >= COLUMN_HASTE && lvinfo.iSubItem <= COLUMN_USER3)) {//0.22で変更
 			_TCHAR szItem[0x20];
 			ListView_GetItemText(hWnd, lvinfo.iItem, lvinfo.iSubItem, szItem, sizeof(szItem) / sizeof(_TCHAR));
-			if (wcscmp(szItem, _T("0")) == 0) {
+			if (_tcscmp (szItem, _T("0")) == 0) {
 				ListView_SetItemText(hWnd, lvinfo.iItem, lvinfo.iSubItem, _T("1"));
 			}
-			else if (wcscmp(szItem, _T("1")) == 0) {
+			else if (_tcscmp (szItem, _T("1")) == 0) {
 				ListView_SetItemText(hWnd, lvinfo.iItem, lvinfo.iSubItem, _T("0"));
 			}
 			else {
@@ -1602,7 +1603,7 @@ int UpdateList(HWND hWnd, int nStart) {
 		if (pInfo[nPos].code == 0)nPTmems++;//0.20で追加
 	}
 #ifdef _DEBUG
-	wsprintf(pInfo[1].name, _T("_DebugName"));
+	_stprintf(pInfo[1].name, _T("_DebugName"));
 #endif
 
 	//エリアチェンジ等でパーティメンバーの情報が飛んでる時 0.20で追加
@@ -1635,7 +1636,7 @@ int UpdateList(HWND hWnd, int nStart) {
 	}
 
 	//稀に自分の情報が無い時がある
-	if (wcslen(pInfo[0].name) == 0)return 0;
+	if (_tcslen(pInfo[0].name) == 0)return 0;
 
 	//リストの数を取得
 	nItemCount = ListView_GetItemCount(GetDlgItem(hWnd, IDC_LIST_PC));
@@ -1645,7 +1646,7 @@ int UpdateList(HWND hWnd, int nStart) {
 		stcDeleteflag[i]++;//削除フラグ 0.24で変更 カウントアップして一定の数値以上で削除(勝手にリストリセット対策)
 		ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_PC), i, COLUMN_NAME, szName, sizeof(szName) / sizeof(_TCHAR) - 1);
 		for (int nPos = 0; nPos<18; nPos++) {
-			if (wcscmp(szName, pInfo[nPos].name) == 0 && pInfo[nPos].listnum >= 100) {
+			if (_tcscmp (szName, pInfo[nPos].name) == 0 && pInfo[nPos].listnum >= 100) {
 				//まだリストが更新されてないPC
 				stcDeleteflag[i] = 0;//削除しない
 				pInfo[nPos].listnum = i;
@@ -1717,7 +1718,7 @@ int UpdateList(HWND hWnd, int nStart) {
 
 				//優先度を取得&優先度ごとの最小HPPキャラクターの情報を取得
 				ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_PC), pInfo[nPos].listnum, COLUMN_PRIORITY, szPriority, sizeof(szPriority) / sizeof(_TCHAR) - 1);
-				if (wcslen(szPriority) == 0) {
+				if (_tcslen(szPriority) == 0) {
 					//新しく追加されたPC
 					//自動セット 0.20で追加
 					_TCHAR szFullPathName[MAX_PATH];
@@ -1798,15 +1799,15 @@ int UpdateList(HWND hWnd, int nStart) {
 					_TCHAR szBuf[0x10];
 					char cFlag = 0;
 					ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_PC), pInfo[nPos].listnum, COLUMN_HASTE, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-					if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_HASTE;
+					if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_HASTE;
 					ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_PC), pInfo[nPos].listnum, COLUMN_REFRESH, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-					if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_REFRESH;
+					if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_REFRESH;
 					ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_PC), pInfo[nPos].listnum, COLUMN_USER, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-					if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_USER;
+					if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_USER;
 					ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_PC), pInfo[nPos].listnum, COLUMN_USER2, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);//0.22で追加
-					if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_USER2;//0.22で追加
+					if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_USER2;//0.22で追加
 					ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_PC), pInfo[nPos].listnum, COLUMN_USER3, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);//0.22で追加
-					if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_USER3;//0.22で追加
+					if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_USER3;//0.22で追加
 					chHasteRefreshFlag[nPos] = cFlag;
 				}
 			}
@@ -1823,7 +1824,7 @@ int UpdateList(HWND hWnd, int nStart) {
 	//パーティメンバーが追加された場合は更新後に追加
 	char nowlistnum = 0;//現在のリスト番号
 	for (int nPos = 0; nPos<18; nPos++) {
-		if (pInfo[nPos].code == 0 && pInfo[nPos].listnum >= 100 && wcslen(pInfo[nPos].name) >= 3) {
+		if (pInfo[nPos].code == 0 && pInfo[nPos].listnum >= 100 && _tcslen(pInfo[nPos].name) >= 3) {
 			item.mask = LVIF_TEXT;
 			item.iItem = nowlistnum;//行
 			item.iSubItem = 0;//列
@@ -1882,7 +1883,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			if (byteMagicNo >= 0 && byteMagicNo <= 5) {
 				//ケアル
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_CureSetting[byteMagicNo].szEquipAfter[nEquip])) {
+					if (_tcslen(g_CureSetting[byteMagicNo].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_CureSetting[byteMagicNo].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -1891,7 +1892,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 6) {
 				//ヘイスト
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_HasteSetting.szEquipAfter[nEquip])) {
+					if (_tcslen(g_HasteSetting.szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_HasteSetting.szEquipAfter[nEquip]);
 					}
 					else break;
@@ -1900,7 +1901,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 7) {
 				//リフレ
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_RefreshSetting.szEquipAfter[nEquip])) {
+					if (_tcslen(g_RefreshSetting.szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_RefreshSetting.szEquipAfter[nEquip]);
 					}
 					else break;
@@ -1909,7 +1910,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 8) {
 				//ユーザ
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[0].szEquipAfter[nEquip])) {//0.22で変更
+					if (_tcslen(g_UserSetting[0].szEquipAfter[nEquip])) {//0.22で変更
 						ffhook_putcmd(g_UserSetting[0].szEquipAfter[nEquip]);//0.22で変更
 					}
 					else break;
@@ -1918,7 +1919,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 9) {
 				//ユーザ2 0.22で追加
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[1].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[1].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[1].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -1927,7 +1928,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 10) {
 				//ユーザ3 0.22で追加
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[2].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[2].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[2].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -1968,7 +1969,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			if (byteMagicNo >= 0 && byteMagicNo <= 5) {
 				//ケアル
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_CureSetting[byteMagicNo].szEquipAfter[nEquip])) {
+					if (_tcslen(g_CureSetting[byteMagicNo].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_CureSetting[byteMagicNo].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -1977,7 +1978,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 6) {
 				//ヘイスト
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_HasteSetting.szEquipAfter[nEquip])) {
+					if (_tcslen(g_HasteSetting.szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_HasteSetting.szEquipAfter[nEquip]);
 					}
 					else break;
@@ -1986,7 +1987,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 7) {
 				//リフレ
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_RefreshSetting.szEquipAfter[nEquip])) {
+					if (_tcslen(g_RefreshSetting.szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_RefreshSetting.szEquipAfter[nEquip]);
 					}
 					else break;
@@ -1995,7 +1996,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 8) {
 				//ユーザ
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[0].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[0].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[0].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -2004,7 +2005,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 9) {
 				//ユーザ2
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[1].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[1].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[1].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -2013,7 +2014,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			else if (byteMagicNo == 10) {
 				//ユーザ3
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[2].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[2].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[2].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -2062,9 +2063,9 @@ int UpdateList(HWND hWnd, int nStart) {
 					//HPがg_DeltaHppPriority未満の時 0.13で変更 0.25で変更
 					//魔法を選択
 					for (int curenum = 5; curenum >= 0; curenum--) {
-						if (priority[j].DeltaHP >= g_CureSetting[curenum].threshold && wcslen(g_CureSetting[curenum].szCmd) != 0 && dwRecastTime[curenum] <= dwNowTime && GetRecast(g_CureSetting[curenum].recast_no) == 0 && myInfo.mp >= g_CureSetting[curenum].mp) {//0.39で変更
+						if (priority[j].DeltaHP >= g_CureSetting[curenum].threshold && _tcslen(g_CureSetting[curenum].szCmd) != 0 && dwRecastTime[curenum] <= dwNowTime && GetRecast(g_CureSetting[curenum].recast_no) == 0 && myInfo.mp >= g_CureSetting[curenum].mp) {//0.39で変更
 							ZeroMemory(szCmd, sizeof(szCmd));
-							if (wcslen(pInfo[priority[j].Player].name) == 0)break;
+							if (_tcslen(pInfo[priority[j].Player].name) == 0)break;
 							_stprintf(szCmd, _T("%s %s"), g_CureSetting[curenum].szCmd, pInfo[priority[j].Player].name);
 							if (wcsncmp(szCmd, _T("/"), 1) == 0) {//誤爆防止
 								ffhook_putcmd(szCmd);
@@ -2075,7 +2076,7 @@ int UpdateList(HWND hWnd, int nStart) {
 									SearchRecastNo(0);
 								}
 								for (int nEquip = 0; nEquip<9; nEquip++) {//0.19で追加 0.43gで変更
-									if (wcslen(g_CureSetting[curenum].szEquip[nEquip])) {
+									if (_tcslen(g_CureSetting[curenum].szEquip[nEquip])) {
 										ffhook_putcmd(g_CureSetting[curenum].szEquip[nEquip]);
 									}
 									else break;
@@ -2088,7 +2089,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			}
 
 			//ヘイスト　HアイコンのPC
-			if (dwRecastTime[6] <= dwNowTime && wcslen(g_HasteSetting.szCmd) != 0) {
+			if (dwRecastTime[6] <= dwNowTime && _tcslen(g_HasteSetting.szCmd) != 0) {
 				//ヘイストは6番
 				for (int i = 0; i<18; i++) {
 					if (chHasteRefreshFlag[i] & FLAG_HASTE && dwEffectTime[0][i] <= dwNowTime && GetRecast(g_HasteSetting.recast_no) == 0 && myInfo.mp >= g_HasteSetting.mp) {//0.39で変更
@@ -2124,7 +2125,7 @@ int UpdateList(HWND hWnd, int nStart) {
 							}
 
 							for (int nEquip = 0; nEquip<9; nEquip++) {//0.19で追加 0.43gで変更
-								if (wcslen(g_HasteSetting.szEquip[nEquip])) {
+								if (_tcslen(g_HasteSetting.szEquip[nEquip])) {
 									ffhook_putcmd(g_HasteSetting.szEquip[nEquip]);
 								}
 								else break;
@@ -2137,7 +2138,7 @@ int UpdateList(HWND hWnd, int nStart) {
 			}
 
 			//リフレ　RアイコンのPC
-			if (dwRecastTime[7] <= dwNowTime && wcslen(g_RefreshSetting.szCmd) != 0) {
+			if (dwRecastTime[7] <= dwNowTime && _tcslen(g_RefreshSetting.szCmd) != 0) {
 				//リフレは7番
 				for (int i = 0; i<18; i++) {
 					if (chHasteRefreshFlag[i] & FLAG_REFRESH && dwEffectTime[1][i] <= dwNowTime && GetRecast(g_RefreshSetting.recast_no) == 0 && myInfo.mp >= g_RefreshSetting.mp) {//0.39で変更
@@ -2172,7 +2173,7 @@ int UpdateList(HWND hWnd, int nStart) {
 								stbNoRecastMode = 1;
 							}
 							for (int nEquip = 0; nEquip<9; nEquip++) {//0.19で追加 0.43gで変更
-								if (wcslen(g_RefreshSetting.szEquip[nEquip])) {
+								if (_tcslen(g_RefreshSetting.szEquip[nEquip])) {
 									ffhook_putcmd(g_RefreshSetting.szEquip[nEquip]);
 								}
 								else break;
@@ -2186,7 +2187,7 @@ int UpdateList(HWND hWnd, int nStart) {
 
 			for (int nUserNum = 0; nUserNum <= 2; nUserNum++) {
 				//0:USER、1:USER2,2:USER3 0.22で変更
-				if (dwRecastTime[nUserNum + 8] <= dwNowTime && wcslen(g_UserSetting[nUserNum].szCmd) != 0) {//ユーザは8番
+				if (dwRecastTime[nUserNum + 8] <= dwNowTime && _tcslen(g_UserSetting[nUserNum].szCmd) != 0) {//ユーザは8番
 					for (int i = 0; i < 18; i++) {
 						if (chHasteRefreshFlag[i] & (FLAG_USER << nUserNum) && dwEffectTime[nUserNum + 2][i] <= dwNowTime && GetRecast(g_UserSetting[nUserNum].recast_no) == 0 && myInfo.mp >= g_UserSetting[nUserNum].mp) {//0.39で変更
 							if (g_UserSetting[nUserNum].mode == 1) {//User*_MODEをチェック 0.32で追加
@@ -2219,7 +2220,7 @@ int UpdateList(HWND hWnd, int nStart) {
 									stbNoRecastMode = 1;
 								}
 								for (int nEquip = 0; nEquip < 9; nEquip++) {//0.43gで変更
-									if (wcslen(g_UserSetting[nUserNum].szEquip[nEquip])) {
+									if (_tcslen(g_UserSetting[nUserNum].szEquip[nEquip])) {
 										ffhook_putcmd(g_UserSetting[nUserNum].szEquip[nEquip]);
 									}
 									else break;
@@ -2320,7 +2321,7 @@ int SearchRecastNo_Log(int ON)
 		if (0 == ReadProcessMemory(g_polHandle, (const void *)dwAddress, shRecastNow, RECAST_MEM_SIZE * sizeof(short), NULL)) {//0.50dで変更
 			return -14;
 		}
-		for (int i = 1; i<RECAST_MEM_SIZE; i++) {//shRecastはshortで格納されているのでループ回数はshortで割った値
+		for (int i = 1; i < RECAST_MEM_SIZE; i++) {//shRecastはshortで格納されているのでループ回数はshortで割った値
 			if (shRecastPast[i] == 0 && shRecastNow[i] > 0) {
 				RecastNo = i * sizeof(short);//リキャスト番号はオフセットアドレスからの数値なのでshortを掛ける
 				break;
@@ -2447,7 +2448,7 @@ PARTYINFORMATION GetNPCInfo(int id)
 	return info;
 }
 
-int ReadINI(HWND hWnd, TCHAR* szSection)
+int ReadINI(HWND hWnd, LPCTSTR szSection)
 {
 	_TCHAR szBuf[MAX_PATH];
 	_TCHAR szFullPathName[MAX_PATH];
@@ -2460,51 +2461,45 @@ int ReadINI(HWND hWnd, TCHAR* szSection)
 		//[OFFSET]
 		g_Offset.Auto = GetPrivateProfileInt(_T("OFFSET"), _T("AUTO"), 0, szFullPathName);//0.36で追加
 		GetPrivateProfileString(_T("OFFSET"), _T("NPCMAP"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);
-		g_Offset.NpcMap = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.NpcMap = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("OFFSET"), _T("MAP"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.21で追加
-		g_Offset.Map = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.Map = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("OFFSET"), _T("NOWSTA"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);
-		g_Offset.NowSta = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.NowSta = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("OFFSET"), _T("RECAST"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);
-		g_Offset.Recast = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.Recast = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("OFFSET"), _T("CAST"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);
-		g_Offset.Cast = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.Cast = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("OFFSET"), _T("VIEWSTYLE"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);
-		g_Offset.ViewPoint = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.ViewPoint = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("OFFSET"), _T("TARGET"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.17で追加
-		g_Offset.Target = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.Target = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("OFFSET"), _T("NPCLIST"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.28で追加
-		g_Offset.NpcList = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.NpcList = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("OFFSET"), _T("ACTIVITY_INFO"), NULL, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.28で追加
-		g_Offset.ActivityInfo = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.ActivityInfo = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 
 		GetPrivateProfileString(_T("NPC_MEM"), _T("POS_X"), _T("04"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで追加
-		g_Offset.PosX = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.PosX = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("NPC_MEM"), _T("POS_Y"), _T("08"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで追加
-		g_Offset.PosY = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.PosY = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("NPC_MEM"), _T("POS_Z"), _T("0C"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで追加
-		g_Offset.PosZ = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.PosZ = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("NPC_MEM"), _T("RADIAN"), _T("18"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで追加
-		g_Offset.Radian = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.Radian = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("NPC_MEM"), _T("FIXEDID"), _T("78"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで追加
-		g_Offset.FixedId = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.FixedId = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("NPC_MEM"), _T("NAME"), _T("7C"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで追加
-		g_Offset.Name = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.Name = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("NPC_MEM"), _T("HP"), _T("CC"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで追加
-		g_Offset.Hpp = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.Hpp = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 
-												//GetPrivateProfileString(_T("OFFSET"),_T("INRANGE"),_T("115"),szBuf,sizeof(szBuf)/sizeof(_TCHAR)-1,szFullPathName);
-												//GetPrivateProfileString(_T("NPC_MEM"),_T("INRANGE"),_T("115"),szBuf,sizeof(szBuf)/sizeof(_TCHAR)-1,szFullPathName);//0.36で変更
 		GetPrivateProfileString(_T("NPC_MEM"), _T("INRANGE"), _T("119"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで変更
-		g_Offset.Inrange = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
-													//GetPrivateProfileString(_T("OFFSET"),_T("DISTANCE"),_T("AC"),szBuf,sizeof(szBuf)/sizeof(_TCHAR)-1,szFullPathName);//0.17で追加
-													//GetPrivateProfileString(_T("NPC_MEM"),_T("DISTANCE"),_T("AC"),szBuf,sizeof(szBuf)/sizeof(_TCHAR)-1,szFullPathName);//0.36で変更
+		g_Offset.Inrange = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("NPC_MEM"), _T("DISTANCE"), _T("B4"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで変更
-		g_Offset.Distance = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
-													 //GetPrivateProfileString(_T("OFFSET"),_T("STATE"),_T("13C"),szBuf,sizeof(szBuf)/sizeof(_TCHAR)-1,szFullPathName);//0.28で追加
-													 //GetPrivateProfileString(_T("NPC_MEM"),_T("STATE"),_T("13C"),szBuf,sizeof(szBuf)/sizeof(_TCHAR)-1,szFullPathName);//0.36で変更
+		g_Offset.Distance = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 		GetPrivateProfileString(_T("NPC_MEM"), _T("STATE"), _T("144"), szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1, szFullPathName);//0.43hで変更
-		g_Offset.State = wcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
+		g_Offset.State = _tcstoul(szBuf, NULL, 16);//16進数で読み込みを行う
 
 												  //INIT
 		GetPrivateProfileString(_T("INIT"), _T("DEFAULT_PIDNAME"), _T(""), g_szDefaultPIDName, sizeof(g_szDefaultPIDName) / sizeof(_TCHAR) - 1, szFullPathName);//0.43で追加
@@ -2643,7 +2638,7 @@ int ReadINI(HWND hWnd, TCHAR* szSection)
 		}
 
 	}
-	else if (wcscmp(szSection, _T("SECTION")) == 0) {//0.26で追加
+	else if (_tcscmp (szSection, _T("SECTION")) == 0) {//0.26で追加
 		for (int i = 0; i<20; i++) {
 			_stprintf(szBuf, _T("Section%d"), i + 1);
 			GetPrivateProfileString(_T("SECTION"), szBuf, NULL, g_SectionName[i], sizeof(g_SectionName[i]) / sizeof(_TCHAR) - 1, szFullPathName);
@@ -2770,16 +2765,16 @@ int ReadINI(HWND hWnd, TCHAR* szSection)
 	}
 	for (int i = 0; i<6; i++) {//0.19で追加 0.20で変更
 		for (int j = 0; j<9; j++) {
-			if (wcslen(g_CureSetting[i].szEquip[j]) && wcsncmp(g_CureSetting[i].szEquip[j], _T("/equip "), 7))return -1;
-			if (wcslen(g_CureSetting[i].szEquipAfter[j]) && wcsncmp(g_CureSetting[i].szEquipAfter[j], _T("/equip "), 7))return -1;
-			if (wcslen(g_HasteSetting.szEquip[j]) && wcsncmp(g_HasteSetting.szEquip[j], _T("/equip "), 7))return -1;
-			if (wcslen(g_HasteSetting.szEquipAfter[j]) && wcsncmp(g_HasteSetting.szEquipAfter[j], _T("/equip "), 7))return -1;
-			if (wcslen(g_RefreshSetting.szEquip[j]) && wcsncmp(g_RefreshSetting.szEquip[j], _T("/equip "), 7))return -1;
-			if (wcslen(g_RefreshSetting.szEquipAfter[j]) && wcsncmp(g_RefreshSetting.szEquipAfter[j], _T("/equip "), 7))return -1;
+			if (_tcslen(g_CureSetting[i].szEquip[j]) && wcsncmp(g_CureSetting[i].szEquip[j], _T("/equip "), 7))return -1;
+			if (_tcslen(g_CureSetting[i].szEquipAfter[j]) && wcsncmp(g_CureSetting[i].szEquipAfter[j], _T("/equip "), 7))return -1;
+			if (_tcslen(g_HasteSetting.szEquip[j]) && wcsncmp(g_HasteSetting.szEquip[j], _T("/equip "), 7))return -1;
+			if (_tcslen(g_HasteSetting.szEquipAfter[j]) && wcsncmp(g_HasteSetting.szEquipAfter[j], _T("/equip "), 7))return -1;
+			if (_tcslen(g_RefreshSetting.szEquip[j]) && wcsncmp(g_RefreshSetting.szEquip[j], _T("/equip "), 7))return -1;
+			if (_tcslen(g_RefreshSetting.szEquipAfter[j]) && wcsncmp(g_RefreshSetting.szEquipAfter[j], _T("/equip "), 7))return -1;
 			//0.22で変更
 			for (int k = 0; k <= 2; k++) {
-				if (wcslen(g_UserSetting[k].szEquip[j]) && wcsncmp(g_UserSetting[k].szEquip[j], _T("/equip "), 7))return -1;
-				if (wcslen(g_UserSetting[k].szEquipAfter[j]) && wcsncmp(g_UserSetting[k].szEquipAfter[j], _T("/equip "), 7))return -1;
+				if (_tcslen(g_UserSetting[k].szEquip[j]) && wcsncmp(g_UserSetting[k].szEquip[j], _T("/equip "), 7))return -1;
+				if (_tcslen(g_UserSetting[k].szEquipAfter[j]) && wcsncmp(g_UserSetting[k].szEquipAfter[j], _T("/equip "), 7))return -1;
 			}
 			//
 		}
@@ -2822,9 +2817,9 @@ int MakeComboFromSection(HWND hWnd)
 
 	//文字列があればコンボボックスに追加
 	for (int i = 0, nRow = 0; i<20; i++) {//0.26で変更 0.33で変更
-		if (wcslen(g_SectionName[i]) != 0) {
+		if (_tcslen(g_SectionName[i]) != 0) {
 			SendMessage(GetDlgItem(hWnd, IDC_COMBO_JOB), CB_ADDSTRING, 0, (LPARAM)g_SectionName[i]);
-			if (wcscmp(g_SectionName[i], szText) == 0) {//0.33で追加
+			if (_tcscmp (g_SectionName[i], szText) == 0) {//0.33で追加
 				nSelectedRow = nRow;
 			}
 			nRow++;//0.33で追加
@@ -2974,16 +2969,16 @@ LRESULT CALLBACK WndProcLog(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			item.iSubItem = COLUMN_RECASTNO;//列
 			item.pszText = szRecastNo;
 			if (RecastNo == -1) {
-				wsprintfA(szRecastNo, "-");//0.43iで変更
+				_stprintf(szRecastNo, _T("-"));//0.43iで変更
 			}
 			else {
-				wsprintfA(szRecastNo, "%d", RecastNo, RecastNo);//0.43iで変更
+				_stprintf(szRecastNo, _T("%d"), RecastNo, RecastNo);//0.43iで変更
 			}
 			SendMessage(GetDlgItem(hWnd, IDC_LIST_LOG), LVM_SETITEMA, NULL, (LPARAM)&item);//mbsで転送するのでSendMessageを使う
 		}
 		if (ffhook_getlog(&attr, szGetLog, sizeof(szGetLog))) {
 			char szAttr[0x10];
-			wsprintfA(szAttr, "%02X", attr);//0.43iで変更
+			_stprintf(szAttr, _T("%02X"), attr);//0.43iで変更
 			item.mask = LVIF_TEXT;
 			item.iItem = line;//行
 			item.iSubItem = COLUMN_ATTR;//列
@@ -2993,7 +2988,7 @@ LRESULT CALLBACK WndProcLog(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			SYSTEMTIME sysTime;
 			GetLocalTime(&sysTime);
 			char szTime[0x10];
-			wsprintfA(szTime, "%02d:%02d:%02d", sysTime.wHour, sysTime.wMinute, sysTime.wSecond);//0.43iで変更
+			_stprintf(szTime, _T("%02d:%02d:%02d"), sysTime.wHour, sysTime.wMinute, sysTime.wSecond);//0.43iで変更
 			item.iSubItem = COLUMN_TIME;//列
 			item.pszText = szTime;
 			SendMessage(GetDlgItem(hWnd, IDC_LIST_LOG), LVM_SETITEMA, NULL, (LPARAM)&item);//mbsで転送するのでSendMessageを使う
@@ -3116,7 +3111,7 @@ LRESULT CALLBACK WndProcFollow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			}
 			SetWindowText(hWnd, _T("Follow - WindowerHelper.dll"));
 			char szHandler[MAX_PATH];
-			wsprintfA(szHandler, "WindowerMMFKeyboardHandler_%d", g_ProcessID);//0.43iで変更
+			_stprintf(szHandler, _T("WindowerMMFKeyboardHandler_%d"), g_ProcessID);//0.43iで変更
 			pKeyboardHelper = (CKeyboardHelper*)DLL_CreateKeyboardHelper(szHandler);//0.1.1.0で追加
 		}
 		else if (g_UseWindowerHelper) {
@@ -3151,7 +3146,7 @@ LRESULT CALLBACK WndProcFollow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				}
 				for (int i = 0x400; i<0x700; i++) {
 					pInfo = GetNPCInfo(i);
-					if (pInfo.inrange && wcslen((const _TCHAR*)pInfo.name) >= 3 && pInfo.inrange) {//0.12aで変更
+					if (pInfo.inrange && _tcslen((const _TCHAR*)pInfo.name) >= 3 && pInfo.inrange) {//0.12aで変更
 						SendMessage(GetDlgItem(hWnd, IDC_COMBO_FNAME), CB_ADDSTRING, 0, (LPARAM)pInfo.name);
 					}
 				}
@@ -3180,7 +3175,7 @@ LRESULT CALLBACK WndProcFollow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			if (nCmpDistance == 0)nCmpDistance = 1;
 
 			GetWindowText(GetDlgItem(hWnd, IDC_COMBO_FNAME), szTargetName, 0x20 - 1);
-			if (wcslen(szTargetName)) {
+			if (_tcslen(szTargetName)) {
 				//(詠唱中はFollowしないにチェックしている && 詠唱中ではない) || 詠唱中はFollowしないにチェックしていない
 				if ((IsDlgButtonChecked(hWnd, IDC_CHECKBOX_CASTING) && Casting() <= 0) || IsDlgButtonChecked(hWnd, IDC_CHECKBOX_CASTING) == 0) {//0.1.1.0で追加
 																																				//if(g_UseWindowerHelper){//0.28で変更
@@ -3272,16 +3267,17 @@ void Follow(_TCHAR *szName, int nCmpDistance, HWND hWnd)
 	static BYTE byNowKeyDown[10];
 
 #ifdef _DEBUG
-	for (int i = 0x000; i<0x700; i++) {
+	int i = 0x000;
 #else
-	for (int i = 0x400; i<0x700; i++) {
+	int i = 0x400;
 #endif
+	for (i; i < 0x700; i++) {
 		pInfo = GetNPCInfo(i);
-		if (wcscmp(pInfo.name, szName) == 0) {
+		if (_tcscmp (pInfo.name, szName) == 0) {
 			break;
 		}
 	}
-	if (wcscmp(pInfo.name, szName) != 0)return;
+	if (_tcscmp (pInfo.name, szName) != 0)return;
 
 	myInfo = GetPartyInfo(0);
 
@@ -3291,7 +3287,7 @@ void Follow(_TCHAR *szName, int nCmpDistance, HWND hWnd)
 		//0.29で追加
 		if (BST_CHECKED == SendMessage(GetDlgItem(hWnd, IDC_CHECKBOX_LOCKON), BM_GETCHECK, 0, 0)) {
 			_TCHAR szTargetCmd[MAX_PATH];
-			if (GetSubTarget() == 0 && wcscmp(szName, GetNPCInfo(GetTargetID()).name) != 0) {
+			if (GetSubTarget() == 0 && _tcscmp (szName, GetNPCInfo(GetTargetID()).name) != 0) {
 				//フォロー対象以外がロックオンされている時 0.30でサブターゲットを加味
 				_stprintf(szTargetCmd, _T("/ta %s"), szName);
 				ffhook_putcmd(szTargetCmd);
@@ -3393,7 +3389,9 @@ void Follow(_TCHAR *szName, int nCmpDistance, HWND hWnd)
 			byNowKeyDown[8] = 0;
 			i++;
 		}
-		if (i)SendInput(i, InKey, sizeof(INPUT));
+		if (i) {
+			SendInput(i, InKey, sizeof(INPUT));
+		}
 	}
 }
 
@@ -3404,16 +3402,17 @@ void Follow_Helper(_TCHAR* szName, int nCmpDistance, CKeyboardHelper* pKeyHelper
 	static BYTE byNowKeyDown[10];
 
 #ifdef _DEBUG
-	for (int i = 0x000; i<0x700; i++) {
+	int i = 0x000;
 #else
-	for (int i = 0x400; i<0x700; i++) {
+	int i = 0x400;
 #endif
+	for (i; i < 0x700; i++) {
 		pInfo = GetNPCInfo(i);
-		if (wcscmp(pInfo.name, szName) == 0) {
+		if (_tcscmp (pInfo.name, szName) == 0) {
 			break;
 		}
 	}
-	if (wcscmp(pInfo.name, szName) != 0)return;
+	if (_tcscmp (pInfo.name, szName) != 0)return;
 
 	myInfo = GetPartyInfo(0);
 
@@ -3422,7 +3421,7 @@ void Follow_Helper(_TCHAR* szName, int nCmpDistance, CKeyboardHelper* pKeyHelper
 	if (nDistance >= nCmpDistance && GetViewPoint() == 1) {
 		if (BST_CHECKED == SendMessage(GetDlgItem(hWnd, IDC_CHECKBOX_LOCKON), BM_GETCHECK, 0, 0)) {
 			_TCHAR szTargetCmd[MAX_PATH];
-			if (GetSubTarget() == 0 && wcscmp(szName, GetNPCInfo(GetTargetID()).name) != 0) {
+			if (GetSubTarget() == 0 && _tcscmp (szName, GetNPCInfo(GetTargetID()).name) != 0) {
 				//フォロー対象以外がロックオンされている時 0.30でサブターゲットを加味
 				_stprintf(szTargetCmd, _T("/ta %s"), szName);
 				ffhook_putcmd(szTargetCmd);
@@ -3435,7 +3434,7 @@ void Follow_Helper(_TCHAR* szName, int nCmpDistance, CKeyboardHelper* pKeyHelper
 
 		//5で画面の切り替えを行っておく事
 		//4と6で角度を+-30度にあわせる
-		double dKakudo = 180 / 3.141592*(atan2(pInfo.z - myInfo.z, pInfo.x - myInfo.x) + myInfo.radian);
+		double dKakudo = 180 / 3.141592 * (atan2(pInfo.z - myInfo.z, pInfo.x - myInfo.x) + myInfo.radian);
 		if (dKakudo < 0)dKakudo += 360;
 
 		if (dKakudo <= 330 && dKakudo >= 180) {//右に回転
@@ -3580,7 +3579,7 @@ LRESULT CALLBACK WndProcReserved(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				}
 				for (int i = 0x400; i<0x700; i++) {
 					pInfo = GetNPCInfo(i);
-					if (pInfo.inrange && wcslen((const _TCHAR*)pInfo.name) >= 3 && pInfo.inrange) {//0.12aで変更
+					if (pInfo.inrange && _tcslen((const _TCHAR*)pInfo.name) >= 3 && pInfo.inrange) {//0.12aで変更
 						SendMessage(GetDlgItem(hWnd, IDC_COMBO_RESERVED_CHARNAME), CB_ADDSTRING, 0, (LPARAM)pInfo.name);
 					}
 				}
@@ -3594,15 +3593,15 @@ LRESULT CALLBACK WndProcReserved(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			_TCHAR szHp[0x10];
 			GetDlgItemText(hWnd, IDC_COMBO_RESERVED_CHARNAME, szTname, sizeof(szTname) / sizeof(_TCHAR) - 1);
 			GetDlgItemText(hWnd, IDC_COMBO_RESERVED_CHARHP, szHp, sizeof(szHp) / sizeof(_TCHAR) - 1);
-			if (wcslen(szTname) >= 3 && _wtoi(szHp) > 10) {
+			if (_tcslen(szTname) >= 3 && _wtoi(szHp) > 10) {
 				int nItemCount = ListView_GetItemCount(GetDlgItem(hWnd, IDC_LIST_RESERVED));
 				if (nItemCount > 18) {
 					MessageBox(hWnd, _T("登録数の上限に達しています"), NULL, MB_ICONERROR);
 					return 0;
 				}
-				for (int i = 0; i<nItemCount; i++) {
+				for (int i = 0; i < nItemCount; i++) {
 					ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_RESERVED), i, COLUMN_NAME, szCmpTname, sizeof(szCmpTname) / sizeof(_TCHAR) - 1);
-					if (wcscmp(szTname, szCmpTname) == 0) {
+					if (_tcscmp (szTname, szCmpTname) == 0) {
 						ListView_SetItemText(GetDlgItem(hWnd, IDC_LIST_RESERVED), i, COLUMN_MAXHP, szHp);
 						return 0;
 					}
@@ -3827,7 +3826,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 	pInfo[0] = GetPartyInfo(0);
 
 	//稀に自分の情報が無い時がある
-	if (wcslen(pInfo[0].name) == 0)return 0;
+	if (_tcslen(pInfo[0].name) == 0)return 0;
 
 	//リストの数を取得
 	nItemCount = ListView_GetItemCount(GetDlgItem(hWnd, IDC_LIST_RESERVED));
@@ -3850,7 +3849,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 	}
 
 	//情報表示＆順番を取得
-	for (int i = 0; i<nItemCount; i++) {
+	for (int i = 0; i < nItemCount; i++) {
 		if (i != 0) {
 			ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_RESERVED), i, COLUMN_NAME, szName, sizeof(szName) / sizeof(_TCHAR) - 1);
 			pInfo[i] = GetCharInfo(szName);
@@ -3952,15 +3951,15 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			_TCHAR szBuf[0x10];
 			char cFlag = 0;
 			ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_RESERVED), i, COLUMN_HASTE, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-			if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_HASTE;
+			if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_HASTE;
 			ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_RESERVED), i, COLUMN_REFRESH, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-			if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_REFRESH;
+			if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_REFRESH;
 			ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_RESERVED), i, COLUMN_USER, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-			if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_USER;
+			if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_USER;
 			ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_RESERVED), i, COLUMN_USER2, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-			if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_USER2;
+			if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_USER2;
 			ListView_GetItemText(GetDlgItem(hWnd, IDC_LIST_RESERVED), i, COLUMN_USER3, szBuf, sizeof(szBuf) / sizeof(_TCHAR) - 1);
-			if (wcscmp(szBuf, _T("0")) == 1)cFlag |= FLAG_USER3;
+			if (_tcscmp (szBuf, _T("0")) == 1)cFlag |= FLAG_USER3;
 			chHasteRefreshFlag[i] = cFlag;
 		}
 	}
@@ -4013,7 +4012,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 		if (byteMagicNo != -1) {
 			if (byteMagicNo >= 0 && byteMagicNo <= 5) {//ケアル
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_CureSetting[byteMagicNo].szEquipAfter[nEquip])) {
+					if (_tcslen(g_CureSetting[byteMagicNo].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_CureSetting[byteMagicNo].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4021,7 +4020,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 6) {//ヘイスト
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_HasteSetting.szEquipAfter[nEquip])) {
+					if (_tcslen(g_HasteSetting.szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_HasteSetting.szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4029,7 +4028,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 7) {//リフレ
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_RefreshSetting.szEquipAfter[nEquip])) {
+					if (_tcslen(g_RefreshSetting.szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_RefreshSetting.szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4037,7 +4036,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 8) {//ユーザ
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[0].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[0].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[0].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4045,7 +4044,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 9) {//ユーザ2
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[1].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[1].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[1].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4053,7 +4052,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 10) {//ユーザ3
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[2].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[2].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[2].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4093,7 +4092,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 		if (byteMagicNo != -1) {
 			if (byteMagicNo >= 0 && byteMagicNo <= 5) {//ケアル
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_CureSetting[byteMagicNo].szEquipAfter[nEquip])) {
+					if (_tcslen(g_CureSetting[byteMagicNo].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_CureSetting[byteMagicNo].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4101,7 +4100,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 6) {//ヘイスト
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_HasteSetting.szEquipAfter[nEquip])) {
+					if (_tcslen(g_HasteSetting.szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_HasteSetting.szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4109,7 +4108,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 7) {//リフレ
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_RefreshSetting.szEquipAfter[nEquip])) {
+					if (_tcslen(g_RefreshSetting.szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_RefreshSetting.szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4117,7 +4116,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 8) {//ユーザ
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[0].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[0].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[0].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4125,7 +4124,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 9) {//ユーザ2
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[1].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[1].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[1].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4133,7 +4132,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 			else if (byteMagicNo == 10) {//ユーザ3
 				for (int nEquip = 0; nEquip<9; nEquip++) {//0.43gで変更
-					if (wcslen(g_UserSetting[2].szEquipAfter[nEquip])) {
+					if (_tcslen(g_UserSetting[2].szEquipAfter[nEquip])) {
 						ffhook_putcmd(g_UserSetting[2].szEquipAfter[nEquip]);
 					}
 					else break;
@@ -4166,14 +4165,14 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 		if (dwTime <= dwNowTime) {
 			dwTime = dwNowTime;
 			//ここでコマンドを送ってみる
-			for (int j = 5; j>0; j--) {//優先度0は回復しない
+			for (int j = 5; j > 0; j--) {//優先度0は回復しない
 				if (priority[j].HPP < g_DeltaHppPriority[j]) {
 					//HPがg_DeltaHppPriority未満の時
 					//魔法を選択
 					for (int curenum = 5; curenum >= 0; curenum--) {
-						if (priority[j].DeltaHP >= g_CureSetting[curenum].threshold && wcslen(g_CureSetting[curenum].szCmd) != 0 && dwRecastTime[curenum] <= dwNowTime && GetRecast(g_CureSetting[curenum].recast_no) == 0 && myInfo.mp >= g_CureSetting[curenum].mp) {//0.43bで変更
+						if (priority[j].DeltaHP >= g_CureSetting[curenum].threshold && _tcslen(g_CureSetting[curenum].szCmd) != 0 && dwRecastTime[curenum] <= dwNowTime && GetRecast(g_CureSetting[curenum].recast_no) == 0 && myInfo.mp >= g_CureSetting[curenum].mp) {//0.43bで変更
 							ZeroMemory(szCmd, sizeof(szCmd));
-							if (wcslen(pInfo[priority[j].Player].name) == 0)break;
+							if (_tcslen(pInfo[priority[j].Player].name) == 0)break;
 							_stprintf(szCmd, _T("%s %s"), g_CureSetting[curenum].szCmd, pInfo[priority[j].Player].name);
 							if (wcsncmp(szCmd, _T("/"), 1) == 0) {//誤爆防止
 								ffhook_putcmd(szCmd);
@@ -4184,7 +4183,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 									SearchRecastNo(0);
 								}
 								for (int nEquip = 0; nEquip<9; nEquip++) {//0.20で追加 0.43gで変更
-									if (wcslen(g_CureSetting[curenum].szEquip[nEquip])) {
+									if (_tcslen(g_CureSetting[curenum].szEquip[nEquip])) {
 										ffhook_putcmd(g_CureSetting[curenum].szEquip[nEquip]);
 									}
 									else break;
@@ -4197,8 +4196,8 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 
 			//ヘイスト　HアイコンのPC
-			if (dwRecastTime[6] <= dwNowTime && wcslen(g_HasteSetting.szCmd) != 0) {//ヘイストは6番
-				for (int i = 0; i<nItemCount; i++) {
+			if (dwRecastTime[6] <= dwNowTime && _tcslen(g_HasteSetting.szCmd) != 0) {//ヘイストは6番
+				for (int i = 0; i < nItemCount; i++) {
 					if (chHasteRefreshFlag[i] & FLAG_HASTE && dwEffectTime[0][i] <= dwNowTime && GetRecast(g_HasteSetting.recast_no) == 0 && myInfo.mp >= g_HasteSetting.mp) {//0.43bで変更
 						if (g_HasteSetting.mode == 1) {//0.43bで追加
 							if (pInfo[i].state == 0x01) {
@@ -4226,7 +4225,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 								stbNoRecastMode = 1;
 							}
 							for (int nEquip = 0; nEquip<9; nEquip++) {//0.20で追加 0.43gで変更
-								if (wcslen(g_HasteSetting.szEquip[nEquip])) {
+								if (_tcslen(g_HasteSetting.szEquip[nEquip])) {
 									ffhook_putcmd(g_HasteSetting.szEquip[nEquip]);
 								}
 								else break;
@@ -4239,8 +4238,8 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 			}
 
 			//リフレ　RアイコンのPC
-			if (dwRecastTime[7] <= dwNowTime && wcslen(g_RefreshSetting.szCmd) != 0) {//リフレは7番
-				for (int i = 0; i<nItemCount; i++) {
+			if (dwRecastTime[7] <= dwNowTime && _tcslen(g_RefreshSetting.szCmd) != 0) {//リフレは7番
+				for (int i = 0; i < nItemCount; i++) {
 					if (chHasteRefreshFlag[i] & FLAG_REFRESH && dwEffectTime[1][i] <= dwNowTime && GetRecast(g_RefreshSetting.recast_no) == 0 && myInfo.mp >= g_RefreshSetting.mp) {//0.43bで変更
 						if (g_RefreshSetting.mode == 1) {//0.43bで追加
 							if (pInfo[i].state == 0x01) {
@@ -4269,7 +4268,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 							}
 
 							for (int nEquip = 0; nEquip<9; nEquip++) {//0.20で追加 0.43gで変更
-								if (wcslen(g_RefreshSetting.szEquip[nEquip])) {
+								if (_tcslen(g_RefreshSetting.szEquip[nEquip])) {
 									ffhook_putcmd(g_RefreshSetting.szEquip[nEquip]);
 								}
 								else break;
@@ -4283,8 +4282,8 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 
 			//ユーザ　UアイコンのPC
 			for (int nUserNum = 0; nUserNum <= 2; nUserNum++) {
-				if (dwRecastTime[nUserNum + 8] <= dwNowTime && wcslen(g_UserSetting[nUserNum].szCmd) != 0) {//ユーザは8番
-					for (int i = 0; i<nItemCount; i++) {
+				if (dwRecastTime[nUserNum + 8] <= dwNowTime && _tcslen(g_UserSetting[nUserNum].szCmd) != 0) {//ユーザは8番
+					for (int i = 0; i < nItemCount; i++) {
 						if (chHasteRefreshFlag[i] & (FLAG_USER << nUserNum) && dwEffectTime[nUserNum + 2][i] <= dwNowTime && GetRecast(g_UserSetting[nUserNum].recast_no) == 0 && myInfo.mp >= g_UserSetting[nUserNum].mp) {//0.43bで変更
 							if (g_UserSetting[nUserNum].mode == 1) {//0.43bで追加
 								if (pInfo[i].state == 0x01) {
@@ -4317,7 +4316,7 @@ int UpdateList_Reserved(HWND hWnd, int nStart) {
 								}
 
 								for (int nEquip = 0; nEquip<9; nEquip++) {//0.20で追加 0.43gで変更
-									if (wcslen(g_UserSetting[nUserNum].szEquip[nEquip])) {
+									if (_tcslen(g_UserSetting[nUserNum].szEquip[nEquip])) {
 										ffhook_putcmd(g_UserSetting[nUserNum].szEquip[nEquip]);
 									}
 									else break;
@@ -4352,12 +4351,12 @@ PARTYINFORMATION GetCharInfo(_TCHAR* name)
 	ZeroMemory(&info, sizeof(info));
 
 #ifdef _DEBUG//0.13で修正&削除
-	for (int i = 0x000; i<0x700; i++) {
+	for (int i = 0x000; i < 0x700; i++) {
 #else
 	for (int i = 0x400; i<0x700; i++) {
 #endif
 		info = GetNPCInfo(i);
-		if (wcscmp(info.name, name) == 0) {
+		if (_tcscmp (info.name, name) == 0) {
 			break;
 		}
 	}
@@ -4378,7 +4377,7 @@ int exec_queue()
 	WaitForSingleObject(hEvent, 1000);//0.42cで変更
 	ResetEvent(hEvent);
 	exe_queue = cqueue->nextpointer;//0.42cで変更
-	if (wcslen(exe_queue->szCmd) == 0) {
+	if (_tcslen(exe_queue->szCmd) == 0) {
 		ret = -2;
 	}
 	else {
@@ -4403,21 +4402,21 @@ int PutCmdQueue(HWND hWnd)
 
 	for (int i = 0; i<10; i++) {
 		ffhook_getcmd(szCmd, sizeof(szCmd) / sizeof(_TCHAR) - 1);
-		if (wcslen(szCmd) == 0) {
+		if (_tcslen(szCmd) == 0) {
 			break;
 		}
-		else if (wcscmp(szCmd, _T("/healer run")) == 0) {
+		else if (_tcscmp (szCmd, _T("/healer run")) == 0) {
 			//マクロから実行すると//healerは無視される(//がダメっぽい)0.40aで変更
 			ret = 2;
 		}
-		else if (wcscmp(szCmd, _T("/healer stop")) == 0) {
+		else if (_tcscmp (szCmd, _T("/healer stop")) == 0) {
 			ret = 3;
 		}
 		else if (wcsncmp(szCmd, _T("/healer "), 8) == 0) {
 			COPYDATASTRUCT cp;
 			ZeroMemory(&cp, sizeof(COPYDATASTRUCT));
 			cp.lpData = &szCmd[8];
-			cp.cbData = (wcslen(&szCmd[8]) + 1) * sizeof(_TCHAR);
+			cp.cbData = (_tcslen(&szCmd[8]) + 1) * sizeof(_TCHAR);
 			SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&cp);
 			ret = 1;
 		}
@@ -5159,10 +5158,10 @@ LRESULT CALLBACK WndProcTarget(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		stButtonRect.left = abs(stButtonRect.left - point.x);
 		stButtonRect.right = abs(stButtonRect.right - point.x);
 		for (int i = 0; i<4; i++) {
-			if (wcslen(g_Link.link[i])) {
+			if (_tcslen(g_Link.link[i])) {
 				SetDlgItemText(hWnd, IDC_BUTTON_TARGET_LINK1 + i, g_Link.link[i]);
 			}
-			if (wcslen(g_Link.url[i]) == 0) {
+			if (_tcslen(g_Link.url[i]) == 0) {
 				EnableWindow(GetDlgItem(hWnd, IDC_BUTTON_TARGET_LINK1 + i), false);
 			}
 		}
@@ -5242,8 +5241,8 @@ LRESULT CALLBACK WndProcTarget(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		case IDC_BUTTON_TARGET_LINK1:
 			GetDlgItemText(hWnd, IDC_EDIT_TARGET_NAME, szName, sizeof(szName) / sizeof(_TCHAR) - 1);
 			GetDlgItemText(hWnd, IDC_EDIT_TARGET_CHANGEDID, szID, sizeof(szID) / sizeof(_TCHAR) - 1);
-			if (wcstoul(szID, NULL, 16) >= 0x400)MessageBox(hWnd, _T("PCはダメ"), HAKOSIRO, MB_OK | MB_ICONERROR);
-			else if (wcslen(szName) >= 3) {
+			if (_tcstoul(szID, NULL, 16) >= 0x400)MessageBox(hWnd, _T("PCはダメ"), HAKOSIRO, MB_OK | MB_ICONERROR);
+			else if (_tcslen(szName) >= 3) {
 				_stprintf(szParam, _T("%s %s%s"), g_Link.cmd, g_Link.url[0], szName);
 				ShellExecute(NULL, NULL, g_Link.exe, szParam, NULL, SW_SHOWDEFAULT);
 			}
@@ -5252,8 +5251,8 @@ LRESULT CALLBACK WndProcTarget(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		case IDC_BUTTON_TARGET_LINK2:
 			GetDlgItemText(hWnd, IDC_EDIT_TARGET_NAME, szName, sizeof(szName) / sizeof(_TCHAR) - 1);
 			GetDlgItemText(hWnd, IDC_EDIT_TARGET_CHANGEDID, szID, sizeof(szID) / sizeof(_TCHAR) - 1);
-			if (wcstoul(szID, NULL, 16) >= 0x400)MessageBox(hWnd, _T("PCはダメ"), HAKOSIRO, MB_OK | MB_ICONERROR);
-			else if (wcslen(szName) >= 3) {
+			if (_tcstoul(szID, NULL, 16) >= 0x400)MessageBox(hWnd, _T("PCはダメ"), HAKOSIRO, MB_OK | MB_ICONERROR);
+			else if (_tcslen(szName) >= 3) {
 				_stprintf(szParam, _T("%s %s%s"), g_Link.cmd, g_Link.url[1], szName);
 				ShellExecute(NULL, NULL, g_Link.exe, szParam, NULL, SW_SHOWDEFAULT);
 			}
@@ -5262,8 +5261,8 @@ LRESULT CALLBACK WndProcTarget(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		case IDC_BUTTON_TARGET_LINK3:
 			GetDlgItemText(hWnd, IDC_EDIT_TARGET_NAME, szName, sizeof(szName) / sizeof(_TCHAR) - 1);
 			GetDlgItemText(hWnd, IDC_EDIT_TARGET_CHANGEDID, szID, sizeof(szID) / sizeof(_TCHAR) - 1);
-			if (wcstoul(szID, NULL, 16) >= 0x400)MessageBox(hWnd, _T("PCはダメ"), HAKOSIRO, MB_OK | MB_ICONERROR);
-			else if (wcslen(szName) >= 3) {
+			if (_tcstoul(szID, NULL, 16) >= 0x400)MessageBox(hWnd, _T("PCはダメ"), HAKOSIRO, MB_OK | MB_ICONERROR);
+			else if (_tcslen(szName) >= 3) {
 				_stprintf(szParam, _T("%s %s%s"), g_Link.cmd, g_Link.url[2], szName);
 				ShellExecute(NULL, NULL, g_Link.exe, szParam, NULL, SW_SHOWDEFAULT);
 			}
@@ -5272,8 +5271,8 @@ LRESULT CALLBACK WndProcTarget(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		case IDC_BUTTON_TARGET_LINK4:
 			GetDlgItemText(hWnd, IDC_EDIT_TARGET_NAME, szName, sizeof(szName) / sizeof(_TCHAR) - 1);
 			GetDlgItemText(hWnd, IDC_EDIT_TARGET_CHANGEDID, szID, sizeof(szID) / sizeof(_TCHAR) - 1);
-			if (wcstoul(szID, NULL, 16) >= 0x400)MessageBox(hWnd, _T("PCはダメ"), HAKOSIRO, MB_OK | MB_ICONERROR);
-			else if (wcslen(szName) >= 3) {
+			if (_tcstoul(szID, NULL, 16) >= 0x400)MessageBox(hWnd, _T("PCはダメ"), HAKOSIRO, MB_OK | MB_ICONERROR);
+			else if (_tcslen(szName) >= 3) {
 				_stprintf(szParam, _T("%s %s%s"), g_Link.cmd, g_Link.url[3], szName);
 				ShellExecute(NULL, NULL, g_Link.exe, szParam, NULL, SW_SHOWDEFAULT);
 			}
@@ -5321,7 +5320,7 @@ int UpdateTarget(HWND hWnd)
 	wChangeID = GetTargetID();
 	GetDlgItemText(hWnd, IDC_EDIT_TARGET_FIXEDID, szFixedID, sizeof(szFixedID) / sizeof(_TCHAR) - 1);
 
-	if (wChangeID != wPastChangeID || wcslen(szFixedID) == 0) {//0.18で変更
+	if (wChangeID != wPastChangeID || _tcslen(szFixedID) == 0) {//0.18で変更
 		SetWindowText(GetDlgItem(hWnd, IDC_EDIT_TARGET_NAME), _T("-"));
 		SetWindowText(GetDlgItem(hWnd, IDC_EDIT_TARGET_HPP), _T("-"));
 		SetWindowText(GetDlgItem(hWnd, IDC_EDIT_TARGET_DISTANCE), _T("-"));
@@ -5339,7 +5338,7 @@ int UpdateTarget(HWND hWnd)
 		wPastChangeID = -2;
 		return -2;
 	}
-	else if (wcslen(TargetInfo.name) < 3) {
+	else if (_tcslen(TargetInfo.name) < 3) {
 		wPastChangeID = -2;
 		return -3;
 	}
@@ -5491,7 +5490,7 @@ LRESULT CALLBACK WndProcCombat(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			}
 			SetWindowText(hWnd, _T("Combat - WindowerHelper.dll"));
 			char szHandler[MAX_PATH];
-			wsprintfA(szHandler, "WindowerMMFKeyboardHandler_%d", g_ProcessID);//0.43iで変更
+			_stprintfA(szHandler, "WindowerMMFKeyboardHandler_%d", g_ProcessID);//0.43iで変更
 			pKeyboardHelper = (CKeyboardHelper*)DLL_CreateKeyboardHelper(szHandler);
 		}
 		else if (g_UseWindowerHelper) {
@@ -5678,10 +5677,10 @@ int MakeList(HWND hWnd)
 		}
 		//IDが!=0 && Nameの一文字目が大文字の時、2文字目が小文字の時リストに追加　又は"???" 又は初めがスペース" Veridical Conflux #??"(エコーズ)
 		if (
-			wcstoul(szId, NULL, 16) != 0 &&
+			_tcstoul(szId, NULL, 16) != 0 &&
 			(
 			(isupper(szName[0]) != 0 && islower(szName[1]) != 0) ||
-				wcscmp(szName, _T("???")) == 0 ||
+				_tcscmp (szName, _T("???")) == 0 ||
 				(wcsncmp(szName, _T(" "), 1) == 0 && isupper(szName[1]) && islower(szName[2]))
 				)
 			) {
@@ -5751,8 +5750,6 @@ int SetCamp(HWND hWnd)
 
 	return 1;
 }
-
-
 
 //Combat窓のメイン 0.28で追加
 int CombatLoop(HWND hWnd, CKeyboardHelper *pKeyboardHelper, INPUTKEYSTATE *pKeyState)
@@ -5940,7 +5937,7 @@ int AutoCombat(HWND hWnd, CKeyboardHelper *pKeyboardHelper, INPUTKEYSTATE *pKeyS
 		_TCHAR szWsText[0xA0];
 		_TCHAR szCmd[0x100];
 		GetDlgItemText(hWnd, IDC_EDIT_COMBAT_WS, szWsText, sizeof(szWsText) / sizeof(_TCHAR) - 1);
-		if (wcslen(szWsText) >= 1) {
+		if (_tcslen(szWsText) >= 1) {
 			_stprintf(szCmd, _T("/ws %s <t>"), szWsText);
 		}
 		else {
@@ -6172,7 +6169,7 @@ LRESULT CALLBACK WndProcSubClass_Combat(HWND hWnd, UINT msg, WPARAM wp, LPARAM l
 		ListView_GetItemText(hWnd, nItemNow, 1, szName, sizeof(szName) / sizeof(_TCHAR) - 1);
 		for (int i = 0; i<nItemCount; i++) {
 			ListView_GetItemText(hWnd, i, 1, szCmpName, sizeof(szCmpName) / sizeof(_TCHAR) - 1);
-			if (wcscmp(szCmpName, szName) == 0) {
+			if (_tcscmp (szCmpName, szName) == 0) {
 				if (nItemState != 0) {
 					ListView_SetCheckState(hWnd, i, 0);//リセット
 				}
@@ -6267,7 +6264,7 @@ LRESULT CALLBACK WndProcFellow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			}
 			SetWindowText(hWnd, _T("Fellow - WindowerHelper.dll"));
 			char szHandler[MAX_PATH];
-			wsprintfA(szHandler, "WindowerMMFKeyboardHandler_%d", g_ProcessID);//0.43iで変更
+			_stprintf(szHandler, _T("WindowerMMFKeyboardHandler_%d"), g_ProcessID);//0.43iで変更
 			pKeyboardHelper = (CKeyboardHelper*)DLL_CreateKeyboardHelper(szHandler);
 		}
 		else if (g_UseWindowerHelper) {
@@ -6296,7 +6293,7 @@ LRESULT CALLBACK WndProcFellow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				}
 				for (int i = 1; i<18; i++) {
 					pInfo = GetPartyInfo(i);
-					if (pInfo.inrange && wcslen((const _TCHAR*)pInfo.name) >= 3 && pInfo.inrange) {
+					if (pInfo.inrange && _tcslen((const _TCHAR*)pInfo.name) >= 3 && pInfo.inrange) {
 						SendMessage(GetDlgItem(hWnd, IDC_COMBO_FELLOW_MASTER_NAME), CB_ADDSTRING, 0, (LPARAM)pInfo.name);
 					}
 				}
@@ -6339,15 +6336,15 @@ LRESULT CALLBACK WndProcFellow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			_TCHAR szTargetName[0x20];
 
 			GetWindowText(GetDlgItem(hWnd, IDC_COMBO_FELLOW_MASTER_NAME), szTargetName, 0x20 - 1);
-			if (wcslen(szTargetName)) {
+			if (_tcslen(szTargetName)) {
 				PARTYINFORMATION masterInfo;
-				for (int i = 1; i<18; i++) {
+				for (int i = 1; i < 18; i++) {
 					masterInfo = GetPartyInfo(i);
-					if (wcscmp(masterInfo.name, szTargetName) == 0) {
+					if (_tcscmp (masterInfo.name, szTargetName) == 0) {
 						break;
 					}
 				}
-				if (wcscmp(masterInfo.name, szTargetName) == 0 && masterInfo.inrange) {
+				if (_tcscmp (masterInfo.name, szTargetName) == 0 && masterInfo.inrange) {
 					_TCHAR szCmd[MAX_PATH];
 					if (masterInfo.state == 0x01) {//戦闘中
 						if (GetTargetID() != 0 && GetTargetID() < 0x400) {//敵をタゲっている
@@ -6386,7 +6383,7 @@ LRESULT CALLBACK WndProcFellow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 							}
 						}
 						else {//敵をタゲっていない
-							if (wcscmp(GetNPCInfo(GetTargetID()).name, szTargetName) == 0) {
+							if (_tcscmp (GetNPCInfo(GetTargetID()).name, szTargetName) == 0) {
 								if (GetLockOn() == 0) {
 									ffhook_putcmd(_T("/lockon"));
 								}
@@ -6406,7 +6403,7 @@ LRESULT CALLBACK WndProcFellow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 
 		if (g_UseWindowerHelper && pKeyboardHelper) {
-			for (int i = 0; i<10; i++) {
+			for (int i = 0; i < 10; i++) {
 				if (KeyState.numpad[i] && stPastKeyState.numpad[i] == 0) {
 					DLL_CKHSetKey(pKeyboardHelper, constWindowerNumpad[i], true);
 				}
@@ -6417,7 +6414,7 @@ LRESULT CALLBACK WndProcFellow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		else if (!g_UseWindowerHelper && GetForegroundWindow() == FindWindow(_T("FFXiClass"), NULL) && GetViewPoint() == 1) {
 			InKey[0].type = INPUT_KEYBOARD;
-			for (int i = 0; i<10; i++) {
+			for (int i = 0; i < 10; i++) {
 				if (KeyState.numpad[i] && stPastKeyState.numpad[i] == 0) {
 					InKey[0].ki.dwFlags = 0;
 					InKey[0].ki.wVk = VK_NUMPAD0 + i;
@@ -6436,14 +6433,14 @@ LRESULT CALLBACK WndProcFellow(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
 		if (!nStart || GetViewPoint() != 1) {
 			if (g_UseWindowerHelper && pKeyboardHelper) {
-				for (int i = 0; i<10; i++) {
+				for (int i = 0; i < 10; i++) {
 					DLL_CKHSetKey(pKeyboardHelper, constWindowerNumpad[i], false);
 				}
 			}
 			else if (!g_UseWindowerHelper && GetForegroundWindow() == FindWindow(_T("FFXiClass"), NULL)) {
 				InKey[0].type = INPUT_KEYBOARD;
 				InKey[0].ki.dwFlags = KEYEVENTF_KEYUP;
-				for (int i = 0; i<10; i++) {
+				for (int i = 0; i < 10; i++) {
 					InKey[0].ki.wVk = VK_NUMPAD0 + i;
 					InKey[0].ki.wScan = MapVirtualKey(VK_NUMPAD0 + i, 0);
 					SendInput(1, InKey, sizeof(INPUT));
@@ -6502,7 +6499,7 @@ int AutoCombatFellow(HWND hWnd, CKeyboardHelper *pKeyboardHelper, INPUTKEYSTATE 
 
 	//5で画面の切り替えを行っておく事
 	//4と6で角度を+-15度にあわせる
-	double dKakudo = 180 / 3.141592*(atan2(targetInfo.z - myInfo.z, targetInfo.x - myInfo.x) + myInfo.radian);
+	double dKakudo = 180 / 3.141592 * (atan2(targetInfo.z - myInfo.z, targetInfo.x - myInfo.x) + myInfo.radian);
 	if (dKakudo < 0)dKakudo += 360;
 	if (dKakudo <= 345 && dKakudo >= 15) {
 		pKeyState->numpad[8] = 1;
@@ -6525,7 +6522,7 @@ int AutoCombatFellow(HWND hWnd, CKeyboardHelper *pKeyboardHelper, INPUTKEYSTATE 
 		_TCHAR szWsText[0xA0];
 		_TCHAR szCmd[0x100];
 		GetDlgItemText(hWnd, IDC_EDIT_FELLOW_WS, szWsText, sizeof(szWsText) / sizeof(_TCHAR) - 1);
-		if (wcslen(szWsText) >= 1) {
+		if (_tcslen(szWsText) >= 1) {
 			_stprintf(szCmd, _T("/ws %s <t>"), szWsText);
 		}
 		else {

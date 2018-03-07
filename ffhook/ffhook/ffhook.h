@@ -119,7 +119,7 @@ EXPORT BOOL WINAPI FF11_ClrCutString(int index);
 // buffer		コマンドを取得するバッファ
 // buffer_size	bufferのサイズ。このサイズ以降はカットされる
 // 戻り値		コマンド文字列長。準備できてない時は-1を返す
-EXPORT int WINAPI FF11_GetCmdA(int index, char *buffer, int buffer_size);
+EXPORT int WINAPI FF11_GetCmdA(int index, LPTSTR buffer, int buffer_size);
 EXPORT int WINAPI FF11_GetCmdW(int index, wchar_t *buffer, int buffer_size);
 
 
@@ -136,7 +136,7 @@ EXPORT BOOL WINAPI FF11_PutCmdW(int index, wchar_t *command);
 #define FF11_GetCmd			FF11_GetCmdW
 #define FF11_PutCmd			FF11_PutCmdW
 #else
-#define FF11_GetLog		FF11_GetLogA
+#define FF11_GetLog			FF11_GetLogA
 #define FF11_SetCutString	FF11_SetCutStringA
 #define FF11_GetCmd			FF11_GetCmdA
 #define FF11_PutCmd			FF11_PutCmdA
