@@ -179,7 +179,7 @@ int GetList(int counter,_TCHAR *id,_TCHAR *name)
 
 	_tcscpy(id,_T("0"));//id初期化
 	if(dump[NPCLIST_SIZE-1] == 0x01 && nID >= counter && nID <= 0x400){
-		_stprintf(id,_T("%03X"),nID);//id作成
+		_stprintf_s(id,_T("%03X"),nID);//id作成
 	}
 	else if(dump[NPCLIST_SIZE-1] != 0x01 && dump[NPCLIST_SIZE-1] != 0x00){//List強制終了
 		return 0;
@@ -214,18 +214,18 @@ int CALLBACK CmpProc(LPARAM lp1,LPARAM lp2,LPARAM lp3)
 
 	//"-"の時は一番下にする 0.57で追加
 	if(_tcscmp(szBuf1,_T("-"))==0){
-		if (g_Sort[(int)lp3] == UP)_stprintf(szBuf1, _T("ZZZZZZZZZZ"));
-		else _stprintf(szBuf1, _T(""));
+		if (g_Sort[(int)lp3] == UP)_stprintf_s(szBuf1, _T("ZZZZZZZZZZ"));
+		else _stprintf_s(szBuf1, _T(""));
 	}
 	else if (wcslen(szBuf1) == 0) {//空白 0.57aで追加
-		if (g_Sort[(int)lp3] == UP)_stprintf(szBuf1, _T("ZZZZZZZZZZZZ"));
+		if (g_Sort[(int)lp3] == UP)_stprintf_s(szBuf1, _T("ZZZZZZZZZZZZ"));
 	}
 	if (_tcscmp(szBuf2, _T("-")) == 0) {
-		if (g_Sort[(int)lp3] == UP)_stprintf(szBuf2, _T("ZZZZZZZZZZ"));
-		else _stprintf(szBuf2, _T(""));
+		if (g_Sort[(int)lp3] == UP)_stprintf_s(szBuf2, _T("ZZZZZZZZZZ"));
+		else _stprintf_s(szBuf2, _T(""));
 	}
 	else if (wcslen(szBuf2) == 0) {//空白 0.57aで追加
-		if (g_Sort[(int)lp3] == UP)_stprintf(szBuf2, _T("ZZZZZZZZZZZZ"));
+		if (g_Sort[(int)lp3] == UP)_stprintf_s(szBuf2, _T("ZZZZZZZZZZZZ"));
 	}
 
 	if (g_Sort[(int)lp3] == UP) {
@@ -380,21 +380,21 @@ int List_AddState(HWND hLIST){
 						switch (pastState[nCheckedID].state) {
 						case ST_WAR:
 							uSoundType[nowState.sound] |= WAR_CORPSE;//0.49で変更
-							_stprintf(szSendText, _T("%-24s WAR->CORPSE code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);//0.53で追加
+							_stprintf_s(szSendText, _T("%-24s WAR->CORPSE code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);//0.53で追加
 							break;
 						case ST_POP:
 							uSoundType[nowState.sound] |= POP_CORPSE;//0.49で変更
-							_stprintf(szSendText, _T("%-24s POP->CORPSE code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s POP->CORPSE code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						case ST_CORPSE:
 							break;
 						case ST_OUT://0.60で変更 勝手に音が鳴る調査
 							uSoundType[nowState.sound] |= OUT_CORPSE;//0.49で変更
-							_stprintf(szSendText, _T("%-24s OUT->CORPSE code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s OUT->CORPSE code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						default://0.60で変更 勝手に音が鳴る調査
 							uSoundType[nowState.sound] |= OUT_CORPSE;
-							_stprintf(szSendText, _T("%-24s NON->CORPSE code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s NON->CORPSE code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						}
 					}
@@ -420,19 +420,19 @@ int List_AddState(HWND hLIST){
 							break;
 						case ST_POP:
 							uSoundType[nowState.sound] |= POP_WAR;//0.49で変更
-							_stprintf(szSendText, _T("%-24s POP->WAR    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s POP->WAR    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						case ST_CORPSE:
 							uSoundType[nowState.sound] |= CORPSE_WAR;//0.49で変更
-							_stprintf(szSendText, _T("%-24s CORPSE->WAR code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s CORPSE->WAR code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						case ST_OUT://0.60で変更
 							uSoundType[nowState.sound] |= OUT_WAR;//0.49で変更
-							_stprintf(szSendText, _T("%-24s OUT->WAR    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s OUT->WAR    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						default://0.60で変更
 							uSoundType[nowState.sound] |= OUT_WAR;
-							_stprintf(szSendText, _T("%-24s NON->WAR    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s NON->WAR    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						}
 					}
@@ -450,21 +450,21 @@ int List_AddState(HWND hLIST){
 						switch (pastState[nCheckedID].state) {
 						case ST_WAR:
 							uSoundType[nowState.sound] |= WAR_POP;//0.49で変更
-							_stprintf(szSendText, _T("%-24s WAR->POP    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s WAR->POP    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						case ST_POP:
 							break;
 						case ST_CORPSE:
 							uSoundType[nowState.sound] |= CORPSE_POP;//0.49で変更
-							_stprintf(szSendText, _T("%-24s CORPSE->POP code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s CORPSE->POP code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						case ST_OUT://0.60で変更
 							uSoundType[nowState.sound] |= OUT_POP;//0.49で変更
-							_stprintf(szSendText, _T("%-24s OUT->POP    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s OUT->POP    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						default://0.60で変更
 							uSoundType[nowState.sound] |= OUT_POP;
-							_stprintf(szSendText, _T("%-24s NOC->POP    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+							_stprintf_s(szSendText, _T("%-24s NOC->POP    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 							break;
 						}
 					}
@@ -485,20 +485,20 @@ int List_AddState(HWND hLIST){
 					switch (pastState[nCheckedID].state) {
 					case ST_WAR:
 						uSoundType[nowState.sound] |= WAR_OUT;//0.49で変更
-						_stprintf(szSendText, _T("%-24s WAR->OUT    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+						_stprintf_s(szSendText, _T("%-24s WAR->OUT    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 						break;
 					case ST_POP:
 						uSoundType[nowState.sound] |= POP_OUT;//0.49で変更
-						_stprintf(szSendText, _T("%-24s POP->OUT    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+						_stprintf_s(szSendText, _T("%-24s POP->OUT    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 						break;
 					case ST_CORPSE:
 						uSoundType[nowState.sound] |= CORPSE_OUT;//0.49で変更
-						_stprintf(szSendText, _T("%-24s CORPSE->OUT code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+						_stprintf_s(szSendText, _T("%-24s CORPSE->OUT code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 						break;
 					case ST_OUT://0.60で変更
 						break;
 					default://0.60で変更
-						_stprintf(szSendText, _T("%-24s NON->OUT    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
+						_stprintf_s(szSendText, _T("%-24s NON->OUT    code=%d id=%03X hpp=%02X inrange=%02X state=%02X\n"), target.name, target.code, target.id, target.hpp, target.inrange, target.state);
 						break;
 					}
 				}
@@ -521,12 +521,12 @@ int List_AddState(HWND hLIST){
 				float fDistance = (float)sqrt(target.distance_2);
 				//if(NPC_CORPSE(target) || fDistance > 50.0){
 				if (NPC_CORPSE(target) || fDistance > 60.0) {//0.57aで変更
-					_stprintf(szDistance, _T("-"));//ST_CORPSE
+					_stprintf_s(szDistance, _T("-"));//ST_CORPSE
 				}
-				else if (fDistance >= 10.0)_stprintf(szDistance, _T("%.1f"), fDistance);
-				else _stprintf(szDistance, _T("0%.1f"), fDistance);//なぜか"%02.1f"が利用出来ないため
+				else if (fDistance >= 10.0)_stprintf_s(szDistance, _T("%.1f"), fDistance);
+				else _stprintf_s(szDistance, _T("0%.1f"), fDistance);//なぜか"%02.1f"が利用出来ないため
 			}
-			else _stprintf(szDistance, _T("-"));
+			else _stprintf_s(szDistance, _T("-"));
 			if (FALSE == ListView_SetItem(hLIST, &item)) {
 				return 8;
 			}
@@ -542,10 +542,10 @@ int List_AddState(HWND hLIST){
 					tMin = (int)((nowtime - pastState[nCheckedID].time) / 60) % 60;
 					tSec = (int)(nowtime - pastState[nCheckedID].time) % 60;
 					if (tHour != 0) {
-						_stprintf(szTime, _T("%d:%02d:%02d"), tHour, tMin, tSec);
+						_stprintf_s(szTime, _T("%d:%02d:%02d"), tHour, tMin, tSec);
 					}
 					else {
-						_stprintf(szTime, _T("%02d:%02d"), tMin, tSec);
+						_stprintf_s(szTime, _T("%02d:%02d"), tMin, tSec);
 					}
 					item.iSubItem = 3;//列Timer
 					item.pszText = szTime;
@@ -685,38 +685,38 @@ int List_ReadNPC(HWND hWnd,HWND hList,int iFlagAutoLoad)
 
 	if (AreaID >= 0x0100) {
 		//セクション名を作成
-		_stprintf(szSection, _T("Area%04X"), AreaID);
+		_stprintf_s(szSection, _T("Area%04X"), AreaID);
 		//フィルターを作成
 		ZeroMemory(szFilter, sizeof(szFilter));
 		if (g_Menu.list_control == 0) {
 			//ファイルネーム作成
-			_stprintf(szFullPathName, _T("AutoLoad.Area%04X"), AreaID);
+			_stprintf_s(szFullPathName, _T("AutoLoad.Area%04X"), AreaID);
 			//\0を_で作成しているため、後で置換
-			_stprintf(szFilter, _T("Area%04X File(*.Area%04X)_*.Area%04X_All (*.*)_*.*__"), AreaID, AreaID, AreaID);
+			_stprintf_s(szFilter, _T("Area%04X File(*.Area%04X)_*.Area%04X_All (*.*)_*.*__"), AreaID, AreaID, AreaID);
 		}
 		else {
 			//ファイルネーム作成
-			_stprintf(szFullPathName, _T("AutoLoad.Area%04X-Name"), AreaID);
+			_stprintf_s(szFullPathName, _T("AutoLoad.Area%04X-Name"), AreaID);
 			//\0を_で作成しているため、後で置換
-			_stprintf(szFilter, _T("Area%04X File(*.Area%04X-Name)_*.Area%04X-Name_All (*.*)_*.*__"), AreaID, AreaID, AreaID);
+			_stprintf_s(szFilter, _T("Area%04X File(*.Area%04X-Name)_*.Area%04X-Name_All (*.*)_*.*__"), AreaID, AreaID, AreaID);
 		}
 	}
 	else {
 		//セクション名を作成
-		_stprintf(szSection, _T("Area%02X"), AreaID);
+		_stprintf_s(szSection, _T("Area%02X"), AreaID);
 		//フィルターを作成
 		ZeroMemory(szFilter, sizeof(szFilter));
 		if (g_Menu.list_control == 0) {
 			//ファイルネーム作成
-			_stprintf(szFullPathName, _T("AutoLoad.Area%02X"), AreaID);
+			_stprintf_s(szFullPathName, _T("AutoLoad.Area%02X"), AreaID);
 			//\0を_で作成しているため、後で置換
-			_stprintf(szFilter, _T("Area%02X File(*.Area%02X)_*.Area%02X_All (*.*)_*.*__"), AreaID, AreaID, AreaID);
+			_stprintf_s(szFilter, _T("Area%02X File(*.Area%02X)_*.Area%02X_All (*.*)_*.*__"), AreaID, AreaID, AreaID);
 		}
 		else {
 			//ファイルネーム作成
-			_stprintf(szFullPathName, _T("AutoLoad.Area%02X-Name"), AreaID);
+			_stprintf_s(szFullPathName, _T("AutoLoad.Area%02X-Name"), AreaID);
 			//\0を_で作成しているため、後で置換
-			_stprintf(szFilter, _T("Area%02X File(*.Area%02X-Name)_*.Area%02X-Name_All (*.*)_*.*__"), AreaID, AreaID, AreaID);
+			_stprintf_s(szFilter, _T("Area%02X File(*.Area%02X-Name)_*.Area%02X-Name_All (*.*)_*.*__"), AreaID, AreaID, AreaID);
 		}
 	}
 
@@ -756,18 +756,18 @@ int List_ReadNPC(HWND hWnd,HWND hList,int iFlagAutoLoad)
 	else{
 		if (AreaID >= 0x0100) {
 			if (g_Menu.list_control == 0) {
-				_stprintf(szFileName, _T("%s\\AutoLoad.Area%04X"), g_NpcListPath, AreaID);
+				_stprintf_s(szFileName, _T("%s\\AutoLoad.Area%04X"), g_NpcListPath, AreaID);
 			}
 			else {
-				_stprintf(szFileName, _T("%s\\AutoLoad.Area%04X-Name"), g_NpcListPath, AreaID);
+				_stprintf_s(szFileName, _T("%s\\AutoLoad.Area%04X-Name"), g_NpcListPath, AreaID);
 			}
 		}
 		else {
 			if (g_Menu.list_control == 0) {
-				_stprintf(szFileName, _T("%s\\AutoLoad.Area%02X"), g_NpcListPath, AreaID);
+				_stprintf_s(szFileName, _T("%s\\AutoLoad.Area%02X"), g_NpcListPath, AreaID);
 			}
 			else {
-				_stprintf(szFileName, _T("%s\\AutoLoad.Area%02X-Name"), g_NpcListPath, AreaID);
+				_stprintf_s(szFileName, _T("%s\\AutoLoad.Area%02X-Name"), g_NpcListPath, AreaID);
 			}
 		}
 		if(0 == GetFullPathName(szFileName,sizeof(szFullPathName)/sizeof(_TCHAR),szFullPathName,NULL)){
@@ -797,7 +797,7 @@ int List_ReadNPC(HWND hWnd,HWND hList,int iFlagAutoLoad)
 	LPARAM lParam=0;
 
 	_TCHAR szReplaceFileName[0x80];
-	_stprintf(szReplaceFileName, _T("%s\\ReplaceName.ini"), szCurrentDir);
+	_stprintf_s(szReplaceFileName, _T("%s\\ReplaceName.ini"), szCurrentDir);
 
 	if (g_Menu.list_control == 0) {
 		//管理方式:ID
@@ -805,9 +805,9 @@ int List_ReadNPC(HWND hWnd,HWND hList,int iFlagAutoLoad)
 		nSetCount = GetPrivateProfileInt(szSection, _T("COUNT"), 0, szFullPathName);
 		for (int i = 0, iCounter = 1; i < nSetCount; i++, iCounter++) {
 			//キーネームを作成
-			_stprintf(szKeyName, _T("SET%03d"), iCounter);
+			_stprintf_s(szKeyName, _T("SET%03d"), iCounter);
 			GetPrivateProfileString(szSection, szKeyName, NULL, szID, sizeof(szID) / sizeof(_TCHAR), szFullPathName);
-			_stprintf(szKeyName, _T("TYPE%03d"), iCounter);
+			_stprintf_s(szKeyName, _T("TYPE%03d"), iCounter);
 			GetPrivateProfileString(szSection, szKeyName, NULL, szType, sizeof(szType) / sizeof(_TCHAR), szFullPathName);
 			for (int j = 0; j < nItemCount; j++) {
 				//NPCLISTをサーチ
@@ -839,7 +839,7 @@ int List_ReadNPC(HWND hWnd,HWND hList,int iFlagAutoLoad)
 					item.iSubItem = 1;//列
 
 					//ReplaceName.iniで置き換える名前があれば置換
-					_stprintf(szKeyName, _T("%s"), szID);
+					_stprintf_s(szKeyName, _T("%s"), szID);
 					GetPrivateProfileString(szSection, szKeyName, NULL, szReplaceName, sizeof(szReplaceName) / sizeof(_TCHAR), szReplaceFileName);
 					if (_tcscmp(szName, NULL) == 0) {
 						item.pszText = szName;//Nameそのまま
@@ -866,7 +866,7 @@ int List_ReadNPC(HWND hWnd,HWND hList,int iFlagAutoLoad)
 		}
 		//Noteを読込み
 		for (int i = 1; i <= nItemCount; i++) {
-			_stprintf(szKeyName, _T("NOTE%03X"), i);
+			_stprintf_s(szKeyName, _T("NOTE%03X"), i);
 			GetPrivateProfileString(szSection, szKeyName, NULL, szNote, sizeof(szNote) / sizeof(_TCHAR), szFullPathName);
 			if (_tcslen(szNote) != 0) {
 				for (int j = 0; j < nItemCount; j++) {
@@ -896,7 +896,7 @@ int List_ReadNPC(HWND hWnd,HWND hList,int iFlagAutoLoad)
 			ZeroMemory(szKeyName, sizeof(szKeyName));
 			//NPCの名前をNPCLISTから取得
 			ListView_GetItemText(hList, i, 1, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-			_stprintf(szKeyName, _T("%s"), szBuf);
+			_stprintf_s(szKeyName, _T("%s"), szBuf);
 
 			GetPrivateProfileString(szSection, szKeyName, _T("Normal"), szType, sizeof(szType) / sizeof(_TCHAR), szFullPathName);
 
@@ -962,39 +962,39 @@ int List_WriteNPC(HWND hWnd,HWND hList)
 
 	if (g_ListAreaID >= 0x0100) {
 		//セクション名を作成
-		_stprintf(szSection, _T("Area%04X"), g_ListAreaID);
+		_stprintf_s(szSection, _T("Area%04X"), g_ListAreaID);
 		//フィルターを作成
 
 		ZeroMemory(szFilter, sizeof(szFilter));
 		if (g_Menu.list_control == 0) {
 			//ファイルネーム作成
-			_stprintf(szFullPathName, _T("AutoLoad.Area%04X-Name"), g_ListAreaID);
+			_stprintf_s(szFullPathName, _T("AutoLoad.Area%04X-Name"), g_ListAreaID);
 			//\0を_で作成しているため、後で置換
-			_stprintf(szFilter, _T("Area%04X File(*.Area%04X)_*.Area%04X_All (*.*)_*.*__"), g_ListAreaID, g_ListAreaID, g_ListAreaID);
+			_stprintf_s(szFilter, _T("Area%04X File(*.Area%04X)_*.Area%04X_All (*.*)_*.*__"), g_ListAreaID, g_ListAreaID, g_ListAreaID);
 		}
 		else {
 			//ファイルネーム作成
-			_stprintf(szFullPathName, _T("AutoLoad.Area%04X"), g_ListAreaID);
+			_stprintf_s(szFullPathName, _T("AutoLoad.Area%04X"), g_ListAreaID);
 			//\0を_で作成しているため、後で置換
-			_stprintf(szFilter, _T("Area%04X File(*.Area%04X-Name)_*.Area%04X-Name_All (*.*)_*.*__"), g_ListAreaID, g_ListAreaID, g_ListAreaID);
+			_stprintf_s(szFilter, _T("Area%04X File(*.Area%04X-Name)_*.Area%04X-Name_All (*.*)_*.*__"), g_ListAreaID, g_ListAreaID, g_ListAreaID);
 		}
 	}
 	else {
 		//セクション名を作成
-		_stprintf(szSection, _T("Area%02X"), g_ListAreaID);
+		_stprintf_s(szSection, _T("Area%02X"), g_ListAreaID);
 		//フィルターを作成
 		ZeroMemory(szFilter, sizeof(szFilter));
 		if (g_Menu.list_control == 0) {
 			//ファイルネーム作成
-			_stprintf(szFullPathName, _T("AutoLoad.Area%02X"), g_ListAreaID);
+			_stprintf_s(szFullPathName, _T("AutoLoad.Area%02X"), g_ListAreaID);
 			//\0を_で作成しているため、後で置換
-			_stprintf(szFilter, _T("Area%02X File(*.Area%02X)_*.Area%02X_All (*.*)_*.*__"), g_ListAreaID, g_ListAreaID, g_ListAreaID);
+			_stprintf_s(szFilter, _T("Area%02X File(*.Area%02X)_*.Area%02X_All (*.*)_*.*__"), g_ListAreaID, g_ListAreaID, g_ListAreaID);
 		}
 		else {
 			//ファイルネーム作成
-			_stprintf(szFullPathName, _T("AutoLoad.Area%02X-Name"), g_ListAreaID);
+			_stprintf_s(szFullPathName, _T("AutoLoad.Area%02X-Name"), g_ListAreaID);
 			//\0を_で作成しているため、後で置換
-			_stprintf(szFilter, _T("Area%02X File(*.Area%02X-Name)_*.Area%02X-Name_All (*.*)_*.*__"), g_ListAreaID, g_ListAreaID, g_ListAreaID);
+			_stprintf_s(szFilter, _T("Area%02X File(*.Area%02X-Name)_*.Area%02X-Name_All (*.*)_*.*__"), g_ListAreaID, g_ListAreaID, g_ListAreaID);
 		}
 	}
 	for (int i = 0; i < sizeof(szFilter); i++) {
@@ -1039,7 +1039,7 @@ int List_WriteNPC(HWND hWnd,HWND hList)
 		if (g_Menu.list_control == 0) {
 			//管理方式:ID
 			//チェックされたNPCの数を書き込み
-			_stprintf(szBuf, _T("%d"), nSetCount);
+			_stprintf_s(szBuf, _T("%d"), nSetCount);
 			WritePrivateProfileString(szSection, _T("COUNT"), szBuf, szFullPathName);
 
 			//チェックされたNPCをファイルに書き込み
@@ -1047,14 +1047,14 @@ int List_WriteNPC(HWND hWnd,HWND hList)
 				if (ListView_GetCheckState(hList, i) != 0) {
 					//キーネームを作成
 					ZeroMemory(szKeyName, sizeof(szKeyName));
-					_stprintf(szKeyName, _T("SET%03d"), iCounter);
+					_stprintf_s(szKeyName, _T("SET%03d"), iCounter);
 					//NPCのIDをNPCLISTから取得
 					ListView_GetItemText(hList, i, 0, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
 					WritePrivateProfileString(szSection, szKeyName, szBuf, szFullPathName);
 					//TYPE EX
 					ListView_GetItemText(hList, i, 4, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
 					if (_tcslen(szBuf) != 0) {
-						_stprintf(szKeyName, _T("TYPE%03d"), iCounter);
+						_stprintf_s(szKeyName, _T("TYPE%03d"), iCounter);
 						WritePrivateProfileString(szSection, szKeyName, szBuf, szFullPathName);
 					}
 					iCounter++;
@@ -1066,7 +1066,7 @@ int List_WriteNPC(HWND hWnd,HWND hList)
 				//キーネームを作成
 				ZeroMemory(szKeyName, sizeof(szKeyName));
 				ListView_GetItemText(hList, i, 0, szBuf, sizeof(szBuf) / sizeof(_TCHAR));//NPCのIDをNPCLISTから取得
-				_stprintf(szKeyName, _T("NOTE%s"), szBuf);
+				_stprintf_s(szKeyName, _T("NOTE%s"), szBuf);
 				//NOTE
 				ListView_GetItemText(hList, i, 6, szBuf, sizeof(szBuf) / sizeof(_TCHAR));//0.57で変更
 				if (_tcslen(szBuf) != 0) {
@@ -1082,7 +1082,7 @@ int List_WriteNPC(HWND hWnd,HWND hList)
 				ZeroMemory(szKeyName, sizeof(szKeyName));
 				//NPCの名前をNPCLISTから取得
 				ListView_GetItemText(hList, i, 1, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-				_stprintf(szKeyName, _T("%s"), szBuf);
+				_stprintf_s(szKeyName, _T("%s"), szBuf);
 				//TYPE EX
 				ListView_GetItemText(hList, i, 4, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
 				if (_tcslen(szBuf) != 0) {

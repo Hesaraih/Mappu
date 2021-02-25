@@ -156,10 +156,10 @@ int GetOffsetAddressAll(HANDLE hProcess, DWORD dwDllAddress)
 	if (g_Offset.Pos) {
 		g_Offset.SendBox = g_Offset.Pos - SendBox_HOSEI;
 	}
-	g_Offset.Sender = GetOffsetAddress(hProcess, dwDllAddress, constSenderPattern);
+	g_Offset.Sender = GetOffsetAddress(hProcess, dwDllAddress, constSenderPattern); //‘—‚èå
 	g_Offset.CursorPos = GetOffsetAddress(hProcess, dwDllAddress, constCursorPosPattern);
 	g_Offset.Order = GetOffsetAddress(hProcess, dwDllAddress, constOrderPattern);
-	g_Offset.SendTos = GetOffsetAddress(hProcess, dwDllAddress, constSendTosPattern);
+	g_Offset.SendTos = GetOffsetAddress(hProcess, dwDllAddress, constSendTosPattern); //‘—‚èæ
 	g_Offset.InputMoney = GetOffsetAddress(hProcess, dwDllAddress, constInputMoneyPattern);
 	DWORD Money1, Money2;//0.05a‚Å’Ç‰Á
 	buf = GetOffsetAddress(hProcess, dwDllAddress, constMoney1Pattern);

@@ -87,7 +87,7 @@ struct FFXIOFFSET{
 	DWORD ViewMogHouseMenu; //モ確メニュ
 	DWORD ChatLogColumn; //行数変更
 	DWORD CampaignInfo; //カンパニエ
-	DWORD OwnAreaID; //OwnAreaID
+	DWORD OwnAreaID; //OwnAreaID(眼・アトバン:AREACHGも一緒)
 	WORD Bazaar2Meripo; //バザー⇒メリポ
 	WORD Meripo2Bazaar; //メリポ⇒バザー
 	DWORD Flee; //FLEE

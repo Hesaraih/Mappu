@@ -31,7 +31,7 @@
 HINSTANCE hInstance;	// 現在のインターフェイス
 
 //WinMain
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
+int WINAPI WinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	hInstance = hInst; // グローバル変数にインスタンス処理を格納します。
 	DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG), NULL, (DLGPROC)WndProc);
@@ -155,7 +155,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
 #ifdef HOOK_INFO
 			_TCHAR szHexLog[0x100] = _T("");
-			for (int i = 0; i<0x20; i++) {
+			for (int i = 0; i < 0x20; i++) {
 				_TCHAR szBuff[10];
 				swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_Offset.Ffxihook_log[i]);
 				_tcscat_s(szHexLog, szBuff);
@@ -163,7 +163,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			szHexLog[ARRAYSIZE(szHexLog) - 1] = '\0';
 			//0.07で追加
 			_TCHAR szHexCmd[0x100] = _T("");
-			for (int i = 0; i<0x20; i++) {
+			for (int i = 0; i < 0x20; i++) {
 				_TCHAR szBuff[10];
 				swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_Offset.Ffxihook_cmd[i]);
 				_tcscat_s(szHexCmd, szBuff);
@@ -277,7 +277,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 
 #ifdef HOOK_INFO
 					_TCHAR szHexLog[0x100] = _T("");
-					for (int i = 0; i<0x20; i++) {
+					for (int i = 0; i < 0x20; i++) {
 						_TCHAR szBuff[10];
 						swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_Offset.Ffxihook_log[i]);
 						_tcscat_s(szHexLog, szBuff);
@@ -285,7 +285,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 					szHexLog[ARRAYSIZE(szHexLog) - 1] = '\0';
 					//0.07で追加
 					_TCHAR szHexCmd[0x100] = _T("");
-					for (int i = 0; i<0x20; i++) {
+					for (int i = 0; i < 0x20; i++) {
 						_TCHAR szBuff[10];
 						swprintf_s(szBuff, 10, i == 0 ? _T("%02X") : _T(",%02X"), g_Offset.Ffxihook_cmd[i]);
 						_tcscat_s(szHexCmd, szBuff);
@@ -330,7 +330,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_NOTIFY://0.05bで追加
 		switch (((LPNMHDR)lp)->idFrom) {
 		case IDC_LINK:
-			if (((PNMLINK)lp)->hdr.code == NM_CLICK) {
+			//if (((PNMLINK)lp)->hdr.code == NM_CLICK) {
+			if (((PNMLINK)lp)->hdr.code == 4294967294) {
 				ShellExecuteW(hWnd, _T("open"), ((PNMLINK)lp)->item.szUrl, NULL, NULL, SW_SHOWNORMAL);
 			}
 			return TRUE;
@@ -353,6 +354,7 @@ void ShowVersion(HWND hWnd)
 	_TCHAR szFileName[MAX_PATH];
 	DWORD dwBlockSize;
 	BYTE *pbyVersionInfo;
+	UINT queryLen;
 
 	if (GetModuleFileName(NULL, szFileName, sizeof(szFileName) / sizeof(_TCHAR) - 1) == 0) {
 		MessageBox(hWnd, _T("Cant get VersionInfo"), NULL, MB_ICONERROR);
@@ -369,18 +371,18 @@ void ShowVersion(HWND hWnd)
 					WORD wLanguage;
 					WORD wCodePage;
 				} *lpTranslate;
-				VerQueryValue((LPVOID)pbyVersionInfo, _T("\\VarFileInfo\\Translation"), (LPVOID*)&lpTranslate, NULL);
+				VerQueryValue((LPVOID)pbyVersionInfo, _T("\\VarFileInfo\\Translation"), (LPVOID*)&lpTranslate, &queryLen);
 				_TCHAR szDir[0x100];
 				_stprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\FileVersion"), lpTranslate->wLanguage, lpTranslate->wCodePage);
-				void *pvVer;
-				VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvVer, NULL);
+				_TCHAR *pvVer;
+				VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvVer, &queryLen);
 				_stprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\LegalCopyright"), lpTranslate->wLanguage, lpTranslate->wCodePage);
-				void *pvCopyright;
-				VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvCopyright, NULL);
+				_TCHAR *pvCopyright;
+				VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvCopyright, &queryLen);
 				//0.05bで追加
 				//_stprintf(szDir, _T("\\StringFileInfo\\%04x%04x\\Comments"), lpTranslate->wLanguage, lpTranslate->wCodePage);
 				//void *pvComment;
-				//VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvComment, NULL);
+				//VerQueryValue((LPVOID)pbyVersionInfo, szDir, (LPVOID*)&pvComment, &queryLen);
 
 				_TCHAR szVersion[0x100];
 				_stprintf(szVersion, _T("<a href=\"https://github.com/Hesaraih\">%s Ver %s</a>"), pvCopyright, pvVer);//0.05bで変更

@@ -155,8 +155,8 @@ const BYTE constLoggedinPattern[PATTERN_MAX_RANGE]     = "EB06891Dxxxxxxxx576A3C
 //FFXI小道具//0.05で追加
 const BYTE constCursorPosPattern[PATTERN_MAX_RANGE]		= "8B51..85D274..3B05xxxxxxxx75..";
 const BYTE constOrderPattern[PATTERN_MAX_RANGE]			= "6A006A006A00E8........A1xxxxxxxx6A00";//変更? "EB06891D........391Dxxxxxxxx75226A70";
-const BYTE constSenderPattern[PATTERN_MAX_RANGE]		= "6A008B0DxxxxxxxxE8BF120000";
-const BYTE constSendTosPattern[PATTERN_MAX_RANGE]		= "8B0Dxxxxxxxx85C974..52E8DDE00100C3";
+const BYTE constSenderPattern[PATTERN_MAX_RANGE]		= "6A008B0DxxxxxxxxE8BF120000"; //送り主
+const BYTE constSendTosPattern[PATTERN_MAX_RANGE]		= "8B0Dxxxxxxxx85C974..52E8DDE.0100C3"; //送り先
 const BYTE constInputMoneyPattern[PATTERN_MAX_RANGE]	= "8935xxxxxxxxEB06891D........391D........75376A14";
 //8935:MOV xx,ESI  EB06:JMP SHORT 891D:MOV ..,EBX 391D:CMP ..,EBX 7537:JNZ SHORT 6A14:PUSH 14
 //Money(所持金)は[Money1] + Money2 + MONEY_HOSEI
@@ -210,7 +210,7 @@ const BYTE constViewMogHousePattern[PATTERN_MAX_RANGE] = "E8........E8........E8
 const BYTE constViewMogHouseMenuPattern[PATTERN_MAX_RANGE] = "636F6D6D656E752000000000"; //+0xC モ確メニュ
 const BYTE constChatLogColumnPattern[PATTERN_MAX_RANGE] = "........9380000005022000"; //+0xC 行数変更
 const BYTE constCampaignInfoPattern[PATTERN_MAX_RANGE] = "48..88....83C0203D..........EDB8xxxxxxxx"; //カンパニエ
-const BYTE constOwnAreaIDPattern[PATTERN_MAX_RANGE] = "7428568B35xxxxxxxx"; //OwnAreaID
+const BYTE constOwnAreaIDPattern[PATTERN_MAX_RANGE] = "7428568B35xxxxxxxx"; //OwnAreaID、AREACHG
 const BYTE constBazaar2MeripoPattern[PATTERN_MAX_RANGE] = "6D6572697463617400000000"; //+0xC &0xFFFF バザー⇒メリポ
 const BYTE constMeripo2BazaarPattern[PATTERN_MAX_RANGE] = "6D63726D656E752000000000"; //+0xC &0xFFFF メリポ⇒バザー
 const BYTE constFleePattern[PATTERN_MAX_RANGE] = "00008A561D"; //-0x4 FLEE
@@ -220,7 +220,7 @@ const BYTE constFleeDefaultPattern3[PATTERN_MAX_RANGE] = "D80D........8B0C8.....
 const BYTE constFleeDefaultPattern4[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D99958zz00008A561D"; //FLEEデフォルト(4Byte目)
 const BYTE constFleeDefaultPattern5[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D9995801zz008A561D"; //FLEEデフォルト(5Byte目)
 const BYTE constFleeDefaultPattern6[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D999580100zz8A561D"; //FLEEデフォルト(6Byte目)
-const BYTE constCharaThroughPattern[PATTERN_MAX_RANGE] = "FFD9442440D8D983C414DFE0"; //-0x4 人抜け
+const BYTE constCharaThroughPattern[PATTERN_MAX_RANGE] = "..D9442440D8D983C414DFE0"; //-0x4 人抜け
 const BYTE constCharaThroughDefaultPattern1[PATTERN_MAX_RANGE] = "8D..2428....pp........D9442440D8D983C414DFE0"; //人抜けデフォルト(1Byte目)
 const BYTE constCharaThroughDefaultPattern2[PATTERN_MAX_RANGE] = "8D..2428......pp......D9442440D8D983C414DFE0"; //人抜けデフォルト(2Byte目)
 const BYTE constCharaThroughDefaultPattern3[PATTERN_MAX_RANGE] = "8D..2428........pp....D9442440D8D983C414DFE0"; //人抜けデフォルト(3Byte目)

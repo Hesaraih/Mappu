@@ -33,7 +33,7 @@
 void ErrorNum(HWND hWnd)
 {
 	_TCHAR szErrorMessage[MAX_PATH];
-	_stprintf(szErrorMessage, _T("Error Code = %d"), g_ErrorCode);
+	_stprintf_s(szErrorMessage, _T("Error Code = %d"), g_ErrorCode);
 	MessageBox(hWnd, szErrorMessage, _T("Mappu"), MB_OK | MB_ICONERROR);
 	PostMessage(hWnd, WM_CLOSE, 1, 1);//0.51で変更
 }
@@ -211,7 +211,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 	g_Font.nDS_x = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_X"), 0, szFullPathName);
 	g_Font.nDS_z = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_Z"), 0, szFullPathName);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR"), _T("RGB(100,100,100)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_Font.ColorEffect = RGB(r, g, b);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_EX"), _T("OFF"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
 	if (_tcscmp(szBuf, _T("DROPSHADOW")) == 0) {
@@ -223,7 +223,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 	g_FontEx.nDS_x = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_X_EX"), 0, szFullPathName);
 	g_FontEx.nDS_z = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_Z_EX"), 0, szFullPathName);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_EX"), _T("RGB(100,100,100)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_FontEx.ColorEffect = RGB(r, g, b);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_SP"), _T("OFF"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
 	if (_tcscmp(szBuf, _T("DROPSHADOW")) == 0) {
@@ -235,7 +235,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 	g_FontSp.nDS_x = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_X_SP"), 0, szFullPathName);
 	g_FontSp.nDS_z = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_Z_SP"), 0, szFullPathName);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_SP"), _T("RGB(100,100,100)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_FontSp.ColorEffect = RGB(r, g, b);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_PC"), _T("OFF"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
 	if (_tcscmp(szBuf, _T("DROPSHADOW")) == 0) {
@@ -247,7 +247,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 	g_FontPC.nDS_x = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_X_PC"), 0, szFullPathName);
 	g_FontPC.nDS_z = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_Z_PC"), 0, szFullPathName);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_PC"), _T("RGB(100,100,100)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_FontPC.ColorEffect = RGB(r, g, b);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_TARGET"), _T("EDGE"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
 	if (_tcscmp(szBuf, _T("DROPSHADOW")) == 0) {
@@ -259,7 +259,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 	g_FontTarget.nDS_x = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_X_TARGET"), 0, szFullPathName);
 	g_FontTarget.nDS_z = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_Z_TARGET"), 0, szFullPathName);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_TARGET"), _T("RGB(0,64,0)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_FontTarget.ColorEffect = RGB(r, g, b);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_SYSTEM"), _T("OFF"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
 	if (_tcscmp(szBuf, _T("DROPSHADOW")) == 0) {
@@ -271,7 +271,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 	g_FontSystem.nDS_x = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_X_SYSTEM"), 0, szFullPathName);
 	g_FontSystem.nDS_z = GetPrivateProfileInt(_T("FONT"), _T("DROPSHADOW_POS_Z_SYSTEM"), 0, szFullPathName);
 	GetPrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_SYSTEM"), _T("RGB(100,100,100)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_FontSystem.ColorEffect = RGB(r, g, b);
 
 	//[MENU]
@@ -577,73 +577,73 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 
 	//[COLOR]
 	GetPrivateProfileString(_T("COLOR"), _T("VISIBLE"), _T("RGB(0,0,255)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorVisible = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("ABILITY"), _T("RGB(255,0,0)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorAbility = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("MAGIC"), _T("RGB(0,255,0)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorMagic = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("RANGE"), _T("RGB(153,0,102)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorRange = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("WINDSONG"), _T("RGB(0,0,128)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorWindSong = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("DETECTION"), _T("RGB(0,128,0)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorDetection = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("MAPNAME"), _T("RGB(204,153,102)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorMapName = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("ZOOM"), _T("RGB(204,153,102)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorZoom = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("MYPOSITION"), _T("RGB(204,153,102)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorMyPosition = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("LT_POS_GT"), _T("RGB(204,153,102)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_Colorlt_Pos_gt = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("DISTANCE"), _T("RGB(204,153,102)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorDistance = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("POP"), _T("RGB(255,0,0)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorNPC_Pop[0] = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("SHARE"), _T("RGB(255,128,128)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorNPC_Share[0] = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("WAR"), _T("RGB(255,0,255)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorNPC_War[0] = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("CORPSE"), _T("RGB(80,80,80)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorNPC_Corpse[0] = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("OUT"), _T("RGB(0,255,0)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorNPC_Out[0] = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("OWN"), _T("RGB(0,0,255)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorOWN = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("PARTY"), _T("RGB(0,204,255)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorPARTY = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("ALIANCE"), _T("RGB(0,204,255)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorALIANCE = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("PC"), _T("RGB(0,0,255)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorPC = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("PET"), _T("RGB(0,100,200)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorPET = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("TARGET"), _T("RGB(0,255,102)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorTarget = RGB(r, g, b);
 	GetPrivateProfileString(_T("COLOR"), _T("TRANSPARENT"), _T("RGB(1,1,1)"), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
-	_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+	(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 	g_ColorTransparent = RGB(r, g, b);
 
 
@@ -653,7 +653,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_Pop[1] = g_ColorNPC_Pop[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_Pop[1] = RGB(r, g, b);
 	}
 	GetPrivateProfileString(_T("COLOR_EX"), _T("SHARE"), _T(""), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
@@ -661,7 +661,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_Share[1] = g_ColorNPC_Share[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_Share[1] = RGB(r, g, b);
 	}
 	GetPrivateProfileString(_T("COLOR_EX"), _T("WAR"), _T(""), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
@@ -669,7 +669,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_War[1] = g_ColorNPC_War[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_War[1] = RGB(r, g, b);
 	}
 	GetPrivateProfileString(_T("COLOR_EX"), _T("CORPSE"), _T(""), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
@@ -677,7 +677,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_Corpse[1] = g_ColorNPC_Corpse[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_Corpse[1] = RGB(r, g, b);
 	}
 	GetPrivateProfileString(_T("COLOR_EX"), _T("OUT"), _T(""), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
@@ -685,7 +685,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_Out[1] = g_ColorNPC_Out[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_Out[1] = RGB(r, g, b);
 	}
 
@@ -695,7 +695,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_Pop[2] = g_ColorNPC_Pop[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_Pop[2] = RGB(r, g, b);
 	}
 	GetPrivateProfileString(_T("COLOR_SP"), _T("SHARE"), _T(""), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
@@ -703,7 +703,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_Share[2] = g_ColorNPC_Share[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_Share[2] = RGB(r, g, b);
 	}
 	GetPrivateProfileString(_T("COLOR_SP"), _T("WAR"), _T(""), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
@@ -711,7 +711,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_War[2] = g_ColorNPC_War[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_War[2] = RGB(r, g, b);
 	}
 	GetPrivateProfileString(_T("COLOR_SP"), _T("CORPSE"), _T(""), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
@@ -719,7 +719,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_Corpse[2] = g_ColorNPC_Corpse[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_Corpse[2] = RGB(r, g, b);
 	}
 	GetPrivateProfileString(_T("COLOR_SP"), _T("OUT"), _T(""), szBuf, sizeof(szBuf) / sizeof(_TCHAR), szFullPathName);
@@ -727,7 +727,7 @@ int ReadIniFiles(HWND hWnd, const _TCHAR* szFileName)
 		g_ColorNPC_Out[2] = g_ColorNPC_Out[0];
 	}
 	else {
-		_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
+		(void)_tscanf(szBuf, _T("RGB(%i,%i,%i)"), &r, &g, &b);
 		g_ColorNPC_Out[2] = RGB(r, g, b);
 	}
 
@@ -777,25 +777,25 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	if (GetWindowRect(hWnd, &rect_MAP) == 0) {
 		return -1;
 	}
-	_stprintf(szBuf, _T("%d"), rect_MAP.left);
+	_stprintf_s(szBuf, _T("%d"), rect_MAP.left);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("MAP_POS_X"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), rect_MAP.top);
+	_stprintf_s(szBuf, _T("%d"), rect_MAP.top);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("MAP_POS_Y"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), rect_MAP.right - rect_MAP.left);
+	_stprintf_s(szBuf, _T("%d"), rect_MAP.right - rect_MAP.left);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("MAP_SIZE_X"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), rect_MAP.bottom - rect_MAP.top);
+	_stprintf_s(szBuf, _T("%d"), rect_MAP.bottom - rect_MAP.top);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("MAP_SIZE_Y"), szBuf, szFullPathName);
 
 	if (GetWindowRect(hNPCList, &rect_LIST) == 0) {
 		return -2;
 	}
-	_stprintf(szBuf, _T("%d"), rect_LIST.left);
+	_stprintf_s(szBuf, _T("%d"), rect_LIST.left);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("NPCLIST_POS_X"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), rect_LIST.top);
+	_stprintf_s(szBuf, _T("%d"), rect_LIST.top);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("NPCLIST_POS_Y"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), rect_LIST.right - rect_LIST.left);
+	_stprintf_s(szBuf, _T("%d"), rect_LIST.right - rect_LIST.left);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("NPCLIST_SIZE_X"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), rect_LIST.bottom - rect_LIST.top);
+	_stprintf_s(szBuf, _T("%d"), rect_LIST.bottom - rect_LIST.top);
 	nRet &= WritePrivateProfileString(_T("POS"), _T("NPCLIST_SIZE_Y"), szBuf, szFullPathName);
 
 	//[MAP]
@@ -803,7 +803,7 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	nRet &= WritePrivateProfileString(_T("MAP"), _T("DEFAULT_ZOOM_SETTING"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_ZOOM_DEFAULT)], szFullPathName);
 
 	//[FONT]
-	_stprintf(szBuf, _T("%d"), g_Font.nSize);
+	_stprintf_s(szBuf, _T("%d"), g_Font.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD)], szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONT_DROPSHADOW)) {
@@ -815,9 +815,9 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	else {
 		nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT"), _T("OFF"), szFullPathName);
 	}
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_Font.ColorEffect & 0xFF, (g_Font.ColorEffect >> 8) & 0xFF, (g_Font.ColorEffect >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_Font.ColorEffect & 0xFF, (g_Font.ColorEffect >> 8) & 0xFF, (g_Font.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), g_FontEx.nSize);
+	_stprintf_s(szBuf, _T("%d"), g_FontEx.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE_EX"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD_EX"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD_EX)], szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONT_DROPSHADOW_EX)) {
@@ -829,9 +829,9 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	else {
 		nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_EX"), _T("OFF"), szFullPathName);
 	}
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_FontEx.ColorEffect & 0xFF, (g_FontEx.ColorEffect >> 8) & 0xFF, (g_FontEx.ColorEffect >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_FontEx.ColorEffect & 0xFF, (g_FontEx.ColorEffect >> 8) & 0xFF, (g_FontEx.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_EX"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), g_FontSp.nSize);
+	_stprintf_s(szBuf, _T("%d"), g_FontSp.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE_SP"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD_SP"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD_SP)], szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONT_DROPSHADOW_SP)) {
@@ -843,9 +843,9 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	else {
 		nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_SP"), _T("OFF"), szFullPathName);
 	}
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_FontSp.ColorEffect & 0xFF, (g_FontSp.ColorEffect >> 8) & 0xFF, (g_FontSp.ColorEffect >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_FontSp.ColorEffect & 0xFF, (g_FontSp.ColorEffect >> 8) & 0xFF, (g_FontSp.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_SP"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), g_FontPC.nSize);
+	_stprintf_s(szBuf, _T("%d"), g_FontPC.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE_PC"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD_PC"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD_PC)], szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONT_DROPSHADOW_PC)) {
@@ -857,9 +857,9 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	else {
 		nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_PC"), _T("OFF"), szFullPathName);
 	}
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_FontPC.ColorEffect & 0xFF, (g_FontPC.ColorEffect >> 8) & 0xFF, (g_FontPC.ColorEffect >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_FontPC.ColorEffect & 0xFF, (g_FontPC.ColorEffect >> 8) & 0xFF, (g_FontPC.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_PC"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), g_FontTarget.nSize);
+	_stprintf_s(szBuf, _T("%d"), g_FontTarget.nSize);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTSIZE_TARGET"), szBuf, szFullPathName);
 	if (GetMenuCheck(hWnd, hMenu, IDM_FONTBOLD_TARGET)) {
 		nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTBOLD_TARGET"), _T("ON"), szFullPathName);
@@ -879,7 +879,7 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	else {
 		nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_TARGET"), _T("OFF"), szFullPathName);
 	}
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_FontTarget.ColorEffect & 0xFF, (g_FontTarget.ColorEffect >> 8) & 0xFF, (g_FontTarget.ColorEffect >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_FontTarget.ColorEffect & 0xFF, (g_FontTarget.ColorEffect >> 8) & 0xFF, (g_FontTarget.ColorEffect >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("FONT"), _T("FONTEFFECT_COLOR_TARGET"), szBuf, szFullPathName);
 
 
@@ -928,16 +928,16 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("CENTER_OWN"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_CENTER_OWN)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("HIDE_HEIGHT_DIFF"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_HIDE_HEIGHT_DIFF)], szFullPathName);//0.56で追加
 	if (GetMenuCheck(hWnd, hMenu, IDM_PRIORITY_BELOW_NORMAL)) {
-		_stprintf(szBuf, _T("%s"), _T("BELOW_NORMAL"));
+		_stprintf_s(szBuf, _T("%s"), _T("BELOW_NORMAL"));
 	}
 	else if (GetMenuCheck(hWnd, hMenu, IDM_PRIORITY_IDLE)) {
-		_stprintf(szBuf, _T("%s"), _T("IDLE"));
+		_stprintf_s(szBuf, _T("%s"), _T("IDLE"));
 	}
 	else {
-		_stprintf(szBuf, _T("%s"), _T("NORMAL"));
+		_stprintf_s(szBuf, _T("%s"), _T("NORMAL"));
 	}
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("PRIORITY"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), g_Menu.alpha_map);
+	_stprintf_s(szBuf, _T("%d"), g_Menu.alpha_map);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("ALPHA_VALUE_MAP"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("TRANSPARENT_COLOR_MODE"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_TRANSPARENT_MODE)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("RADAR_MODE"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_RADAR_MODE)], szFullPathName);
@@ -947,97 +947,97 @@ int WriteIniFiles(HWND hWnd, HWND hNPCList, HMENU hMenu, HMENU hMenuNPCList, con
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("STATESOUND_EX"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_STATESOUND_EX)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("POPSOUND_SP"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_POPSOUND_SP)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("STATESOUND_SP"), OffOn[GetMenuCheck(hWnd, hMenu, IDM_STATESOUND_SP)], szFullPathName);
-	_stprintf(szBuf, _T("%d"), g_Menu.alpha_npclist);
+	_stprintf_s(szBuf, _T("%d"), g_Menu.alpha_npclist);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("ALPHA_VALUE_NPCLIST"), szBuf, szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("ALWAYS_UPDATE_AND_SET_ALL_ITEMS"), OffOn[GetMenuCheck(hWnd, hMenuNPCList, IDM_LIST_ALWAYS_UPDATE)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("FILE_AUTOLOAD"), OffOn[GetMenuCheck(hWnd, hMenuNPCList, IDM_FILE_AUTOLOAD)], szFullPathName);
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("HIDE_TOOL_BAR"), OffOn[GetMenuCheck(hWnd, hMenuNPCList, IDM_HIDE_TOOL_BAR)], szFullPathName);//0.50で追加
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("HIDE_BUTTONBOX"), OffOn[GetMenuCheck(hWnd, hMenuNPCList, IDM_HIDE_BUTTONBOX)], szFullPathName);//0.50で追加
 																																					 //カラムの幅　0.50で追加
-	_stprintf(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 0));
+	_stprintf_s(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 0));
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("COLUMN_ID"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 1));
+	_stprintf_s(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 1));
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("COLUMN_NAME"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 2));
+	_stprintf_s(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 2));
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("COLUMN_STATE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 3));
+	_stprintf_s(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 3));
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("COLUMN_TIMER"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 4));
+	_stprintf_s(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 4));
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("COLUMN_TYPE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 5));
+	_stprintf_s(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 5));
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("COLUMN_YM"), szBuf, szFullPathName);//0.59で追加
-	_stprintf(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 6));//0.59で追加
+	_stprintf_s(szBuf, _T("%d"), ListView_GetColumnWidth(g_hList, 6));//0.59で追加
 	nRet &= WritePrivateProfileString(_T("MENU"), _T("COLUMN_NOTE"), szBuf, szFullPathName);
 
 
 	//[COLOR]
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorVisible & 0xFF, (g_ColorVisible >> 8) & 0xFF, (g_ColorVisible >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorVisible & 0xFF, (g_ColorVisible >> 8) & 0xFF, (g_ColorVisible >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("VISIBLE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorAbility & 0xFF, (g_ColorAbility >> 8) & 0xFF, (g_ColorAbility >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorAbility & 0xFF, (g_ColorAbility >> 8) & 0xFF, (g_ColorAbility >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("ABILITY"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorMagic & 0xFF, (g_ColorMagic >> 8) & 0xFF, (g_ColorMagic >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorMagic & 0xFF, (g_ColorMagic >> 8) & 0xFF, (g_ColorMagic >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("MAGIC"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorRange & 0xFF, (g_ColorRange >> 8) & 0xFF, (g_ColorRange >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorRange & 0xFF, (g_ColorRange >> 8) & 0xFF, (g_ColorRange >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("RANGE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorWindSong & 0xFF, (g_ColorWindSong >> 8) & 0xFF, (g_ColorWindSong >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorWindSong & 0xFF, (g_ColorWindSong >> 8) & 0xFF, (g_ColorWindSong >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("WINDSONG"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorDetection & 0xFF, (g_ColorDetection >> 8) & 0xFF, (g_ColorDetection >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorDetection & 0xFF, (g_ColorDetection >> 8) & 0xFF, (g_ColorDetection >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("DETECTION"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorMapName & 0xFF, (g_ColorMapName >> 8) & 0xFF, (g_ColorMapName >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorMapName & 0xFF, (g_ColorMapName >> 8) & 0xFF, (g_ColorMapName >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("MAPNAME"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorZoom & 0xFF, (g_ColorZoom >> 8) & 0xFF, (g_ColorZoom >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorZoom & 0xFF, (g_ColorZoom >> 8) & 0xFF, (g_ColorZoom >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("ZOOM"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorMyPosition & 0xFF, (g_ColorMyPosition >> 8) & 0xFF, (g_ColorMyPosition >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorMyPosition & 0xFF, (g_ColorMyPosition >> 8) & 0xFF, (g_ColorMyPosition >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("MYPOSITION"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_Colorlt_Pos_gt & 0xFF, (g_Colorlt_Pos_gt >> 8) & 0xFF, (g_Colorlt_Pos_gt >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_Colorlt_Pos_gt & 0xFF, (g_Colorlt_Pos_gt >> 8) & 0xFF, (g_Colorlt_Pos_gt >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("LT_POS_GT"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorDistance & 0xFF, (g_ColorDistance >> 8) & 0xFF, (g_ColorDistance >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorDistance & 0xFF, (g_ColorDistance >> 8) & 0xFF, (g_ColorDistance >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("DISTANCE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Pop[0] & 0xFF, (g_ColorNPC_Pop[0] >> 8) & 0xFF, (g_ColorNPC_Pop[0] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Pop[0] & 0xFF, (g_ColorNPC_Pop[0] >> 8) & 0xFF, (g_ColorNPC_Pop[0] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("POP"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Share[0] & 0xFF, (g_ColorNPC_Share[0] >> 8) & 0xFF, (g_ColorNPC_Share[0] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Share[0] & 0xFF, (g_ColorNPC_Share[0] >> 8) & 0xFF, (g_ColorNPC_Share[0] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("SHARE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_War[0] & 0xFF, (g_ColorNPC_War[0] >> 8) & 0xFF, (g_ColorNPC_War[0] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_War[0] & 0xFF, (g_ColorNPC_War[0] >> 8) & 0xFF, (g_ColorNPC_War[0] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("WAR"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Corpse[0] & 0xFF, (g_ColorNPC_Corpse[0] >> 8) & 0xFF, (g_ColorNPC_Corpse[0] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Corpse[0] & 0xFF, (g_ColorNPC_Corpse[0] >> 8) & 0xFF, (g_ColorNPC_Corpse[0] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("CORPSE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Out[0] & 0xFF, (g_ColorNPC_Out[0] >> 8) & 0xFF, (g_ColorNPC_Out[0] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Out[0] & 0xFF, (g_ColorNPC_Out[0] >> 8) & 0xFF, (g_ColorNPC_Out[0] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("OUT"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorOWN & 0xFF, (g_ColorOWN >> 8) & 0xFF, (g_ColorOWN >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorOWN & 0xFF, (g_ColorOWN >> 8) & 0xFF, (g_ColorOWN >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("OWN"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorPARTY & 0xFF, (g_ColorPARTY >> 8) & 0xFF, (g_ColorPARTY >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorPARTY & 0xFF, (g_ColorPARTY >> 8) & 0xFF, (g_ColorPARTY >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("PARTY"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorALIANCE & 0xFF, (g_ColorALIANCE >> 8) & 0xFF, (g_ColorALIANCE >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorALIANCE & 0xFF, (g_ColorALIANCE >> 8) & 0xFF, (g_ColorALIANCE >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("ALIANCE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorPC & 0xFF, (g_ColorPC >> 8) & 0xFF, (g_ColorPC >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorPC & 0xFF, (g_ColorPC >> 8) & 0xFF, (g_ColorPC >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("PC"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorPET & 0xFF, (g_ColorPET >> 8) & 0xFF, (g_ColorPET >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorPET & 0xFF, (g_ColorPET >> 8) & 0xFF, (g_ColorPET >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("PET"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorTarget & 0xFF, (g_ColorTarget >> 8) & 0xFF, (g_ColorTarget >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorTarget & 0xFF, (g_ColorTarget >> 8) & 0xFF, (g_ColorTarget >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR"), _T("TARGET"), szBuf, szFullPathName);
 
 	//[COLOR_EX]
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Pop[1] & 0xFF, (g_ColorNPC_Pop[1] >> 8) & 0xFF, (g_ColorNPC_Pop[1] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Pop[1] & 0xFF, (g_ColorNPC_Pop[1] >> 8) & 0xFF, (g_ColorNPC_Pop[1] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_EX"), _T("POP"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Share[1] & 0xFF, (g_ColorNPC_Share[1] >> 8) & 0xFF, (g_ColorNPC_Share[1] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Share[1] & 0xFF, (g_ColorNPC_Share[1] >> 8) & 0xFF, (g_ColorNPC_Share[1] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_EX"), _T("SHARE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_War[1] & 0xFF, (g_ColorNPC_War[1] >> 8) & 0xFF, (g_ColorNPC_War[1] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_War[1] & 0xFF, (g_ColorNPC_War[1] >> 8) & 0xFF, (g_ColorNPC_War[1] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_EX"), _T("WAR"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Corpse[1] & 0xFF, (g_ColorNPC_Corpse[1] >> 8) & 0xFF, (g_ColorNPC_Corpse[1] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Corpse[1] & 0xFF, (g_ColorNPC_Corpse[1] >> 8) & 0xFF, (g_ColorNPC_Corpse[1] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_EX"), _T("CORPSE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Out[1] & 0xFF, (g_ColorNPC_Out[1] >> 8) & 0xFF, (g_ColorNPC_Out[1] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Out[1] & 0xFF, (g_ColorNPC_Out[1] >> 8) & 0xFF, (g_ColorNPC_Out[1] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_EX"), _T("OUT"), szBuf, szFullPathName);
 
 	//[COLOR_SP]
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Pop[2] & 0xFF, (g_ColorNPC_Pop[2] >> 8) & 0xFF, (g_ColorNPC_Pop[2] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Pop[2] & 0xFF, (g_ColorNPC_Pop[2] >> 8) & 0xFF, (g_ColorNPC_Pop[2] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_SP"), _T("POP"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Share[2] & 0xFF, (g_ColorNPC_Share[2] >> 8) & 0xFF, (g_ColorNPC_Share[2] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Share[2] & 0xFF, (g_ColorNPC_Share[2] >> 8) & 0xFF, (g_ColorNPC_Share[2] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_SP"), _T("SHARE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_War[2] & 0xFF, (g_ColorNPC_War[2] >> 8) & 0xFF, (g_ColorNPC_War[2] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_War[2] & 0xFF, (g_ColorNPC_War[2] >> 8) & 0xFF, (g_ColorNPC_War[2] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_SP"), _T("WAR"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Corpse[2] & 0xFF, (g_ColorNPC_Corpse[2] >> 8) & 0xFF, (g_ColorNPC_Corpse[2] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Corpse[2] & 0xFF, (g_ColorNPC_Corpse[2] >> 8) & 0xFF, (g_ColorNPC_Corpse[2] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_SP"), _T("CORPSE"), szBuf, szFullPathName);
-	_stprintf(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Out[2] & 0xFF, (g_ColorNPC_Out[2] >> 8) & 0xFF, (g_ColorNPC_Out[2] >> 16) & 0xFF);
+	_stprintf_s(szBuf, _T("RGB(%i,%i,%i)"), g_ColorNPC_Out[2] & 0xFF, (g_ColorNPC_Out[2] >> 8) & 0xFF, (g_ColorNPC_Out[2] >> 16) & 0xFF);
 	nRet &= WritePrivateProfileString(_T("COLOR_SP"), _T("OUT"), szBuf, szFullPathName);
 
 	return nRet;
@@ -1054,13 +1054,13 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 
 	//NPCMAP
 	if(g_Offset.NpcMap == 0 || g_Offset.NpcMap >= g_DllSize){
-		_stprintf(szNpcmap, _T("\nNPCMAP=?"));
+		_stprintf_s(szNpcmap, _T("\nNPCMAP=?"));
 		nFlag = 1;
 	}
 
 	//NOWSTA
 	if(g_Offset.NowSta == 0 || g_Offset.NowSta >= g_DllSize){
-		_stprintf(szNowsta, _T("\nNOWSTA=?"));
+		_stprintf_s(szNowsta, _T("\nNOWSTA=?"));
 		nFlag = 2;
 	}
 	else{
@@ -1072,7 +1072,7 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 
 	//NPCLIST
 	if(g_Offset.NpcList == 0 || g_Offset.NpcList >= g_DllSize){
-		_stprintf(szNpclist, _T("\nNPCLIST=?"));
+		_stprintf_s(szNpclist, _T("\nNPCLIST=?"));
 		nFlag = 4;
 	}
 
@@ -1141,9 +1141,9 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 				MessageBox(hWnd, _T("オフセット取得に失敗"), NULL, MB_ICONERROR);
 			}
 			_TCHAR szBuf[MAX_PATH];
-			_stprintf(szBuf, _T("Mappu.iniを上書きしますか？\n[OFFSET]\nNPCMAP = %X\nNPCLIST = %X\nNOWSTA = %X\nTARGET = %X\nWEATHER = %X"), g_Offset.NpcMap, g_Offset.NpcList, g_Offset.NowSta, g_Offset.Target, g_Offset.Weather);
+			_stprintf_s(szBuf, _T("Mappu.iniを上書きしますか？\n[OFFSET]\nNPCMAP = %X\nNPCLIST = %X\nNOWSTA = %X\nTARGET = %X\nWEATHER = %X"), g_Offset.NpcMap, g_Offset.NpcList, g_Offset.NowSta, g_Offset.Target, g_Offset.Weather);
 			if (g_Offset.NpcMap == 0 || g_Offset.NowSta == 0 || g_Offset.NpcList == 0 || g_Offset.Target == 0 || g_Offset.Weather == 0) {
-				_stprintf(szBuf, _T("オフセット取得に失敗!\n[OFFSET]\nNPCMAP = %X\nNPCLIST = %X\nNOWSTA = %X\nTARGET = %X\nWEATHER = %X"), g_Offset.NpcMap, g_Offset.NpcList, g_Offset.NowSta, g_Offset.Target, g_Offset.Weather);
+				_stprintf_s(szBuf, _T("オフセット取得に失敗!\n[OFFSET]\nNPCMAP = %X\nNPCLIST = %X\nNOWSTA = %X\nTARGET = %X\nWEATHER = %X"), g_Offset.NpcMap, g_Offset.NpcList, g_Offset.NowSta, g_Offset.Target, g_Offset.Weather);
 				MessageBox(hWnd, szBuf, _T("Mappu"), MB_OK | MB_ICONERROR);
 				DestroyWindow(hWnd);
 			}
@@ -1153,15 +1153,15 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 				if (0 == GetFullPathName(filename, sizeof(szFullPathName) / sizeof(_TCHAR), szFullPathName, NULL)) {
 					return 0;
 				}
-				_stprintf(szBuf, _T("%X"), g_Offset.NpcMap);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.NpcMap);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NPCMAP"), szBuf, szFullPathName);
-				_stprintf(szBuf, _T("%X"), g_Offset.NpcList);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.NpcList);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NPCLIST"), szBuf, szFullPathName);
-				_stprintf(szBuf, _T("%X"), g_Offset.NowSta);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.NowSta);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NOWSTA"), szBuf, szFullPathName);
-				_stprintf(szBuf, _T("%X"), g_Offset.Target);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.Target);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("TARGET"), szBuf, szFullPathName);
-				_stprintf(szBuf, _T("%X"), g_Offset.Weather);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.Weather);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("WEATHER"), szBuf, szFullPathName);
 
 				if (nRet == 0) {
@@ -1169,21 +1169,21 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 				}
 			}
 		}
-		_stprintf(szBuf, _T("%d"), g_DLLFileSize);
+		_stprintf_s(szBuf, _T("%d"), g_DLLFileSize);
 		WritePrivateProfileString(_T("OTHER"), _T("DLLFILESIZE"), szBuf, szFullPathName);
 		nFlag = 0;
 	}
 
 	if (nFlag) {
-		_stprintf(szText, _T("[OFFSET]アドレスを検索しますか？%s%s%s"), szNpcmap, szNowsta, szNpclist);
+		_stprintf_s(szText, _T("[OFFSET]アドレスを検索しますか？%s%s%s"), szNpcmap, szNowsta, szNpclist);
 		if (IDYES == MessageBox(hWnd, szText, _T("Mappu.ini [OFFSET] error"), MB_YESNO | MB_ICONQUESTION)) {
 			if (GetOffsetAddressAll(g_polHandle, g_DllAddress) != 0) {
 				MessageBox(hWnd, _T("オフセット取得に失敗"), NULL, MB_ICONERROR);
 			}
 			_TCHAR szBuf[MAX_PATH];
-			_stprintf(szBuf, _T("Mappu.iniを上書きしますか？\n[OFFSET]\nNPCMAP = %X\nNPCLIST = %X\nNOWSTA = %X\nTARGET = %X\nWEATHER = %X"), g_Offset.NpcMap, g_Offset.NpcList, g_Offset.NowSta, g_Offset.Target, g_Offset.Weather);
+			_stprintf_s(szBuf, _T("Mappu.iniを上書きしますか？\n[OFFSET]\nNPCMAP = %X\nNPCLIST = %X\nNOWSTA = %X\nTARGET = %X\nWEATHER = %X"), g_Offset.NpcMap, g_Offset.NpcList, g_Offset.NowSta, g_Offset.Target, g_Offset.Weather);
 			if (g_Offset.NpcMap == 0 || g_Offset.NowSta == 0 || g_Offset.NpcList == 0 || g_Offset.Target == 0 || g_Offset.Weather == 0) {
-				_stprintf(szBuf, _T("オフセット取得に失敗!\n[OFFSET]\nNPCMAP = %X\nNPCLIST = %X\nNOWSTA = %X\nTARGET = %X\nWEATHER = %X"), g_Offset.NpcMap, g_Offset.NpcList, g_Offset.NowSta, g_Offset.Target, g_Offset.Weather);
+				_stprintf_s(szBuf, _T("オフセット取得に失敗!\n[OFFSET]\nNPCMAP = %X\nNPCLIST = %X\nNOWSTA = %X\nTARGET = %X\nWEATHER = %X"), g_Offset.NpcMap, g_Offset.NpcList, g_Offset.NowSta, g_Offset.Target, g_Offset.Weather);
 				MessageBox(hWnd, szBuf, _T("Mappu"), MB_OK | MB_ICONERROR);
 				DestroyWindow(hWnd);
 			}
@@ -1193,15 +1193,15 @@ int CheckOffset(HWND hWnd,const _TCHAR* filename)
 				if (0 == GetFullPathName(filename, sizeof(szFullPathName) / sizeof(_TCHAR), szFullPathName, NULL)) {
 					return 0;
 				}
-				_stprintf(szBuf, _T("%X"), g_Offset.NpcMap);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.NpcMap);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NPCMAP"), szBuf, szFullPathName);
-				_stprintf(szBuf, _T("%X"), g_Offset.NpcList);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.NpcList);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NPCLIST"), szBuf, szFullPathName);
-				_stprintf(szBuf, _T("%X"), g_Offset.NowSta);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.NowSta);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("NOWSTA"), szBuf, szFullPathName);
-				_stprintf(szBuf, _T("%X"), g_Offset.Target);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.Target);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("TARGET"), szBuf, szFullPathName);
-				_stprintf(szBuf, _T("%X"), g_Offset.Weather);
+				_stprintf_s(szBuf, _T("%X"), g_Offset.Weather);
 				nRet &= WritePrivateProfileString(_T("OFFSET"), _T("WEATHER"), szBuf, szFullPathName);
 
 				if (nRet == 0) {
@@ -2433,7 +2433,7 @@ int SetColor(HWND hWnd, DWORD dwId, COLORREF *Color)
 
 	_TCHAR szBuf[0x10], szText[0x20];
 	GetDlgItemText(hWnd, dwId, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
-	_stprintf(szText, _T("%s \"%s\""), _T("Color"), szBuf);
+	_stprintf_s(szText, _T("%s \"%s\""), _T("Color"), szBuf);
 	ZeroMemory(&cc, sizeof(cc));
 	cc.lStructSize = sizeof(CHOOSECOLOR);
 	cc.hwndOwner = hWnd;

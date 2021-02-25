@@ -64,7 +64,7 @@ int Draw(HWND hWnd, HWND hLIST, HWND hCHARACTER)
 	//WindowTextを更新 0.50で追加
 	_TCHAR szText[0x20], szCmp[0x20];
 	GetWindowText(hWnd, szCmp, sizeof(szCmp) / sizeof(_TCHAR) - 1);
-	_stprintf(szText, _T("Mappu - %s"), mypos.name);
+	_stprintf_s(szText, _T("Mappu - %s"), mypos.name);
 	if (_tcscmp(szText, szCmp) != 0 && _tcslen(mypos.name) != 0)SetWindowText(hWnd, szText);
 #endif
 
@@ -117,6 +117,7 @@ int DrawMap(HWND hWnd, INFORMATION mypos, MAP_INFORMATION *mapInfo)
 
 															// 大きいメモリデバイスコンテキストを作る（べつに小さくてもOK）
 	BITMAPINFO bmpinfo;
+	LPDWORD lpPixel;
 	ZeroMemory(&bmpinfo, sizeof(bmpinfo));
 	bmpinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bmpinfo.bmiHeader.biWidth = rect.right - rect.left;
@@ -124,7 +125,7 @@ int DrawMap(HWND hWnd, INFORMATION mypos, MAP_INFORMATION *mapInfo)
 	bmpinfo.bmiHeader.biPlanes = 1;
 	bmpinfo.bmiHeader.biBitCount = 32;//32ビットカラー
 	bmpinfo.bmiHeader.biCompression = BI_RGB;
-	if ((hBitmap = CreateDIBSection(NULL, &bmpinfo, DIB_RGB_COLORS, NULL, NULL, NULL)) == NULL)return 9;
+	if ((hBitmap = CreateDIBSection(NULL, &bmpinfo, DIB_RGB_COLORS, (void**)&lpPixel, NULL, NULL)) == NULL)return 9;
 	// 今作ったビットマップを、メモリデバイスコンテキストに選択する
 	if (NULL == SelectObject(hMemDC, hBitmap))return 10;
 	if (0 == DeleteObject(hBitmap))return 11;
@@ -189,10 +190,10 @@ int DrawMap(HWND hWnd, INFORMATION mypos, MAP_INFORMATION *mapInfo)
 		}
 		else {
 			if (mapInfo->AreaID >= 0x0100) {//2Byteエリア 0.53で追加
-				_stprintf(szBuf, _T("No MAP!Area = %x"), mapInfo->AreaID);
+				_stprintf_s(szBuf, _T("No MAP!Area = %x"), mapInfo->AreaID);
 			}
 			else {
-				_stprintf(szBuf, _T("No MAP!Area = %02x"), mapInfo->AreaID);
+				_stprintf_s(szBuf, _T("No MAP!Area = %02x"), mapInfo->AreaID);
 			}
 			SetTextColor(hMemDC, g_ColorMapName);
 			DrawText(hMemDC, szBuf, -1, &rect, DT_SINGLELINE | DT_BOTTOM | DT_LEFT | DT_END_ELLIPSIS);
@@ -210,7 +211,7 @@ int DrawMap(HWND hWnd, INFORMATION mypos, MAP_INFORMATION *mapInfo)
 	}
 	else if (mapInfo->code == 1) {
 		//map.iniが見つからなかった時
-		_stprintf(szBuf, _T("map.iniが見つかりません。"));
+		_stprintf_s(szBuf, _T("map.iniが見つかりません。"));
 		SetTextColor(hMemDC, g_ColorMapName);
 		DrawText(hMemDC, szBuf, -1, &rect, DT_SINGLELINE | DT_BOTTOM | DT_LEFT | DT_END_ELLIPSIS);//0.47aで変更
 		mapInfo->zoom = (float)0.4;
@@ -222,10 +223,10 @@ int DrawMap(HWND hWnd, INFORMATION mypos, MAP_INFORMATION *mapInfo)
 	}
 	else {//map.ini読み込み時のその他エラー
 		if (mapInfo->AreaID >= 0x0100) {
-			_stprintf(szBuf, _T("map.ini読み込みエラー。 code = %d,Area = %x"), mapInfo->code, mapInfo->AreaID);
+			_stprintf_s(szBuf, _T("map.ini読み込みエラー。 code = %d,Area = %x"), mapInfo->code, mapInfo->AreaID);
 		}
 		else {
-			_stprintf(szBuf, _T("map.ini読み込みエラー。 code = %d,Area = %02x"), mapInfo->code, mapInfo->AreaID);
+			_stprintf_s(szBuf, _T("map.ini読み込みエラー。 code = %d,Area = %02x"), mapInfo->code, mapInfo->AreaID);
 		}
 		SetTextColor(hMemDC, g_ColorMapName);
 		DrawText(hMemDC, szBuf, -1, &rect, DT_SINGLELINE | DT_BOTTOM | DT_LEFT | DT_END_ELLIPSIS);//0.47aで変更
@@ -301,6 +302,7 @@ int DrawCharacter(HWND hWnd, HWND hLIST, HWND hCHARACTER, INFORMATION mypos, MAP
 	if ((hMemDC = CreateCompatibleDC(hDC)) == NULL)return 43;
 	// 大きいメモリデバイスコンテキストを作る（べつに小さくてもOK）
 	BITMAPINFO bmpinfo;
+	LPDWORD lpPixel;
 	ZeroMemory(&bmpinfo, sizeof(bmpinfo));
 	bmpinfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bmpinfo.bmiHeader.biWidth = rect.right - rect.left;
@@ -309,7 +311,7 @@ int DrawCharacter(HWND hWnd, HWND hLIST, HWND hCHARACTER, INFORMATION mypos, MAP
 	bmpinfo.bmiHeader.biBitCount = 32;//32ビットカラー
 	bmpinfo.bmiHeader.biCompression = BI_RGB;
 
-	if ((hBitmap = CreateDIBSection(NULL, &bmpinfo, DIB_RGB_COLORS, NULL, NULL, NULL)) == NULL) {
+	if ((hBitmap = CreateDIBSection(NULL, &bmpinfo, DIB_RGB_COLORS, (void**)&lpPixel, NULL, NULL)) == NULL) {
 		return 44;
 	}
 	// 今作ったビットマップを、メモリデバイスコンテキストに選択する
@@ -426,7 +428,7 @@ int DrawWeatherIcon(HWND hWnd)
 
 	byteWeather = GetWeather();
 	if (g_Menu.weather_icon && byteWeather != nFlagIcon && byteWeather > 3) {//0.48で変更 0.50で変更
-		_stprintf(szIconName, _T(".\\weather\\%s.ico"), szWeather[byteWeather]);
+		_stprintf_s(szIconName, _T(".\\weather\\%s.ico"), szWeather[byteWeather]);
 		hIcon = (HICON)LoadImage(0, szIconName, IMAGE_ICON, 16, 16, LR_LOADFROMFILE | LR_SHARED);
 		if (hIcon) {
 			SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
@@ -790,7 +792,7 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 
 	//倍率表示
 	if (g_ColorZoom) {
-		_stprintf(szBuf, _T("x%0.1f"), g_Zoom);
+		_stprintf_s(szBuf, _T("x%0.1f"), g_Zoom);
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
 			SetTextColor(*hMemDC, g_FontSystem.ColorEffect);
@@ -811,7 +813,7 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 		double dDistanceXZ, dDistanceXYZ;
 		dDistanceXYZ = (double)sqrt(pow((long double)targetpos.x - mypos.x, 2) + pow((long double)targetpos.y - mypos.y, 2) + pow((long double)targetpos.z - mypos.z, 2));
 		dDistanceXZ = (double)sqrt(pow((long double)targetpos.x - mypos.x, 2) + pow((long double)targetpos.z - mypos.z, 2));
-		_stprintf(szBuf, _T("\n%0.1lf(%0.1f)"), dDistanceXYZ, dDistanceXZ);
+		_stprintf_s(szBuf, _T("\n%0.1lf(%0.1f)"), dDistanceXYZ, dDistanceXZ);
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
 			SetTextColor(*hMemDC, g_FontSystem.ColorEffect);
@@ -829,10 +831,10 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 	//MyPosition表示
 	if (g_Menu.own_position && g_ColorMyPosition) {
 		if (mapInfo.AreaID >= 0x0100) {
-			_stprintf(szBuf, _T("Area:%X_%1X (%.1f, %.1f, %.1f)"), mapInfo.AreaID, mapInfo.SubID, mypos.x, mypos.y, mypos.z);
+			_stprintf_s(szBuf, _T("Area:%X_%1X (%.1f, %.1f, %.1f)"), mapInfo.AreaID, mapInfo.SubID, mypos.x, mypos.y, mypos.z);
 		}
 		else {
-			_stprintf(szBuf, _T("Area:%02X_%1X (%.1f, %.1f, %.1f)"), mapInfo.AreaID, mapInfo.SubID, mypos.x, mypos.y, mypos.z);
+			_stprintf_s(szBuf, _T("Area:%02X_%1X (%.1f, %.1f, %.1f)"), mapInfo.AreaID, mapInfo.SubID, mypos.x, mypos.y, mypos.z);
 		}
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
@@ -851,10 +853,10 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 	//<pos>表示
 	if (g_Menu.own_lt_pos_gt && (mapInfo.x == 0 || mapInfo.z == 0) && g_Colorlt_Pos_gt) {
 		if (g_Menu.own_position) {
-			_stprintf(szBuf, _T("\n(?-?)"));
+			_stprintf_s(szBuf, _T("\n(?-?)"));
 		}
 		else {
-			_stprintf(szBuf, _T("(?-?)"));
+			_stprintf_s(szBuf, _T("(?-?)"));
 		}
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
@@ -878,10 +880,10 @@ int DrawInfo(HDC *hMemDC, INFORMATION mypos, MAP_INFORMATION mapInfo, RECT Windo
 		//マップ上の座標から<pos>に変換
 		//(fx-a)/(b) a:実座標(A-1)の開始位置 b:1マスあたりの幅
 		if (g_Menu.own_position) {
-			_stprintf(szBuf, _T("\n(%c-%d)"), (int)((fx - 17) / 32) + ('A'), (int)((fz - 17) / 32) + 1);
+			_stprintf_s(szBuf, _T("\n(%c-%d)"), (int)((fx - 17) / 32) + ('A'), (int)((fz - 17) / 32) + 1);
 		}
 		else {
-			_stprintf(szBuf, _T("(%c-%d)"), (int)((fx - 17) / 32) + ('A'), (int)((fz - 17) / 32) + 1);
+			_stprintf_s(szBuf, _T("(%c-%d)"), (int)((fx - 17) / 32) + ('A'), (int)((fz - 17) / 32) + 1);
 		}
 		//ドロップシャドウ
 		if (g_FontSystem.nEffect == 1 && !(g_FontSystem.nDS_x == 0 && g_FontSystem.nDS_z == 0)) {
@@ -1395,6 +1397,7 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 				//Typeの取得
 				ListView_GetItemText(hLIST, i, 4, szType, sizeof(szType) / sizeof(_TCHAR));
+				szType[sizeof(szType) / sizeof(_TCHAR) - 1] = 0;
 				if (_tcscmp(szType, _T("EX")) == 0) {
 					if (nNormalExSp != 1) {//EX描画以外では戻る 0.60で追加
 						continue;
@@ -1503,28 +1506,29 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 						//ID
 						if (g_Menu.npc_id) {
-							//_stprintf(szID,_T("%03X"),checked_id[i]);
-							_stprintf(szID, _T("%03X"), npcPos.id);//0.60aで変更
+							//_stprintf_s(szID,_T("%03X"),checked_id[i]);
+							_stprintf_s(szID, _T("%03X"), npcPos.id);//0.60aで変更
 						}
 						//HPP
 						if (g_Menu.npc_hpp) {
-							_stprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
+							_stprintf_s(szHPP, _T("(%d%%)"), npcPos.hpp);
 						}
 						//Timer
 						if (g_Menu.npc_timer) {
 							_TCHAR szBuf[0x10];
 							ListView_GetItemText(hLIST, i, 3, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
+							szBuf[sizeof(szBuf) / sizeof(_TCHAR) - 1] = 0;
 							if (_tcslen(szBuf) != 0) {
-								_stprintf(szTIMER, _T("\"%s\""), szBuf);
+								_stprintf_s(szTIMER, _T("\"%s\""), szBuf);
 							}
 						}
 						//Name
 						if (g_Menu.npc_name) {
-							_stprintf(szNAME, _T("%s"), npcPos.name);
+							_stprintf_s(szNAME, _T("%s"), npcPos.name);
 						}
 						//表示
 						if (g_Menu.npc_id || g_Menu.npc_hpp || g_Menu.npc_timer || g_Menu.npc_name) {
-							_stprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
+							_stprintf_s(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
 							int nX, nZ;
 							nX = nCenter_X + x + 1 + int(2 * g_PointSizeNPC);
 							nZ = nCenter_Z - z - (MulDiv(g_Font.nSize, GetDeviceCaps(*hMemDC, LOGPIXELSY), 72) / 2);
@@ -1556,27 +1560,27 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 						//ID
 						if (g_Menu.npc_id_ex) {
-							_stprintf(szID, _T("%03X"), checked_id[i]);
+							_stprintf_s(szID, _T("%03X"), checked_id[i]);
 						}
 						//HPP
 						if (g_Menu.npc_hpp_ex) {
-							_stprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
+							_stprintf_s(szHPP, _T("(%d%%)"), npcPos.hpp);
 						}
 						//Timer
 						if (g_Menu.npc_timer_ex) {
 							_TCHAR szBuf[0x10];
 							ListView_GetItemText(hLIST, i, 3, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
 							if (_tcslen(szBuf) != 0) {
-								_stprintf(szTIMER, _T("\"%s\""), szBuf);
+								_stprintf_s(szTIMER, _T("\"%s\""), szBuf);
 							}
 						}
 						//Name
 						if (g_Menu.npc_name_ex) {
-							_stprintf(szNAME, _T("%s"), npcPos.name);
+							_stprintf_s(szNAME, _T("%s"), npcPos.name);
 						}
 						//表示
 						if (g_Menu.npc_id_ex || g_Menu.npc_hpp_ex || g_Menu.npc_timer_ex || g_Menu.npc_name_ex) {
-							_stprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
+							_stprintf_s(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
 							int nX, nZ;
 							nX = nCenter_X + x + 1 + int(2 * g_PointSizeNPC);
 							nZ = nCenter_Z - z - (MulDiv(g_FontEx.nSize, GetDeviceCaps(*hMemDC, LOGPIXELSY), 72) / 2);
@@ -1608,27 +1612,27 @@ int DrawNPC(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos, M
 
 						//ID
 						if (g_Menu.npc_id_sp) {
-							_stprintf(szID, _T("%03X"), checked_id[i]);
+							_stprintf_s(szID, _T("%03X"), checked_id[i]);
 						}
 						//HPP
 						if (g_Menu.npc_hpp_sp) {
-							_stprintf(szHPP, _T("(%d%%)"), npcPos.hpp);
+							_stprintf_s(szHPP, _T("(%d%%)"), npcPos.hpp);
 						}
 						//Timer
 						if (g_Menu.npc_timer_sp) {
 							_TCHAR szBuf[0x10];
 							ListView_GetItemText(hLIST, i, 3, szBuf, sizeof(szBuf) / sizeof(_TCHAR));
 							if (_tcslen(szBuf) != 0) {
-								_stprintf(szTIMER, _T("\"%s\""), szBuf);
+								_stprintf_s(szTIMER, _T("\"%s\""), szBuf);
 							}
 						}
 						//Name
 						if (g_Menu.npc_name_sp) {
-							_stprintf(szNAME, _T("%s"), npcPos.name);
+							_stprintf_s(szNAME, _T("%s"), npcPos.name);
 						}
 						//表示
 						if (g_Menu.npc_id_sp || g_Menu.npc_hpp_sp || g_Menu.npc_timer_sp || g_Menu.npc_name_sp) {
-							_stprintf(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
+							_stprintf_s(szShow, _T("%s%s%s%s"), szID, szHPP, szTIMER, szNAME);
 							int nX, nZ;
 							nX = nCenter_X + x + 1 + int(2 * g_PointSizeNPC);
 							nZ = nCenter_Z - z - (MulDiv(g_FontSp.nSize, GetDeviceCaps(*hMemDC, LOGPIXELSY), 72) / 2);
@@ -1872,20 +1876,20 @@ int DrawTarget(HDC *hMemDC, HWND hLIST, INFORMATION mypos, INFORMATION targetpos
 			_TCHAR szNAME[0x20] = _T("");
 			//ID
 			if (g_Menu.target_id) {
-				_stprintf(szID, _T("%03X"), targetpos.id);
+				_stprintf_s(szID, _T("%03X"), targetpos.id);
 			}
 			//HPP
 			if (g_Menu.target_hpp) {
-				_stprintf(szHPP, _T("(%d%%)"), targetpos.hpp);
+				_stprintf_s(szHPP, _T("(%d%%)"), targetpos.hpp);
 			}
 			//Name
 			if (g_Menu.target_name) {
-				_stprintf(szNAME, _T("%s"), targetpos.name);
+				_stprintf_s(szNAME, _T("%s"), targetpos.name);
 			}
 
 			//表示
 			if (g_Menu.target_id || g_Menu.target_hpp || g_Menu.target_name) {
-				_stprintf(szShow, _T("%s%s%s"), szID, szHPP, szNAME);
+				_stprintf_s(szShow, _T("%s%s%s"), szID, szHPP, szNAME);
 				int nX, nZ;
 				nX = nCenter_X + x + 1 + int(2 * g_PointSizeTARGET);
 				nZ = nCenter_Z - z + logFont.lfHeight / 2;
@@ -1968,7 +1972,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		stwAreaID = wNowAreaID;
 		retInfo.AreaID = stwAreaID;
 
-		_stprintf(szFileName, _T("%s\\map.ini"), g_MapPath);
+		_stprintf_s(szFileName, _T("%s\\map.ini"), g_MapPath);
 		if (0 == GetFullPathName(szFileName, sizeof(szFullPathName) / sizeof(_TCHAR), szFullPathName, NULL)) {
 			//map.iniが存在しないとき
 			retInfo.code = 1;
@@ -1976,17 +1980,17 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		}
 
 		if (stwAreaID >= 0x0100) {//2byteエリア
-			_stprintf(szAreaID, _T("%x"), stwAreaID);
+			_stprintf_s(szAreaID, _T("%x"), stwAreaID);
 		}
 		else {//1byteエリア
-			_stprintf(szAreaID, _T("%02x"), stwAreaID);
+			_stprintf_s(szAreaID, _T("%02x"), stwAreaID);
 		}
 
 		//[Map] エリア名取得
-		_stprintf(szSection, _T("%s_jname"), szAreaID); //a0_jname等
+		_stprintf_s(szSection, _T("%s_jname"), szAreaID); //a0_jname等
 		GetPrivateProfileString(_T("Map"), szSection, _T(""), stszAreaName, sizeof(stszAreaName) / sizeof(_TCHAR), szFullPathName);
 		if (_tcslen(stszAreaName) == 0) { //日本語名が取得できなかった時
-			_stprintf(szSection, _T("%s_ename"), szAreaID); //英語名で取得
+			_stprintf_s(szSection, _T("%s_ename"), szAreaID); //英語名で取得
 			GetPrivateProfileString(_T("Map"), szSection, _T(""), stszAreaName, sizeof(stszAreaName) / sizeof(_TCHAR), szFullPathName);
 		}
 
@@ -1995,7 +1999,7 @@ MAP_INFORMATION GetMAPINFORMATION_SECTION(INFORMATION mypos)
 		GetPrivateProfileString(_T("Map"), szAreaID, _T(""), stszMapiniString[nSubID], sizeof(stszMapiniString[0]) / sizeof(_TCHAR), szFullPathName);
 		//SubIDがある表記の配列
 		for (nSubID = 1; nSubID < 0x20; nSubID++) {
-			_stprintf(szSection, _T("%s_%x"), szAreaID, nSubID - 1);
+			_stprintf_s(szSection, _T("%s_%x"), szAreaID, nSubID - 1);
 			GetPrivateProfileString(_T("Map"), szSection, _T(""), stszMapiniString[nSubID], sizeof(stszMapiniString[0]) / sizeof(_TCHAR), szFullPathName);
 		}
 	}
@@ -2131,17 +2135,17 @@ float GetZoomIni()
 	_TCHAR szZoom[0x10];
 	WORD wAreaID;
 
-	_stprintf(szFileName, _T("%s\\zoom.ini"), g_MapPath);
+	_stprintf_s(szFileName, _T("%s\\zoom.ini"), g_MapPath);
 	if (0 == GetFullPathName(szFileName, sizeof(szFullPathName) / sizeof(_TCHAR), szFullPathName, NULL)) {
 		return -1;
 	}
 
 	wAreaID = GetAreaID();
 	if (wAreaID >= 0x0100) {
-		_stprintf(szSection, _T("%04x"), wAreaID);
+		_stprintf_s(szSection, _T("%04x"), wAreaID);
 	}
 	else {
-		_stprintf(szSection, _T("%02x"), wAreaID);
+		_stprintf_s(szSection, _T("%02x"), wAreaID);
 	}
 
 	GetPrivateProfileString(_T("ZOOM"), szSection, _T(""), szZoom, sizeof(szZoom) / sizeof(_TCHAR), szFullPathName);
@@ -2169,18 +2173,18 @@ IPicture* LoadMAP(MAP_INFORMATION mapInfo, _TCHAR *szExtension)
 	//ファイル名を作成
 	if (g_HexToDec == 0) {
 		if (mapInfo.AreaID >= 0x0100) {//2Byteエリア 0.53で追加
-			_stprintf(szBuf, _T("%s\\%x_%x.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
+			_stprintf_s(szBuf, _T("%s\\%x_%x.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
 		}
 		else {
-			_stprintf(szBuf, _T("%s\\%02x_%x.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
+			_stprintf_s(szBuf, _T("%s\\%02x_%x.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
 		}
 	}
 	else {
 		if (mapInfo.AreaID >= 0x0100) {//2Byteエリア 0.53で追加
-			_stprintf(szBuf, _T("%s\\%x_%d.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
+			_stprintf_s(szBuf, _T("%s\\%x_%d.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
 		}
 		else {
-			_stprintf(szBuf, _T("%s\\%02x_%d.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
+			_stprintf_s(szBuf, _T("%s\\%02x_%d.%s"), g_MapPath, mapInfo.AreaID, mapInfo.SubID, szExtension);
 		}
 	}
 
@@ -2189,10 +2193,10 @@ IPicture* LoadMAP(MAP_INFORMATION mapInfo, _TCHAR *szExtension)
 	}
 	if (!PathFileExists(cFilename)) {//ファイルが存在しなかった時
 		if (mapInfo.AreaID >= 0x0100) {//SubIDの無いファイルを読み込む
-			_stprintf(szBuf, _T("%s\\%x.%s"), g_MapPath, mapInfo.AreaID, szExtension);
+			_stprintf_s(szBuf, _T("%s\\%x.%s"), g_MapPath, mapInfo.AreaID, szExtension);
 		}
 		else {
-			_stprintf(szBuf, _T("%s\\%02x.%s"), g_MapPath, mapInfo.AreaID, szExtension);
+			_stprintf_s(szBuf, _T("%s\\%02x.%s"), g_MapPath, mapInfo.AreaID, szExtension);
 		}
 		if (0 == GetFullPathName(szBuf, sizeof(cFilename) / sizeof(_TCHAR), cFilename, NULL)) {
 			return 0;
@@ -2202,8 +2206,9 @@ IPicture* LoadMAP(MAP_INFORMATION mapInfo, _TCHAR *szExtension)
 #ifndef UNICODE//ユニコード文字列に変換
 	mbstowcs(wcFilename, cFilename, _tcslen(cFilename) + 1);
 #else//元々ユニコードなのでコピーするだけ
-	wcscpy(wcFilename, cFilename);
+	wcscpy_s(wcFilename, cFilename);
 #endif
+	wcFilename[_countof(wcFilename) - 1] = 0;
 	hr = OleLoadPicturePath(wcFilename, NULL, 0, 0, IID_IPicture, (void**)&pPic);
 	if (FAILED(hr)) {
 		return 0;
@@ -2261,7 +2266,7 @@ int RenderMAP(HDC hDC, IPicture *pPic, INFORMATION mypos, MAP_INFORMATION mapInf
 	}
 
 	//画像描画
-	pPic->Render(hDC, (int)x, (int)z, lWidth, lHeight, 0, hmWidth, hmHeight, -hmHeight, NULL);
+	pPic->Render(hDC, (int)x, (int)z, lWidth, lHeight, 0, hmWidth, hmHeight, -hmHeight, &rect);
 
 
 	//Mappu0.40にて追加
