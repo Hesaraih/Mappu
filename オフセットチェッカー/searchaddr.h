@@ -131,7 +131,9 @@ const BYTE constServer2Pattern[PATTERN_MAX_RANGE]      = "2BC28D14808D8491pppppp
 //Pos(位置)は直接サーチ出来ず[Pos1] + Pos2
 const BYTE constPos1Pattern[PATTERN_MAX_RANGE]         = "8B54240CBFppppppppB9........33C0893D";//0.05でpに変更
 const BYTE constPos2Pattern[PATTERN_MAX_RANGE]         = "8B4C2404D94424088988pppppppp8B15";//0.05でpに変更
-const BYTE constPcmapPattern[PATTERN_MAX_RANGE]        = "85C00F84........B9xxxxxxxx894C24";
+//const BYTE constPcmapPattern[PATTERN_MAX_RANGE]        = "85C00F84........B9xxxxxxxx894C24";
+//※検索方法：xxのパターンなのでベースアドレス+オフセット値(予測)で検索すると3ヶ所ぐらいヒットするのでxxの先頭が4の倍数値になっている部分がマッチするようにシグネチャを設定
+const BYTE constPcmapPattern[PATTERN_MAX_RANGE]        = "85C00F84........BBxxxxxxxxEB048B"; //2021.12.20変更　
 //NPCMAP2は直接サーチ出来ずNpcmap + 0x1C00
 //const BYTE constNpcmap2Pattern[PATTERN_MAX_RANGE]        = "";
 
@@ -156,7 +158,7 @@ const BYTE constLoggedinPattern[PATTERN_MAX_RANGE]     = "EB06891Dxxxxxxxx576A3C
 const BYTE constCursorPosPattern[PATTERN_MAX_RANGE]		= "8B51..85D274..3B05xxxxxxxx75..";
 const BYTE constOrderPattern[PATTERN_MAX_RANGE]			= "6A006A006A00E8........A1xxxxxxxx6A00";//変更? "EB06891D........391Dxxxxxxxx75226A70";
 const BYTE constSenderPattern[PATTERN_MAX_RANGE]		= "6A008B0DxxxxxxxxE8BF120000"; //送り主
-const BYTE constSendTosPattern[PATTERN_MAX_RANGE]		= "8B0Dxxxxxxxx85C974..52E8DDE.0100C3"; //送り先
+const BYTE constSendTosPattern[PATTERN_MAX_RANGE]		= "8B0Dxxxxxxxx85C974..52E8.DE.0100C3"; //送り先
 const BYTE constInputMoneyPattern[PATTERN_MAX_RANGE]	= "8935xxxxxxxxEB06891D........391D........75376A14";
 //8935:MOV xx,ESI  EB06:JMP SHORT 891D:MOV ..,EBX 391D:CMP ..,EBX 7537:JNZ SHORT 6A14:PUSH 14
 //Money(所持金)は[Money1] + Money2 + MONEY_HOSEI
