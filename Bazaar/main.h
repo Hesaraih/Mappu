@@ -42,7 +42,7 @@ int g_WaitUpdate;
 int g_Retry;
 DWORD g_ProcessID;
 DWORD g_DllAddress;//FFXiMain.dllのアドレス
-HANDLE g_PolHandle;
+HANDLE g_polHandle = 0;
 NPC_MEM_MAP NPC_MEM;//NPC_MEMのオフセット情報
 volatile BYTE g_byThreadFlag;
 _TCHAR g_szSound[MAX_PATH];

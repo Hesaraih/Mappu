@@ -122,6 +122,10 @@
     _T("WORDROBE2_INFO = SAFEBOX2_INFO + (81 * 0x2c),\r\n")\
     _T("WORDROBE3_INFO = WORDROBE2_INFO + (81 * 0x2c),\r\n")\
     _T("WORDROBE4_INFO = WORDROBE3_INFO + (81 * 0x2c),\r\n")\
+    _T("WORDROBE5_INFO = WORDROBE4_INFO + (81 * 0x2c),\r\n")\
+    _T("WORDROBE6_INFO = WORDROBE5_INFO + (81 * 0x2c),\r\n")\
+    _T("WORDROBE7_INFO = WORDROBE6_INFO + (81 * 0x2c),\r\n")\
+    _T("WORDROBE8_INFO = WORDROBE7_INFO + (81 * 0x2c),\r\n")\
     _T("\r\n")\
     ,g_Offset.Fish,g_Offset.Target,g_Offset.NowSta,g_Offset.Jobinfo,g_Offset.Maxhpmpinfo,g_Offset.Activityinfo,g_Offset.XIACE_Iteminfo,g_Offset.Inventorycount,g_Offset.Loggedin,g_Offset.Status,g_Offset.Equipinfo,g_Offset.Inventory,g_Offset.Inventorymax
 

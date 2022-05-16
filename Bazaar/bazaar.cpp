@@ -24,30 +24,30 @@ int BazaarWaitUpdate(int id)
 	DWORD dwAddress;
 	WORD get_id;
 
-	if(id < 0x400 || id > 0x700){
+	if (id < 0x400 || id > 0x700) {
 		return -1;
 	}
 
 	//メモリリード
 	dwAddress = g_DllAddress + g_OffsetBazaar;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return -1;
 	}
 
 	dwAddress += 0x14;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&get_id,sizeof(WORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &get_id, sizeof(WORD), NULL)) {
 		return -1;
 	}
 
-	if(id != get_id){
+	if (id != get_id) {
 		return 0;
 	}
-	else if(BazaarGetItemCount() < 1){
+	else if (BazaarGetItemCount() < 1) {
 		return 0;
 	}
-	else{
-		for(int i=BazaarGetItemCount();i>0;i--){
-			if(wcslen(BazaarGetItemName(i-1)) == 0){//データも読み込んでみる
+	else {
+		for (int i = BazaarGetItemCount(); i > 0; i--) {
+			if (wcslen(BazaarGetItemName(i - 1)) == 0) {//データも読み込んでみる
 				return 0;
 			}
 		}
@@ -56,20 +56,21 @@ int BazaarWaitUpdate(int id)
 	return 1;
 }
 
-
-//バザーの品数を取得
+/// <summary>
+/// バザーの品数を取得
+/// </summary>
 WORD BazaarGetItemCount()
 {
 	DWORD dwAddress;
 	WORD wCount;
 
 	dwAddress = g_DllAddress + g_OffsetBazaar;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return -1;
 	}
 
 	dwAddress += 0x4;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&wCount,sizeof(WORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &wCount, sizeof(WORD), NULL)) {
 		return -1;
 	}
 
@@ -84,38 +85,39 @@ _TCHAR* BazaarGetItemName(int nNum)
 	char szName[0x30];
 	static _TCHAR szTRet[0x30];
 
-	ZeroMemory(szTRet,sizeof(szTRet));
+	ZeroMemory(szTRet, sizeof(szTRet));
 
-	if(nNum < 0 || nNum >= 80){
+	if (nNum < 0 || nNum >= 80) {
 		return szTRet;
 	}
 
 	dwAddress = g_DllAddress + g_OffsetBazaar;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return szTRet;
 	}
 
 	dwAddress += 0x8;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return szTRet;
 	}
 
 	dwAddress += 0x2C + 0x50 * nNum;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return szTRet;
 	}
 
-	if(dwAddress == 0)return szTRet;
+	if (dwAddress == 0)return szTRet;
 
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,szName,sizeof(szName),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, szName, sizeof(szName), NULL)) {
 		return szTRet;
 	}
 
-	if(mbstowcs(szTRet,szName,sizeof(szName)-1) == -1){
-		_swprintf(szTRet,_T("Error - mbstowcs失敗"));
+	szName[sizeof(szName) - 1] = '\0';
+	if (mbstowcs(szTRet, szName, sizeof(szName) - 1) == -1) {
+		_swprintf(szTRet, _T("Error - mbstowcs失敗"));
 	}
 
-	szTRet[sizeof(szTRet)/sizeof(_TCHAR)-1] = 0x00;//安全策
+	szTRet[sizeof(szTRet) / sizeof(_TCHAR) - 1] = 0x00;//安全策
 
 	return szTRet;
 }
@@ -129,55 +131,57 @@ _TCHAR* BazaarGetItemNote(int nNum)
 	char szBuf[0x130];
 	char szComment[0x100];
 	static _TCHAR szTRet[0x100];
-	
-	ZeroMemory(szTRet,sizeof(szTRet));
 
-	if(nNum < 0 || nNum >= 80){
+	ZeroMemory(szTRet, sizeof(szTRet));
+
+	if (nNum < 0 || nNum >= 80) {
 		return szTRet;
 	}
 
 	dwAddress = g_DllAddress + g_OffsetBazaar;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return szTRet;
 	}
 
 	dwAddress += 0x8;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return szTRet;
 	}
 
-	if(dwAddress == 0)return szTRet;
+	if (dwAddress == 0)return szTRet;
 
 	dwAddress += 0x2C + 0x50 * nNum;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
-		return szTRet;
-	}
-	
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,szBuf,sizeof(szBuf),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return szTRet;
 	}
 
-	
-	switch((strlen(szBuf)+1)%4){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, szBuf, sizeof(szBuf), NULL)) {
+		return szTRet;
+	}
+
+
+	szBuf[sizeof(szBuf) - 1] = '\0';
+
+	switch ((strlen(szBuf) + 1) % 4) {
 	case 0:
-		strcpy(szComment,&szBuf[0x1C+strlen(szBuf)+1]);
+		strncpy(szComment, &szBuf[0x1C + strlen(szBuf) + 1], sizeof(szComment) - 1);
 		break;
 	case 1:
-		strcpy(szComment,&szBuf[0x1C+strlen(szBuf)+1+3]);
+		strncpy(szComment, &szBuf[0x1C + strlen(szBuf) + 1 + 3], sizeof(szComment) - 1);
 		break;
 	case 2:
-		strcpy(szComment,&szBuf[0x1C+strlen(szBuf)+1+2]);
+		strncpy(szComment, &szBuf[0x1C + strlen(szBuf) + 1 + 2], sizeof(szComment) - 1);
 		break;
 	case 3:
-		strcpy(szComment,&szBuf[0x1C+strlen(szBuf)+1+1]);
+		strcpy(szComment, &szBuf[0x1C + strlen(szBuf) + 1 + 1]);
 		break;
 	}
 
-	if(mbstowcs(szTRet,szComment,sizeof(szComment)-1) == -1){
-		_swprintf(szTRet,_T("Error - mbstowcs失敗"));
+	if (mbstowcs(szTRet, szComment, sizeof(szComment) - 1) == -1) {
+		_swprintf(szTRet, _T("Error - mbstowcs失敗"));
 	}
 
-	szTRet[sizeof(szTRet)/sizeof(_TCHAR)-1] = 0x00;//安全策
+	szTRet[sizeof(szTRet) / sizeof(_TCHAR) - 1] = 0x00;//安全策
 
 	return szTRet;
 }
@@ -188,28 +192,28 @@ int BazaarGetItemPrice(int nNum)
 {
 	DWORD dwAddress;
 	int nValue;
-	
-	if(nNum < 0 || nNum >= 80){
+
+	if (nNum < 0 || nNum >= 80) {
 		return -1;
 	}
 
 	dwAddress = g_DllAddress + g_OffsetBazaar;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return -1;
 	}
 
 	dwAddress += 0x8;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return -1;
 	}
 
 	dwAddress += 0x28 + 0x50 * nNum;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return -1;
 	}
-	
+
 	dwAddress += 0x0C;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&nValue,sizeof(int),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &nValue, sizeof(int), NULL)) {
 		return -1;
 	}
 
@@ -222,28 +226,28 @@ char BazaarGetItemNumber(int nNum)
 {
 	DWORD dwAddress;
 	char cNumber;
-	
-	if(nNum < 0 || nNum >= 80){
+
+	if (nNum < 0 || nNum >= 80) {
 		return -1;
 	}
 
 	dwAddress = g_DllAddress + g_OffsetBazaar;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return -1;
 	}
 
 	dwAddress += 0x8;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return -1;
 	}
 
 	dwAddress += 0x28 + 0x50 * nNum;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&dwAddress,sizeof(DWORD),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &dwAddress, sizeof(DWORD), NULL)) {
 		return -1;
 	}
-	
+
 	dwAddress += 0x4;
-	if( 0 == ReadProcessMemory(g_polHandle,(const void *)dwAddress,&cNumber,sizeof(char),NULL)){
+	if (0 == ReadProcessMemory(g_polHandle, (const void*)dwAddress, &cNumber, sizeof(char), NULL)) {
 		return -1;
 	}
 

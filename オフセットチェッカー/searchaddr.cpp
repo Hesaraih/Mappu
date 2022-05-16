@@ -13,7 +13,12 @@
 #include "main.h"
 #include "searchaddr.h"
 
-
+/// <summary>
+/// 全てのオフセットアドレスを取得
+/// </summary>
+/// <param name="hProcess">pol.exeのプロセスハンドラ</param>
+/// <param name="dwDllAddress">FFXiMain.dllのアドレス(ベースアドレス)</param>
+/// <returns>オフセット取得数</returns>
 int GetOffsetAddressAll(HANDLE hProcess, DWORD dwDllAddress)
 {
 	int ret = 0;

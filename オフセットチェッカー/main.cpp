@@ -79,7 +79,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			g_Offset.dwDllAddress = GetDllModuleAddress(1, &pId, &hPol, stsztDllFullPath);//0.05Ç≈ïœçX
 			GetOffsetAddressAll(hPol, g_Offset.dwDllAddress);
 			_TCHAR *szText;
-			szText = (_TCHAR*)malloc(0x1000 * sizeof(_TCHAR));
+			szText = (_TCHAR*)malloc(0x2000 * sizeof(_TCHAR));
 			if (szText == NULL) {
 				MessageBox(hWnd, _T("ÉÅÉÇÉäÇÃäÑìñÇƒÇ…é∏îs"), NULL, MB_ICONERROR);
 				return TRUE;//0.5Ç≈ïœçX
@@ -91,9 +91,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			_stprintf_s(szText, 0x1000 * sizeof(_TCHAR), FORMAT_MAPPU);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
+
 			_stprintf_s(szText, 0x1000 * sizeof(_TCHAR), FORMAT_HEALER);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
+
 			_stprintf_s(szText, 0x1000 * sizeof(_TCHAR), FORMAT_BAZAAR);
 			SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 			SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
@@ -202,7 +204,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 				g_Offset.dwDllAddress = (DWORD)LoadLibrary(szFileName);
 				GetOffsetAddressAll(hPol, g_Offset.dwDllAddress);
 				_TCHAR *szText;
-				szText = (_TCHAR*)malloc(0x1000 * sizeof(_TCHAR));
+				szText = (_TCHAR*)malloc(0x2000 * sizeof(_TCHAR));
 				if (szText == NULL) {
 					MessageBox(hWnd, _T("ÉÅÉÇÉäÇÃäÑìñÇƒÇ…é∏îs"), NULL, MB_ICONERROR);
 				}
@@ -214,6 +216,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 					_stprintf_s(szText, sizeof(szText), FORMAT_MAPPU);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
+
 					_stprintf_s(szText, sizeof(szText), FORMAT_HEALER);
 					SendMessage(hEdit, EM_SETSEL, (WPARAM)GetWindowTextLength(hEdit), (LPARAM)GetWindowTextLength(hEdit));
 					SendMessage(hEdit, EM_REPLACESEL, 0, (LPARAM)szText);
@@ -516,12 +519,12 @@ int Save(_TCHAR *sztFileName, HWND hWnd, HWND hEdit)
 	}
 	else {//ê¨å˜éû
 		_TCHAR *sztText;
-		sztText = (_TCHAR*)malloc(0x1000 * sizeof(_TCHAR));
+		sztText = (_TCHAR*)malloc(0x2000 * sizeof(_TCHAR));
 		if (sztText == NULL) {
 			ret = -2;
 		}
 		else {
-			GetWindowText(hEdit, sztText, 0x1000);
+			GetWindowText(hEdit, sztText, 0x2000);
 			HANDLE hFile = CreateFile(sztFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 			if (hFile == INVALID_HANDLE_VALUE) {
 				ret = -3;

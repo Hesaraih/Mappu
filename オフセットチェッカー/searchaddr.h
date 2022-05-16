@@ -28,7 +28,7 @@
 #define Meripo2Bazaar_HOSEI			0x0C
 #define Flee_HOSEI					0x04
 #define CharaThrough_HOSEI			0x04
-#define PlusValue_HOSEI				0x2E
+#define PlusValue_HOSEI				0x32	//2022.5.16 2Eから修正
 #define BackGroundFlag_HOSEI		0x1D
 #define MainPuppet_HOSEI			0x4938
 #define AbilityRecast_HOSEI			0x7C
@@ -103,7 +103,7 @@ const BYTE constCastPattern[PATTERN_MAX_RANGE]         = "8BF083C41085F674..A1xx
 const BYTE constVeiwstylePattern[PATTERN_MAX_RANGE]    = "1Dxxxxxxxx881D........881D..................8B0D";//変更
 const BYTE constNpclistPattern[PATTERN_MAX_RANGE]      = "33C05685D2577E198B3Dxxxxxxxx8B7424";
 //Activityinfoは近い値から+0x08しているだけ(参考値)
-const BYTE constActivityinfoPattern[PATTERN_MAX_RANGE] = "C646....8B4424..85C0758FA0xxxxxxxxBB";//変更
+const BYTE constActivityinfoPattern[PATTERN_MAX_RANGE] = "C646....8B4424..85C0758FA0xxxxxxxxBF";//2022.5.16 変更
 const BYTE constTargetPattern[PATTERN_MAX_RANGE]       = "4424....5250E8........8B0Dxxxxxxxx";//変更
 const BYTE constWeatherPattern[PATTERN_MAX_RANGE]      = "8BC883C40485C90F84........66A1xxxxxxxx663D";
 const BYTE constBazaarPattern[PATTERN_MAX_RANGE]       = "485683F8058BF10F87........FF2485........66837C240C11757CA1xxxxxxxx";
@@ -216,12 +216,12 @@ const BYTE constOwnAreaIDPattern[PATTERN_MAX_RANGE] = "7428568B35xxxxxxxx"; //Ow
 const BYTE constBazaar2MeripoPattern[PATTERN_MAX_RANGE] = "6D6572697463617400000000"; //+0xC &0xFFFF バザー⇒メリポ
 const BYTE constMeripo2BazaarPattern[PATTERN_MAX_RANGE] = "6D63726D656E752000000000"; //+0xC &0xFFFF メリポ⇒バザー
 const BYTE constFleePattern[PATTERN_MAX_RANGE] = "00008A561D"; //-0x4 FLEE
-const BYTE constFleeDefaultPattern1[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0zz99580100008A561D"; //FLEEデフォルト(1Byte目)
-const BYTE constFleeDefaultPattern2[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D9zz580100008A561D"; //FLEEデフォルト(2Byte目)
+const BYTE constFleeDefaultPattern1[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0zz995C0100008A561D"; //FLEEデフォルト(1Byte目)
+const BYTE constFleeDefaultPattern2[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D9zz5C0100008A561D"; //FLEEデフォルト(2Byte目)
 const BYTE constFleeDefaultPattern3[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D999zz0100008A561D"; //FLEEデフォルト(3Byte目)
-const BYTE constFleeDefaultPattern4[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D99958zz00008A561D"; //FLEEデフォルト(4Byte目)
-const BYTE constFleeDefaultPattern5[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D9995801zz008A561D"; //FLEEデフォルト(5Byte目)
-const BYTE constFleeDefaultPattern6[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D999580100zz8A561D"; //FLEEデフォルト(6Byte目)
+const BYTE constFleeDefaultPattern4[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D9995Czz00008A561D"; //FLEEデフォルト(4Byte目)
+const BYTE constFleeDefaultPattern5[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D9995C01zz008A561D"; //FLEEデフォルト(5Byte目)
+const BYTE constFleeDefaultPattern6[PATTERN_MAX_RANGE] = "D80D........8B0C8.........33C0D9995C0100zz8A561D"; //FLEEデフォルト(6Byte目)
 const BYTE constCharaThroughPattern[PATTERN_MAX_RANGE] = "..D9442440D8D983C414DFE0"; //-0x4 人抜け
 const BYTE constCharaThroughDefaultPattern1[PATTERN_MAX_RANGE] = "8D..2428....pp........D9442440D8D983C414DFE0"; //人抜けデフォルト(1Byte目)
 const BYTE constCharaThroughDefaultPattern2[PATTERN_MAX_RANGE] = "8D..2428......pp......D9442440D8D983C414DFE0"; //人抜けデフォルト(2Byte目)
